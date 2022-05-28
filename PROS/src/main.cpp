@@ -42,22 +42,28 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+Controller controller;
+std::shared_ptr<ChassisController> drive = ChassisControllerBuilder()
+	.withMotors(
+		{7,2},
+		{-6, -14}
+	)
+	.withDimensions(AbstractMotor::gearset::green, {{3.25_in, 10_in}, imev5GreenTPR})
+	.build();
+std::shared_ptr<AsyncMotionProfileController> profileController = 
+	AsyncMotionProfileControllerBuilder()
+	.withLimits({
+		1.0,
+		2.0,
+		10.0
+	})
+	.withOutput(drive)
+	.buildMotionProfileController();
 void autonomous() {
-	std::shared_ptr<ChassisController> drive = ChassisControllerBuilder()
-		.withMotors(
-			{7,2},
-			{-6, -14}
-		)
-		.withGains(
-        	{0.003, 0, 0.00009}, // Distance controller gains
-        	{0.003, 0, 0.00002}  // Turn controller gains
-    	)	
-		.withDimensions(AbstractMotor::gearset::green, {{3.25_in, 10_in}, imev5GreenTPR})
-		//.build();
-		.withOdometry()
-		.buildOdometry();
-		//drive->moveDistance(12_in);
-		drive->turnAngle(90_deg);
+	profileController->generatePath(
+		{{0_ft, 0_ft, 0_deg}, {3_ft, 3_ft, 0_deg}}, "A");
+	profileController->setTarget("A");
+	profileController->waitUntilSettled();
 }
 
 /**
@@ -74,15 +80,6 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Controller controller;
-	std::shared_ptr<ChassisController> drive = ChassisControllerBuilder()
-		.withMotors(
-			{7,2},
-			{-6, -14}
-		)
-		.withDimensions(AbstractMotor::gearset::green, {{3.25_in, 10_in}, imev5GreenTPR})
-		.build();
-
 	while (true) {
 		drive->getModel()->arcade(controller.getAnalog(ControllerAnalog::leftY),
                               controller.getAnalog(ControllerAnalog::rightX));

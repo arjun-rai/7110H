@@ -54,14 +54,14 @@ void pre_auton(void) {
 
 double kP = 0.02; //steady minor oscillations, should stop close to the correct point
 double kI = 0; //compensate for undershoot
-double kD = 0.0004; //until steady
+double kD = 0.0001; //until steady 0.0001
 
 double turnkP = 0.1; //0.1
 double turnkI = 0;
 double turnkD = 0.06; //0.0001
 //Autonomous Settings
-int desiredValue = 0;
-int desiredTurnValue = 0;
+double desiredValue = 0;
+double desiredTurnValue = 0;
 
 int error; //SensorValue - DesiredValue : Position 
 int prevError = 0; //Position 2- milleseconds ago
@@ -163,16 +163,8 @@ int drivePID(){
     {
       turnMotorPower=-maxTurningPower;
     }
-    
-    Controller.Screen.setCursor(0, 0);
-    Controller.Screen.clearLine();
-    Controller.Screen.print(averagePosition);
-    Controller.Screen.print(desiredValue);
-    
-
     leftDrive.spin(fwd, lateralMotorPower + turnMotorPower, voltageUnits::volt);
     rightDrive.spin(fwd, lateralMotorPower - turnMotorPower, voltageUnits::volt);
-
     prevError = error;
     turnPrevError = turnError;
     vex::task::sleep(5);
@@ -185,21 +177,14 @@ int drivePID(){
 void PID(double move, double angle)
 {
   resetDriveSensors=true;
-  desiredValue=(move/(M_PI*3.25))*360;
+  desiredValue=((move)/(M_PI*3.25))*360.0;
   desiredTurnValue=angle;
 }
-
-bool enableWooga=true;
-int wooga()
+void PID(double move)
 {
-  while (enableWooga)
-  {
-    int x = averagePosition*sin(Inertial.rotation());
-    int y= averagePosition*cos(Inertial.rotation());
-  }
-  return 1;
+  resetDriveSensors=true;
+  desiredValue=((move)/(M_PI*3.25))*360.0;
 }
-
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -213,7 +198,11 @@ int wooga()
 
 void autonomous(void) {
   vex::task PID1(drivePID);
-  PID(12, 0);
+  PID(12);
+  wait(1000, msec);
+  PID(0, 90);
+  wait(1000, msec);
+  PID(12);
 }
 
 /*---------------------------------------------------------------------------*/
