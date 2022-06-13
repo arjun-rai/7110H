@@ -359,7 +359,6 @@ int profile()
     double timeForAccel = ((loc - (timeForConst*maxV))/(0.5*maxV))/2.0;
     int size = (timeForAccel*1000)/10.0;
     double vel[size];
-    //printf("%f %f %f\n", timeForAccel, timeForConst, maxV);
     vel[0] = 0;
     for (int i =1;i<size;i++)
     {
@@ -376,10 +375,6 @@ int profile()
     for (int i =size-1;i>=0; i--)
     {
       double rpmVal = ((vel[i])/(M_PI*3.25))*60;
-      if (rpmVal<1)
-      {
-        rpmVal=0;
-      }
       rightDrive.spin(fwd, rpmVal, vex::velocityUnits::rpm);
       leftDrive.spin(fwd, rpmVal, vex::velocityUnits::rpm);
       wait(10, msec);
