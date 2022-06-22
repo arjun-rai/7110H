@@ -14,6 +14,8 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
+#include "pure-pursuit.cpp"
+#include "auton-selector.cpp"
 using namespace vex;
 
 // A global instance of competition
@@ -31,122 +33,21 @@ competition Competition;
 /*---------------------------------------------------------------------------*/
 
 //Button Class for auton selector buttons, with hex codes for color
-class Button
-{
-  public:
-    int x, y,  width, height;
-    std::string text;
-    std::string buttonColor, textColor;
-    bool pressed;
-    Button(int x, int y, int width, int height, std::string text, std::string buttonColor, std::string textColor)
-    {
-      this->x = x;
-      this->y = y;
-      this->width = width;
-      this->height = height;
-      this->text = text;
-      this->buttonColor = buttonColor;
-      this->textColor = textColor;
-      this->pressed=false;
-    }
-    
-  //displays button
-  void show()
-  {
-    //Brain.Screen.clearScreen(vex::white);
-    if (!pressed)
-    {
-      Brain.Screen.setFillColor(buttonColor.c_str());
-      Brain.Screen.setPenColor(buttonColor.c_str());
-    }
-    else 
-    {
-      Brain.Screen.setFillColor("#2EFF00");
-      Brain.Screen.setPenColor("#2EFF00");
-    }
-    Brain.Screen.drawRectangle(x, y, width, height);
-    Brain.Screen.setPenColor(textColor.c_str());
-    Brain.Screen.printAt(x+(width/2.0)- Brain.Screen.getStringWidth(text.c_str())/2.0, y+Brain.Screen.getStringHeight(text.c_str())/2.0 +height/2.0, false, text.c_str());
-  }
-  //checks if the button is pressed;
-  bool isPressed()
-  {
-    if (Brain.Screen.pressing() && Brain.Screen.xPosition()>=x && Brain.Screen.xPosition()<=x+width 
-    && Brain.Screen.yPosition() >=y && Brain.Screen.yPosition()<=y+height)
-    {
-      
-        return true;
-    }
-    
-    return false;
-  }
 
-  
-};
-int autonSelector()
-{
-  Button autonButtons[] = {
-  Button(10, 10, 150, 50, "Auton Red 1", "#FF0000", "#FFFFFF"),
-  Button(170, 10, 150, 50, "Auton Red 2", "#FF0000", "#FFFFFF"),
-  Button(330, 10, 150, 50, "Auton Red 3", "#FF0000", "#FFFFFF"),
-  Button(10, 70, 150, 50, "Auton Blue 1", "#0000FF", "#FFFFFF"),
-  Button(170, 70, 150, 50, "Auton Blue 2", "#0000FF", "#FFFFFF"),
-  Button(330, 70, 150, 50, "Auton Blue 3", "#0000FF", "#FFFFFF"),
-  Button(10, 130, 480, 50, "Submit", "#2EFF00", "#FFFFFF")
-  };
-  bool chosenOn[] = {false, false, false, false, false, false, false};
-  bool chosen[] = {false, false, false, false, false, false, false};
-  bool submitted = false;
-  int index = -1;
-  int len = sizeof(autonButtons)/sizeof(autonButtons[0]);
-  while (!submitted)
-  {
-    for (int i =0;i<len; i++)
-    {
-      Button b = autonButtons[i];
-      if (autonButtons[i].isPressed() && (index==i || index==-1) && i!=len-1)
-      {
-        if (!chosenOn[i])
-        {
-          chosen[i] = !chosen[i];
-          chosenOn[i]=true;
-          if (chosen[i])
-          {
-            autonButtons[len-1] = Button(10, 130, 480, 50, "Submit " + b.text, "#2EFF00", "#FFFFFF");
-            autonButtons[i].pressed=true;
-            index =i;
-          }
-          else
-          {
-            autonButtons[len-1] = Button(10, 130, 480, 50,"Submit", "#2EFF00", "#FFFFFF");
-            autonButtons[i].pressed=false;
-            index =-1;
-          }
-        }
-      }
-      else
-      {
-        chosenOn[i] = false;
-      }
-      //once submit is pressed and there is an auton selected, break out of the loop
-      if (i==len-1 && autonButtons[i].isPressed() && index!=-1)
-      {
-        return index;
-        submitted = true;
-        break;
-      }
-      b.show();
-    }
-    vex::wait(20,msec);
-  }
-  return -1;
-}
 //auton buttons with the text, and hex codes for colors
 
 int autonNum =-1;
+std::vector<pathPoint> path = {point(0, 0), point(1, 1), point(4, 4)};
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
+
+  path = inject(path);
+  path = smooth(path);
+  curv_func(path);
+  speed_func(path);
+  
+
   //shows button, allows user to select button and then stops once submit is pressed
   //autonNum = autonSelector();
   Brain.Screen.clearScreen(vex::black);
@@ -297,6 +198,8 @@ void PID(double move)
   desiredValue=((move)/(M_PI*3.25))*360.0;
 }
 
+
+
 void driveBrake(vex::brakeType b)
 {
   RightBack.setBrake(b);
@@ -304,9 +207,6 @@ void driveBrake(vex::brakeType b)
   LeftBack.setBrake(b);
   LeftFront.setBrake(b);
 }
-
-
-
 
 double loc =44; //inches  dist+2
 bool enableProfile = true;
@@ -383,6 +283,18 @@ int profile()
   return 1;
 }
 
+double pos[] = {0,0};
+double lastLeft = 0;
+double lastRight =0;
+void getCurrLoc()
+{
+  double dist = ((leftDrive.rotation(rev)*M_PI*3.25)-lastLeft + (rightDrive.rotation(rev)*M_PI*3.25)-lastRight)/2.0;
+  pos[0] += dist*cos(radians(Inertial.rotation()));
+  pos[1] += dist*sin(radians(Inertial.rotation()));
+  lastLeft = leftDrive.rotation(rev)*M_PI*3.25;
+  lastRight = rightDrive.rotation(rev)*M_PI*3.25;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              Autonomous Task                              */
@@ -392,9 +304,29 @@ int profile()
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-
+double drive_width = 10;
+double dt = 0.005;
+double maxVelChange=500;
 void autonomous(void) {
-  vex::task prof(profile);
+  while (closest(pos, path)!=path.size()-1)
+  {
+    getCurrLoc();
+    double look[] = {};
+    lookahead(pos, path, look);
+    int close = closest(pos, path);
+    double curv;
+    if (look[2]>close)
+      curv = curvature(path, pos, look);
+    else
+      curv = 0.00001;
+    double vel = path[close].finVel;
+    double wheels[] = {};
+    turn(curv, vel, drive_width, wheels);
+    rightDrive.spin(fwd, wheels[1], vex::velocityUnits::rpm);
+    leftDrive.spin(fwd, wheels[0], vex::velocityUnits::rpm);
+    wait(20, msec);
+  }
+  //vex::task prof(profile);
   // vex::task PID1(drivePID);
   // PID(48);
     // wait(1000, msec);
