@@ -17,6 +17,9 @@
 #include "v5.h"
 #include "v5_vcs.h"
 #include "robot-config.h"
+#include "pure-pursuit.h"
+#include "auton-selector.h"
+
 
 #define waitUntil(condition)                                                   \
   do {                                                                         \
@@ -25,3 +28,4 @@
 
 #define repeat(iterations)                                                     \
   for (int iterator = 0; iterator < iterations; iterator++)
+

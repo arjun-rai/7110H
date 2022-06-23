@@ -14,8 +14,6 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
-#include "pure-pursuit.cpp"
-#include "auton-selector.cpp"
 using namespace vex;
 
 // A global instance of competition
@@ -37,7 +35,7 @@ competition Competition;
 //auton buttons with the text, and hex codes for colors
 
 int autonNum =-1;
-std::vector<pathPoint> path = {point(0, 0), point(1, 1), point(4, 4)};
+std::vector<pathPoint> path = {point(0, 0), point(20, 20), point(0, 40)};
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
@@ -46,7 +44,13 @@ void pre_auton(void) {
   path = smooth(path);
   curv_func(path);
   speed_func(path);
+  //double test[] = {0,0};
   
+  // for (int i =0;i<path.size(); i++)
+  // {
+  //   printf("%f\t%f\n", path[i].x, path[i].y);
+  //   wait(50 ,msec);
+  // }
 
   //shows button, allows user to select button and then stops once submit is pressed
   //autonNum = autonSelector();
@@ -289,8 +293,10 @@ double lastRight =0;
 void getCurrLoc()
 {
   double dist = ((leftDrive.rotation(rev)*M_PI*3.25)-lastLeft + (rightDrive.rotation(rev)*M_PI*3.25)-lastRight)/2.0;
-  pos[0] += dist*cos(radians(Inertial.rotation()));
-  pos[1] += dist*sin(radians(Inertial.rotation()));
+  // if (dist*cos(radians(Inertial.rotation()))>100 || dist*sin(radians(Inertial.rotation()))>100)
+  //   return;
+  pos[0] += dist*sin(radians(Inertial.rotation()));
+  pos[1] += dist*cos(radians(Inertial.rotation()));
   lastLeft = leftDrive.rotation(rev)*M_PI*3.25;
   lastRight = rightDrive.rotation(rev)*M_PI*3.25;
 }
@@ -304,8 +310,9 @@ void getCurrLoc()
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-double drive_width = 10;
-double dt = 0.005;
+//Due to turning scrub, use a track width a couple inches larger than the real one
+double track_width = 15;
+//double dt = 0.005;
 double maxVelChange=500;
 void autonomous(void) {
   while (closest(pos, path)!=path.size()-1)
@@ -316,14 +323,16 @@ void autonomous(void) {
     int close = closest(pos, path);
     double curv;
     if (look[2]>close)
-      curv = curvature(path, pos, look);
+      curv = curvature(path, pos, look, radians(Inertial.rotation()));
     else
       curv = 0.00001;
     double vel = path[close].finVel;
     double wheels[] = {};
-    turn(curv, vel, drive_width, wheels);
+    turn(curv, vel, track_width, wheels);
     rightDrive.spin(fwd, wheels[1], vex::velocityUnits::rpm);
     leftDrive.spin(fwd, wheels[0], vex::velocityUnits::rpm);
+    printf("%f\t%f\n", pos[0], pos[1]);
+    //printf("%f\n", look[2]);
     wait(20, msec);
   }
   //vex::task prof(profile);

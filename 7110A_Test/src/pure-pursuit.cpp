@@ -4,19 +4,6 @@
 // PATH GENERATION
 ///////////////////////////////////////////////////////////////////////////
 
-
-
-//stores data for calculations
-struct pathPoint{
-  double x;
-  double y;
-  double w = 0;
-  double curve = 0;
-  double dist =0;
-  double vel =0;
-  double finVel=0;
-};
-
 pathPoint point(double x1, double y1)
 {
   pathPoint p;
@@ -41,13 +28,9 @@ double radians(double degrees){
 }
 
 double degree(double radians){
-  return radians * 180/M_PI;
+  return radians * 180.0/M_PI;
 }
 
-struct vect{
-  double mag; //set to distance
-  double angle;
-};
 
 vect vect_(double x1, double y1, double x2, double y2)
 {
@@ -78,7 +61,7 @@ pathPoint add(pathPoint p, vect v, int t){
   return point(x_temp, y_temp);
 }
 
-double spacing = 1;
+double spacing = 0.5;
 std::vector<pathPoint> inject(std::vector<pathPoint> p)
 {
   std::vector<pathPoint> ret;
@@ -125,7 +108,7 @@ double area_of_triangle(pathPoint a, pathPoint b, pathPoint c)
   return fabs((b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x));
 }
 
-void curv_func(std::vector<pathPoint> p)
+void curv_func(std::vector<pathPoint>& p)
 {
   p[0].curve = 0.0001; //so no /0 error
   p[p.size()-1].curve = 0.0001;
@@ -143,14 +126,14 @@ void curv_func(std::vector<pathPoint> p)
 }
 
 double max_vel = 200;
-double turning_const = 5; //changes how fast it goes around turns
-double max_accel = 50;
-double starting_vel = 36;
-void speed_func(std::vector<pathPoint> p)
+double turning_const = 100; //changes how fast it goes around turns
+double max_accel = 70;
+double starting_vel = 10;
+void speed_func(std::vector<pathPoint>& p)
 {
-  for (pathPoint s:p)
+  for (int i =0;i<p.size(); i++)
   {
-    s.vel = fmin(max_vel, turning_const/s.curve);
+    p[i].vel = fmin(max_vel, turning_const/p[i].curve);
   }
 
   p[p.size()-1].vel =0;
@@ -192,14 +175,14 @@ int closest(double pos[], std::vector<pathPoint> p)
 }
 
 double l = 15;
-double angle = 0; //radians
+//double angle = 0; //radians
 int t_i=0;
 void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
 {
   for (int i =0; i<path.size()-1; i++)
   {
     int i_ = path.size()-2-i;
-    pathPoint p = path[i];
+    pathPoint p = path[path.size()-2-i];
     double d[] = {path[i_+1].x-p.x, path[i_+1].y-p.y};
     double f[] = {p.x-pos[0], p.y-pos[1]};
     double a = 0;
@@ -207,8 +190,8 @@ void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
     double c = -(l*l);
     for (int j = 0; j < 2; j++) {
         a += d[j] * d[j];
-        b+=d[i]*f[i];
-        c+=f[i]*f[i];
+        b+=d[j]*f[j];
+        c+=f[j]*f[j];
     }
     b*=2;
     double disc = b*b-4*a*c;
@@ -246,13 +229,13 @@ double sign(double x)
   return copysign(1, x);
 }
 
-double curvature(std::vector<pathPoint> path, double pos[], double lookahead[])
+double curvature(std::vector<pathPoint> path, double pos[], double lookahead[], double angle)
 {
   double a = -tan(M_PI/2-angle);
   double b = 1;
   double c = tan(M_PI/2-angle)*pos[0]-pos[1];
   double x = fabs(a*lookahead[0]+b*lookahead[1] + c)/sqrt(a*a+b*b); //point line dist
-  double side = sign(sin(M_PI/2 - angle)*(lookahead[0]=pos[0]) - cos(M_PI/2-angle)*(lookahead[1]-pos[1]));
+  double side = sign(sin(M_PI/2 - angle)*(lookahead[0]-pos[0]) - cos(M_PI/2-angle)*(lookahead[1]-pos[1]));
   //^ needed to figure out which side the robot is on
   double curv = (2*x)/(l*l);
   curv*=side;
@@ -261,8 +244,8 @@ double curvature(std::vector<pathPoint> path, double pos[], double lookahead[])
 
 void turn(double curv, double vel, double width, double ret[])
 {
-  ret[0] = vel*(2+curv*width)/2;
-  ret[1] = vel*(2-curv*width)/2;
+  ret[0] = vel*(2+curv*width)/2.0;
+  ret[1] = vel*(2-curv*width)/2.0;
 }
 
 

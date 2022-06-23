@@ -1,56 +1,47 @@
 #include "vex.h"
-class Button
-{
-  public:
-    int x, y,  width, height;
-    std::string text;
-    std::string buttonColor, textColor;
-    bool pressed;
-    Button(int x, int y, int width, int height, std::string text, std::string buttonColor, std::string textColor)
-    {
-      this->x = x;
-      this->y = y;
-      this->width = width;
-      this->height = height;
-      this->text = text;
-      this->buttonColor = buttonColor;
-      this->textColor = textColor;
-      this->pressed=false;
-    }
-    
-  //displays button
-  void show()
-  {
-    //Brain.Screen.clearScreen(vex::white);
-    if (!pressed)
-    {
-      Brain.Screen.setFillColor(buttonColor.c_str());
-      Brain.Screen.setPenColor(buttonColor.c_str());
-    }
-    else 
-    {
-      Brain.Screen.setFillColor("#2EFF00");
-      Brain.Screen.setPenColor("#2EFF00");
-    }
-    Brain.Screen.drawRectangle(x, y, width, height);
-    Brain.Screen.setPenColor(textColor.c_str());
-    Brain.Screen.printAt(x+(width/2.0)- Brain.Screen.getStringWidth(text.c_str())/2.0, y+Brain.Screen.getStringHeight(text.c_str())/2.0 +height/2.0, false, text.c_str());
-  }
-  //checks if the button is pressed;
-  bool isPressed()
-  {
-    if (Brain.Screen.pressing() && Brain.Screen.xPosition()>=x && Brain.Screen.xPosition()<=x+width 
-    && Brain.Screen.yPosition() >=y && Brain.Screen.yPosition()<=y+height)
-    {
-      
-        return true;
-    }
-    
-    return false;
-  }
 
+Button::Button(int x, int y, int width, int height, std::string text, std::string buttonColor, std::string textColor)
+{
+  this->x = x;
+  this->y = y;
+  this->width = width;
+  this->height = height;
+  this->text = text;
+  this->buttonColor = buttonColor;
+  this->textColor = textColor;
+  this->pressed=false;
+}
+  //displays button
+void Button::show()
+{
+  //Brain.Screen.clearScreen(vex::white);
+  if (!pressed)
+  {
+    Brain.Screen.setFillColor(buttonColor.c_str());
+    Brain.Screen.setPenColor(buttonColor.c_str());
+  }
+  else 
+  {
+    Brain.Screen.setFillColor("#2EFF00");
+    Brain.Screen.setPenColor("#2EFF00");
+  }
+  Brain.Screen.drawRectangle(x, y, width, height);
+  Brain.Screen.setPenColor(textColor.c_str());
+  Brain.Screen.printAt(x+(width/2.0)- Brain.Screen.getStringWidth(text.c_str())/2.0, y+Brain.Screen.getStringHeight(text.c_str())/2.0 +height/2.0, false, text.c_str());
+}
+  //checks if the button is pressed;
+bool Button::isPressed()
+{
+  if (Brain.Screen.pressing() && Brain.Screen.xPosition()>=x && Brain.Screen.xPosition()<=x+width 
+  && Brain.Screen.yPosition() >=y && Brain.Screen.yPosition()<=y+height)
+  {
+    
+      return true;
+  }
   
-};
+  return false;
+}
+
 int autonSelector()
 {
   Button autonButtons[] = {
