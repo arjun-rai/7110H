@@ -79,7 +79,7 @@ std::vector<pathPoint> inject(std::vector<pathPoint> p)
   return ret;
 }
 
-double b = 0.75; //weight_smooth b = 0.75~0.98
+double b = 0.95; //weight_smooth b = 0.75~0.98
 double a = 1-b; //weight data: a = 1-b
 double tol = 0.001;
 std::vector<pathPoint> smooth(std::vector<pathPoint> p)
@@ -102,7 +102,7 @@ std::vector<pathPoint> smooth(std::vector<pathPoint> p)
   }
   return p_new;
 }
-
+//twice the signed area of a triangle
 double area_of_triangle(pathPoint a, pathPoint b, pathPoint c)
 {
   return fabs((b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x));
@@ -119,24 +119,30 @@ void curv_func(std::vector<pathPoint>& p)
     pathPoint p1 = p[i-1];
     pathPoint p2 = p[i];
     pathPoint p3 = p[i+1];
-    double temp = (4*area_of_triangle(p1, p2, p3));
+    double temp = (4*fabs(area_of_triangle(p1, p2, p3)/2.0));
     p[i].curve = temp/(distanceP(p1,p2)*distanceP(p2, p3)*distanceP(p3, p1));
+    // if (p[i].curve)
     if(p[i].curve==0) p[i].curve+=0.001;
   }
 }
 
-double max_vel = 200;
-double turning_const = 100; //changes how fast it goes around turns
-double max_accel = 70;
-double starting_vel = 10;
+double max_vel = 200*(3.25*M_PI)/60.0; //rpm to in/s
+double turning_const = 4; //changes how fast it goes around turns
+double max_accel = 3; //in/s^3 
+double starting_vel = 10*(3.25*M_PI)/60; //rpm to in/s
 void speed_func(std::vector<pathPoint>& p)
 {
   for (int i =0;i<p.size(); i++)
   {
     p[i].vel = fmin(max_vel, turning_const/p[i].curve);
   }
+  //  for (int i =0;i<p.size(); i++)
+  // {
+  //   printf("%d\t%f\n", i, p[i].vel);
+  //   wait(50, msec);
+  // }
 
-  p[p.size()-1].vel =0;
+  p[p.size()-1].finVel =0;
   for (int i=p.size()-2; i>=0;i--)
   {
     double d = distanceP(p[i+1], p[i]);
@@ -246,6 +252,16 @@ void turn(double curv, double vel, double width, double ret[])
 {
   ret[0] = vel*(2+curv*width)/2.0;
   ret[1] = vel*(2-curv*width)/2.0;
+}
+
+//used for rate limiting
+double constrain(double input, double lastInput, double min, double max)
+{
+  if (input-lastInput<min)
+    return min;
+  if (input-lastInput>max)
+    return max;
+  return input-lastInput;
 }
 
 

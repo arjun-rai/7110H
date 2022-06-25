@@ -35,7 +35,7 @@ competition Competition;
 //auton buttons with the text, and hex codes for colors
 
 int autonNum =-1;
-std::vector<pathPoint> path = {point(0, 0), point(20, 20), point(0, 40)};
+std::vector<pathPoint> path = {point(0, 0), point(10, 20), point(20, 30), point(10, 50), point(-20, 60)};
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
@@ -48,7 +48,7 @@ void pre_auton(void) {
   
   // for (int i =0;i<path.size(); i++)
   // {
-  //   printf("%f\t%f\n", path[i].x, path[i].y);
+  //   printf("%d\t%f\n", i, path[i].finVel);
   //   wait(50 ,msec);
   // }
 
@@ -311,10 +311,11 @@ void getCurrLoc()
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
-double track_width = 15;
+double track_width = 12.5;
 //double dt = 0.005;
-double maxVelChange=500;
+double maxVelChange=3;
 void autonomous(void) {
+  double lastVel = 0;
   while (closest(pos, path)!=path.size()-1)
   {
     getCurrLoc();
@@ -327,11 +328,15 @@ void autonomous(void) {
     else
       curv = 0.00001;
     double vel = path[close].finVel;
+    vel = lastVel+constrain(vel, lastVel, -maxVelChange, maxVelChange);
+    lastVel = vel;
     double wheels[] = {};
     turn(curv, vel, track_width, wheels);
-    rightDrive.spin(fwd, wheels[1], vex::velocityUnits::rpm);
-    leftDrive.spin(fwd, wheels[0], vex::velocityUnits::rpm);
-    printf("%f\t%f\n", pos[0], pos[1]);
+    //can add coefficients and tune for better velocity accuracy if needed
+    rightDrive.spin(fwd, wheels[1]/(3.25*M_PI)*60, vex::velocityUnits::rpm);
+    leftDrive.spin(fwd, wheels[0]/(3.25*M_PI)*60, vex::velocityUnits::rpm);
+    //double avg = (rightDrive.velocity(vex::velocityUnits::rpm)+leftDrive.velocity(vex::velocityUnits::rpm))/2.0;
+    //printf("%d\t%f\n", close, vel);
     //printf("%f\n", look[2]);
     wait(20, msec);
   }

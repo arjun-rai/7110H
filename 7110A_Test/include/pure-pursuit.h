@@ -36,6 +36,7 @@ void lookahead(double pos[], std::vector<pathPoint> path, double ret[]);
 double sign(double x);
 double curvature(std::vector<pathPoint> path, double pos[], double lookahead[], double angle);
 void turn(double curv, double vel, double width, double ret[]);
+double constrain(double input, double lastInput, double min, double max);
 
 #endif
 
