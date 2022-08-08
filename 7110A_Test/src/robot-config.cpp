@@ -9,6 +9,8 @@ brain  Brain;
 
 // VEXcode device constructors
 controller Controller = controller();
+encoder leftEncoder = encoder(Brain.ThreeWirePort.C);
+encoder rightEncoder = encoder(Brain.ThreeWirePort.A);
 motor RightFront = motor(PORT19, ratio18_1, true);
 motor RightBack = motor(PORT14, ratio18_1, true);
 motor LeftFront = motor(PORT7, ratio18_1, false);

@@ -11,6 +11,8 @@ extern motor RightBack;
 extern inertial Inertial;
 extern motor_group leftDrive;
 extern motor_group rightDrive;
+extern encoder leftEncoder;
+extern encoder rightEncoder;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

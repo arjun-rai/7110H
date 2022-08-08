@@ -35,7 +35,8 @@ competition Competition;
 //auton buttons with the text, and hex codes for colors
 
 int autonNum =-1;
-std::vector<pathPoint> path = {point(0, 0), point(10, 20), point(20, 30), point(10, 50), point(-20, 60)};
+//point(10, 20), point(15, 30), point(10, 50),
+std::vector<pathPoint> path = {point(0, 0), point(0, 60)};
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
@@ -64,6 +65,8 @@ void pre_auton(void) {
   }
   leftDrive.resetRotation();
   rightDrive.resetRotation();
+  leftEncoder.resetRotation();
+  rightEncoder.resetRotation();
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -292,13 +295,13 @@ double lastLeft = 0;
 double lastRight =0;
 void getCurrLoc()
 {
-  double dist = ((leftDrive.rotation(rev)*M_PI*3.25)-lastLeft + (rightDrive.rotation(rev)*M_PI*3.25)-lastRight)/2.0;
+  double dist = ((leftEncoder.rotation(rev)*M_PI*3.25)-lastLeft + (rightEncoder.rotation(rev)*M_PI*3.25)-lastRight)/2.0;
   // if (dist*cos(radians(Inertial.rotation()))>100 || dist*sin(radians(Inertial.rotation()))>100)
   //   return;
   pos[0] += dist*sin(radians(Inertial.rotation()));
   pos[1] += dist*cos(radians(Inertial.rotation()));
-  lastLeft = leftDrive.rotation(rev)*M_PI*3.25;
-  lastRight = rightDrive.rotation(rev)*M_PI*3.25;
+  lastLeft = leftEncoder.rotation(rev)*M_PI*3.25;
+  lastRight = rightEncoder.rotation(rev)*M_PI*3.25;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -374,7 +377,9 @@ void usercontrol(void) {
     // update your motors, etc.
     // ........................................................................
     // Controller.Screen.clearLine();
-    // Controller.Screen.print(frontLift.rotation(degrees));
+    // Controller.Screen.setCursor(0, 0);
+    // Controller.Screen.print(leftEncoder.position(degrees));
+
     leftDrive.spin(vex::directionType::fwd, (Controller.Axis3.value() + (Controller.Axis1.value())), vex::velocityUnits::pct);
     rightDrive.spin(vex::directionType::fwd,  (Controller.Axis3.value() - (Controller.Axis1.value())), vex::velocityUnits::pct);
     wait(20, msec); // Sleep the task for a short amount of time to
