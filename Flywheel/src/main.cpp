@@ -49,7 +49,7 @@ void pre_auton(void) {
 
 void autonomous(void) {
   flywheel1.spin(fwd, 100, vex::velocityUnits::pct);
-  flywheel2.spin(fwd, 100, vex::velocityUnits::pct);
+  //flywheel2.spin(fwd, 100, vex::velocityUnits::pct);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
