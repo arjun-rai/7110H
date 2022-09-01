@@ -193,6 +193,67 @@ int drivePID(){
   return 1;
 }
 
+double flykP = 0.02; //steady minor oscillations, should stop close to the correct point
+double flykI = 0; //compensate for undershoot
+double flykD = 0; //until steady 0.0001
+//Autonomous Settings
+
+int flyError; //SensorValue - DesiredValue : Position 
+int flyPrevError = 0; //Position 2- milleseconds ago
+int flyDerivative; // error - prevError : Speed
+int flyTotalError=0; //totalError = totalError + error;
+
+double flyVolt=0;
+
+int desiredFly=0;
+int flyIntegralBound =25;
+bool resetFlySensors = false;
+
+//Variables modified for use
+bool enableFlyPID = true;
+
+int FlyPID(){
+
+  while(enableFlyPID)
+  {
+    if (resetFlySensors)
+    {
+      resetFlySensors = false;
+     // Inertial.setRotation(0, degrees);
+      flywheel.setPosition(0, degrees);
+    }
+    //Get the position of both motors
+    int flywheelPosition = flywheel.position(degrees);
+    //////////////////////////////////////////////////////////
+    //Lateral Movement PID
+    /////////////////////////////////////////////////////////
+    //Get average of the two motors
+
+    //Potential
+    flyError = desiredFly-flywheelPosition;
+
+    //Derivative
+    flyDerivative = flyError - flyPrevError;
+
+    //Integral (Highly suggested do not use it)
+    //Velocity -> Postion -> Absement (Position and Time)
+    flyTotalError += flyError;
+
+    //Maybe /12.0 ?
+    double flyMotorPower = flyError*flykP + flyDerivative*flykD+flyTotalError*flykI;
+    //
+    double newVolt = flyMotorPower+flyVolt;
+    flywheel.spin(fwd, newVolt, voltageUnits::volt);
+    flyVolt = newVolt;
+
+    flyPrevError = flyError;
+    vex::task::sleep(5);
+  }
+
+
+  return 1;
+}
+
 void PID(double move, double angle)
 {
   resetDriveSensors=true;
@@ -231,20 +292,11 @@ void getCurrLoc()
   lastRight = rightEncoder.rotation(rev)*M_PI*3.25;
 }
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              Autonomous Task                              */
-/*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of   */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
-//Due to turning scrub, use a track width a couple inches larger than the real one
 double track_width = 12.5;
 //double dt = 0.005;
 double maxVelChange=3;
-void autonomous(void) {
+bool pathing()
+{
   double lastVel = 0;
   while (closest(pos, path)!=path.size()-1)
   {
@@ -270,6 +322,23 @@ void autonomous(void) {
     //printf("%f\n", look[2]);
     wait(20, msec);
   }
+  return true;
+}
+
+/*---------------------------------------------------------------------------*/
+/*                                                                           */
+/*                              Autonomous Task                              */
+/*                                                                           */
+/*  This task is used to control your robot during the autonomous phase of   */
+/*  a VEX Competition.                                                       */
+/*                                                                           */
+/*  You must modify the code to add your own robot specific commands here.   */
+/*---------------------------------------------------------------------------*/
+//Due to turning scrub, use a track width a couple inches larger than the real one
+
+void autonomous(void) {
+  vex::task flyPID1(FlyPID);
+  desiredFly=300;
   //vex::task prof(profile);
   // vex::task PID1(drivePID);
   // PID(48);

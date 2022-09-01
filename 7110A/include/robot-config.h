@@ -13,6 +13,7 @@ extern motor_group leftDrive;
 extern motor_group rightDrive;
 extern encoder leftEncoder;
 extern encoder rightEncoder;
+extern motor flywheel;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

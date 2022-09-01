@@ -17,6 +17,7 @@ motor FrontLeft = motor(PORT9, ratio18_1, true);
 motor FrontRight = motor(PORT19, ratio18_1, false);
 motor MiddleLeft = motor(PORT10, ratio18_1, true);
 motor MiddleRight = motor(PORT15, ratio18_1, false);
+motor flywheel = motor(PORT16, ratio6_1,false);
 inertial Inertial = inertial(PORT9);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
