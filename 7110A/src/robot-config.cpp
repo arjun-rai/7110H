@@ -21,6 +21,7 @@ motor flywheel = motor(PORT16, ratio6_1,false);
 inertial Inertial = inertial(PORT9);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
+motor intake = motor(PORT17, ratio6_1, false);
 
 
 // VEXcode generated functions

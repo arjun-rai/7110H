@@ -33,14 +33,22 @@ competition Competition;
 //Button Class for auton selector buttons, with hex codes for color
 
 //auton buttons with the text, and hex codes for colors
-
+void driveBrake(vex::brakeType b)
+{
+  BackLeft.setBrake(b);
+  BackRight.setBrake(b);
+  FrontLeft.setBrake(b);
+  FrontRight.setBrake(b);
+  MiddleLeft.setBrake(b);
+  MiddleRight.setBrake(b);
+}
 int autonNum =-1;
 //point(10, 20), point(15, 30), point(10, 50),
 std::vector<pathPoint> path = {point(0, 0), point(30, 30),point(0, 60)};
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-
+  flywheel.setBrake(coast);
   path = inject(path);
   path = smooth(path);
   curv_func(path);
@@ -67,6 +75,9 @@ void pre_auton(void) {
   rightDrive.resetRotation();
   leftEncoder.resetRotation();
   rightEncoder.resetRotation();
+  driveBrake(coast);
+  flywheel.setBrake(coast);
+  intake.setBrake(coast);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -193,7 +204,7 @@ int drivePID(){
   return 1;
 }
 
-double flykP = 0.02; //steady minor oscillations, should stop close to the correct point
+double flykP = 0.0001; //steady minor oscillations, should stop close to the correct point
 double flykI = 0; //compensate for undershoot
 double flykD = 0; //until steady 0.0001
 //Autonomous Settings
@@ -223,14 +234,16 @@ int FlyPID(){
       flywheel.setPosition(0, degrees);
     }
     //Get the position of both motors
-    int flywheelPosition = flywheel.position(degrees);
+    int flywheelRPM = flywheel.velocity(vex::velocityUnits::rpm);
     //////////////////////////////////////////////////////////
     //Lateral Movement PID
     /////////////////////////////////////////////////////////
     //Get average of the two motors
-
+    Controller.Screen.setCursor(0, 0);
+    Controller.Screen.clearLine();
+    Controller.Screen.print(flywheelRPM);
     //Potential
-    flyError = desiredFly-flywheelPosition;
+    flyError = desiredFly-flywheelRPM;
 
     //Derivative
     flyDerivative = flyError - flyPrevError;
@@ -247,7 +260,7 @@ int FlyPID(){
     flyVolt = newVolt;
 
     flyPrevError = flyError;
-    vex::task::sleep(5);
+    vex::task::sleep(20);
   }
 
 
@@ -264,16 +277,6 @@ void PID(double move)
 {
   resetDriveSensors=true;
   desiredValue=((move)/(M_PI*3.25))*360.0;
-}
-
-
-
-void driveBrake(vex::brakeType b)
-{
-  RightBack.setBrake(b);
-  RightFront.setBrake(b);
-  LeftBack.setBrake(b);
-  LeftFront.setBrake(b);
 }
 
 
@@ -337,8 +340,8 @@ bool pathing()
 //Due to turning scrub, use a track width a couple inches larger than the real one
 
 void autonomous(void) {
-  vex::task flyPID1(FlyPID);
-  desiredFly=300;
+  // vex::task flyPID1(FlyPID);
+  // desiredFly=300;
   //vex::task prof(profile);
   // vex::task PID1(drivePID);
   // PID(48);
@@ -357,7 +360,12 @@ void autonomous(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-
+bool intakeOn = false;
+bool intakeToggle =false;
+bool indexerOn = false;
+bool indexerToggle =false;
+bool flyOn = false;
+bool flyToggle =false;
 void usercontrol(void) {
   enableDrivePID=false;
   //Controller.Screen.clearLine();
@@ -378,6 +386,61 @@ void usercontrol(void) {
 
     leftDrive.spin(vex::directionType::fwd, (Controller.Axis3.value() + (Controller.Axis1.value())), vex::velocityUnits::pct);
     rightDrive.spin(vex::directionType::fwd,  (Controller.Axis3.value() - (Controller.Axis1.value())), vex::velocityUnits::pct);
+    if (Controller.ButtonL2.pressing())
+    {
+      if (!indexerOn)
+      {
+        indexerToggle = !indexerToggle;
+        indexerOn=true;
+      }
+    }
+    else
+    {
+      indexerOn=false;
+    }
+    if (Controller.ButtonL1.pressing())
+    {
+      if (!intakeOn)
+      {
+        intakeToggle = !intakeToggle;
+        intakeOn=true;
+      }
+    }
+    else
+    {
+      intakeOn=false;
+    }
+    if (intakeToggle&&indexerToggle)
+    {
+      intake.spin(reverse, 550, vex::velocityUnits::rpm);
+    }
+    else if (intakeToggle)
+    {
+      intake.spin(fwd, 550, vex::velocityUnits::rpm);
+    }
+    else {
+      intake.stop();
+    }
+    if (Controller.ButtonR1.pressing())
+    {
+      if (!flyOn)
+      {
+        flyToggle = !flyToggle;
+        flyOn=true;
+      }
+    }
+    else
+    {
+      flyOn=false;
+    }
+    if (flyToggle)
+    {
+      flywheel.spin(fwd, 600, rpm);
+    }
+    else 
+    {
+      flywheel.stop();
+    }
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
