@@ -412,11 +412,11 @@ void usercontrol(void) {
     }
     if (intakeToggle&&indexerToggle)
     {
-      intake.spin(reverse, 550, vex::velocityUnits::rpm);
+      intake.spin(reverse, 200, vex::velocityUnits::rpm);
     }
     else if (intakeToggle)
     {
-      intake.spin(fwd, 550, vex::velocityUnits::rpm);
+      intake.spin(fwd, 200, vex::velocityUnits::rpm);
     }
     else {
       intake.stop();
@@ -435,7 +435,7 @@ void usercontrol(void) {
     }
     if (flyToggle)
     {
-      flywheel.spin(fwd, 600, rpm);
+      flywheel.spin(fwd, 500, rpm);
     }
     else 
     {

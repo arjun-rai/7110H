@@ -2913,10 +2913,11 @@ Linker script and memory map
                 0x03800938        0x4 build/src/robot-config.o
                 0x03800938                vexcodeInit()
  .text._GLOBAL__sub_I_robot_config.cpp
-                0x0380093c      0x314 build/src/robot-config.o
+                0x0380093c      0x310 build/src/robot-config.o
  .text._Z5pointdd
-                0x03800c50       0x38 build/src/pure-pursuit.o
-                0x03800c50                point(double, double)
+                0x03800c4c       0x38 build/src/pure-pursuit.o
+                0x03800c4c                point(double, double)
+ *fill*         0x03800c84        0x4 
  .text._Z5vect_dddd
                 0x03800c88       0xf0 build/src/pure-pursuit.o
                 0x03800c88                vect_(double, double, double, double)
