@@ -204,9 +204,9 @@ int drivePID(){
   return 1;
 }
 
-double flykP = 0.0001; //steady minor oscillations, should stop close to the correct point
+double flykP = 0.0025; //steady minor oscillations, should stop close to the correct point 0.0003 good
 double flykI = 0; //compensate for undershoot
-double flykD = 0; //until steady 0.0001
+double flykD = 0.25; //until steady 0.0001
 //Autonomous Settings
 
 int flyError; //SensorValue - DesiredValue : Position 
@@ -239,9 +239,7 @@ int FlyPID(){
     //Lateral Movement PID
     /////////////////////////////////////////////////////////
     //Get average of the two motors
-    Controller.Screen.setCursor(0, 0);
-    Controller.Screen.clearLine();
-    Controller.Screen.print(flywheelRPM);
+    
     //Potential
     flyError = desiredFly-flywheelRPM;
 
@@ -255,9 +253,24 @@ int FlyPID(){
     //Maybe /12.0 ?
     double flyMotorPower = flyError*flykP + flyDerivative*flykD+flyTotalError*flykI;
     //
+    // if (flyMotorPower>3)
+    // {
+    //   flyMotorPower=3;
+    // }
     double newVolt = flyMotorPower+flyVolt;
+    // if (newVolt>=10)
+    // {
+    //   newVolt=10;
+    // }
+    if(desiredFly==0.0)
+    {
+      continue;
+    }
     flywheel.spin(fwd, newVolt, voltageUnits::volt);
     flyVolt = newVolt;
+    Controller.Screen.setCursor(0, 0);
+    Controller.Screen.clearLine();
+    Controller.Screen.print(flywheelRPM);
 
     flyPrevError = flyError;
     vex::task::sleep(20);
@@ -341,7 +354,7 @@ bool pathing()
 
 void autonomous(void) {
   // vex::task flyPID1(FlyPID);
-  // desiredFly=300;
+  // desiredFly=400;
   //vex::task prof(profile);
   // vex::task PID1(drivePID);
   // PID(48);
@@ -367,11 +380,17 @@ bool indexerToggle =false;
 bool flyOn = false;
 bool flyToggle =false;
 void usercontrol(void) {
+  vex::task flyPID1(FlyPID);
+  desiredFly=0;
   enableDrivePID=false;
   //Controller.Screen.clearLine();
   //Controller.Screen.print(averagePosition);
   // User control code here, inside the loop
   while (1) {
+    // Controller.Screen.setCursor(0, 0);
+    // Controller.Screen.clearLine();
+    // Controller.Screen.print(flywheel.voltage());
+
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
     // values based on feedback from the joysticks.
@@ -435,11 +454,16 @@ void usercontrol(void) {
     }
     if (flyToggle)
     {
-      flywheel.spin(fwd, 500, rpm);
+      // flywheel.spin(fwd, 500, rpm);
+      enableFlyPID=true;
+      desiredFly=340;
     }
     else 
     {
       flywheel.stop();
+      desiredFly=0;
+      // enableFlyPID=false;
+      
     }
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
