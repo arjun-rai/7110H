@@ -75,7 +75,7 @@ void pre_auton(void) {
   rightDrive.resetRotation();
   leftEncoder.resetRotation();
   rightEncoder.resetRotation();
-  driveBrake(coast);
+  driveBrake(brake);
   flywheel.setBrake(coast);
   intake.setBrake(coast);
   // All activities that occur before the competition starts
@@ -204,9 +204,9 @@ int drivePID(){
   return 1;
 }
 
-double flykP = 0.0025; //steady minor oscillations, should stop close to the correct point 0.0003 good
+double flykP = 0.0015; //steady minor oscillations, should stop close to the correct point 0.0003 good
 double flykI = 0; //compensate for undershoot
-double flykD = 0.25; //until steady 0.0001
+double flykD = 0.048; //until steady 0.0001
 //Autonomous Settings
 
 int flyError; //SensorValue - DesiredValue : Position 
@@ -273,7 +273,7 @@ int FlyPID(){
     Controller.Screen.print(flywheelRPM);
 
     flyPrevError = flyError;
-    vex::task::sleep(20);
+    vex::task::sleep(10);
   }
 
 
@@ -353,6 +353,12 @@ bool pathing()
 //Due to turning scrub, use a track width a couple inches larger than the real one
 
 void autonomous(void) {
+  vex::task flyPID1(FlyPID);
+  enableFlyPID=true;
+  desiredFly=450;
+  wait(2000, msec);
+  intake.spin(reverse, 150, vex::velocityUnits::rpm);
+
   // vex::task flyPID1(FlyPID);
   // desiredFly=400;
   //vex::task prof(profile);
@@ -403,8 +409,8 @@ void usercontrol(void) {
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.print(leftEncoder.position(degrees));
 
-    leftDrive.spin(vex::directionType::fwd, (Controller.Axis3.value() + (Controller.Axis1.value())), vex::velocityUnits::pct);
-    rightDrive.spin(vex::directionType::fwd,  (Controller.Axis3.value() - (Controller.Axis1.value())), vex::velocityUnits::pct);
+    leftDrive.spin(vex::directionType::fwd, 0.5*(Controller.Axis3.value() + (Controller.Axis1.value())), vex::velocityUnits::pct);
+    rightDrive.spin(vex::directionType::fwd,  0.5*(Controller.Axis3.value() - (Controller.Axis1.value())), vex::velocityUnits::pct);
     if (Controller.ButtonL2.pressing())
     {
       if (!indexerOn)
@@ -431,7 +437,7 @@ void usercontrol(void) {
     }
     if (intakeToggle&&indexerToggle)
     {
-      intake.spin(reverse, 200, vex::velocityUnits::rpm);
+      intake.spin(reverse, 150, vex::velocityUnits::rpm);
     }
     else if (intakeToggle)
     {
@@ -454,15 +460,16 @@ void usercontrol(void) {
     }
     if (flyToggle)
     {
-      // flywheel.spin(fwd, 500, rpm);
+      // flywheel.spin(fwd, 340, rpm);
       enableFlyPID=true;
-      desiredFly=340;
+      desiredFly=365;
     }
     else 
     {
       flywheel.stop();
       desiredFly=0;
-      // enableFlyPID=false;
+      flyVolt=0;
+      //enableFlyPID=false;
       
     }
     wait(20, msec); // Sleep the task for a short amount of time to
