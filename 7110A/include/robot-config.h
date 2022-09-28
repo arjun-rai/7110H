@@ -13,8 +13,8 @@ extern motor MiddleRight;
 extern inertial Inertial;
 extern motor_group leftDrive;
 extern motor_group rightDrive;
-extern encoder leftEncoder;
-extern encoder rightEncoder;
+// extern encoder leftEncoder;
+// extern encoder rightEncoder;
 extern motor flywheel;
 extern motor intake;
 /**

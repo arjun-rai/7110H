@@ -44,15 +44,21 @@ void driveBrake(vex::brakeType b)
 }
 int autonNum =-1;
 //point(10, 20), point(15, 30), point(10, 50),
-std::vector<pathPoint> path = {point(0, 0), point(30, 30),point(0, 60)};
+std::vector<std::vector<pathPoint>> pathMain = {
+  {point(0, 0), point(0, -10)},
+  {point(0, -10), point(10, -10)}
+  };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   flywheel.setBrake(coast);
-  path = inject(path);
-  path = smooth(path);
-  curv_func(path);
-  speed_func(path);
+  for (int i =0;i<pathMain.size(); i++)
+  {
+    pathMain[i] = inject(pathMain[i]);
+    pathMain[i] = smooth(pathMain[i]);
+    curv_func(pathMain[i]);
+    speed_func(pathMain[i]);
+  }
   //double test[] = {0,0};
   
   // for (int i =0;i<path.size(); i++)
@@ -73,8 +79,8 @@ void pre_auton(void) {
   }
   leftDrive.resetRotation();
   rightDrive.resetRotation();
-  leftEncoder.resetRotation();
-  rightEncoder.resetRotation();
+  // leftEncoder.resetRotation();
+  // rightEncoder.resetRotation();
   driveBrake(brake);
   flywheel.setBrake(coast);
   intake.setBrake(coast);
@@ -82,13 +88,13 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
-double kP = 0.02; //steady minor oscillations, should stop close to the correct point
+double kP = 0; //steady minor oscillations, should stop close to the correct point
 double kI = 0; //compensate for undershoot
-double kD = 0.0001; //until steady 0.0001
+double kD = 0; //until steady 0.0001
 
-double turnkP = 0.1; //0.1
+double turnkP = 0.0685; //0.1
 double turnkI = 0;
-double turnkD = 0.06; //0.0001
+double turnkD = 0.0001; //0.006
 //Autonomous Settings
 double desiredValue = 0;
 double desiredTurnValue = 0;
@@ -107,7 +113,7 @@ int integralBound =25;
 int averagePosition;
 bool resetDriveSensors = false;
 double maxLateralPower = 11.8;
-double maxTurningPower = 10;
+double maxTurningPower = 6;
 
 //Variables modified for use
 bool enableDrivePID = true;
@@ -193,6 +199,9 @@ int drivePID(){
     {
       turnMotorPower=-maxTurningPower;
     }
+    Controller.Screen.setCursor(0,0);
+    Controller.Screen.clearLine();
+    Controller.Screen.print(Inertial.rotation());
     leftDrive.spin(fwd, lateralMotorPower + turnMotorPower, voltageUnits::volt);
     rightDrive.spin(fwd, lateralMotorPower - turnMotorPower, voltageUnits::volt);
     prevError = error;
@@ -299,24 +308,34 @@ double lastLeft = 0;
 double lastRight =0;
 void getCurrLoc()
 {
-  double dist = ((leftEncoder.rotation(rev)*M_PI*3.25)-lastLeft + (rightEncoder.rotation(rev)*M_PI*3.25)-lastRight)/2.0;
+  double dist = ((leftDrive.rotation(rev)*(3.0/5)*M_PI*3.25)-lastLeft + (rightDrive.rotation(rev)*(3.0/5)*M_PI*3.25)-lastRight)/2.0;
   // if (dist*cos(radians(Inertial.rotation()))>100 || dist*sin(radians(Inertial.rotation()))>100)
   //   return;
   pos[0] += dist*sin(radians(Inertial.rotation()));
   pos[1] += dist*cos(radians(Inertial.rotation()));
-  lastLeft = leftEncoder.rotation(rev)*M_PI*3.25;
-  lastRight = rightEncoder.rotation(rev)*M_PI*3.25;
+  lastLeft = leftDrive.rotation(rev)*M_PI*3.25*(3.0/5);
+  lastRight = rightDrive.rotation(rev)*M_PI*3.25*(3.0/5);
+}
+
+bool enableOdom=false;
+int odom()
+{
+  while (enableOdom)
+  {
+    getCurrLoc();
+  }
+  return 1;
 }
 
 double track_width = 12.5;
 //double dt = 0.005;
 double maxVelChange=3;
-bool pathing()
+bool pathing(std::vector<pathPoint> path, bool backwards)
 {
   double lastVel = 0;
   while (closest(pos, path)!=path.size()-1)
   {
-    getCurrLoc();
+    // getCurrLoc();
     double look[] = {};
     lookahead(pos, path, look);
     int close = closest(pos, path);
@@ -330,9 +349,17 @@ bool pathing()
     lastVel = vel;
     double wheels[] = {};
     turn(curv, vel, track_width, wheels);
-    //can add coefficients and tune for better velocity accuracy if needed
-    rightDrive.spin(fwd, wheels[1]/(3.25*M_PI)*60, vex::velocityUnits::rpm);
-    leftDrive.spin(fwd, wheels[0]/(3.25*M_PI)*60, vex::velocityUnits::rpm);
+    //can add coefficients and tune for better velocity accuracy if 
+    if (backwards)
+    {
+      rightDrive.spin(fwd, -wheels[1]/(3.25*M_PI*(3.0/5))*60, vex::velocityUnits::rpm);
+      leftDrive.spin(fwd, -wheels[0]/(3.25*M_PI*(3.0/5))*60, vex::velocityUnits::rpm);
+    }
+    else
+    {
+      rightDrive.spin(fwd, wheels[1]/(3.25*M_PI*(3.0/5))*60, vex::velocityUnits::rpm);
+      leftDrive.spin(fwd, wheels[0]/(3.25*M_PI*(3.0/5))*60, vex::velocityUnits::rpm);
+    }
     //double avg = (rightDrive.velocity(vex::velocityUnits::rpm)+leftDrive.velocity(vex::velocityUnits::rpm))/2.0;
     //printf("%d\t%f\n", close, vel);
     //printf("%f\n", look[2]);
@@ -353,16 +380,23 @@ bool pathing()
 //Due to turning scrub, use a track width a couple inches larger than the real one
 
 void autonomous(void) {
-  vex::task flyPID1(FlyPID);
-  enableFlyPID=true;
-  desiredFly=450;
-  wait(2000, msec);
-  intake.spin(reverse, 150, vex::velocityUnits::rpm);
-
+  vex::task Odom(odom);
+  pathing(pathMain[0], true);
+  // vex::task flyPID1(FlyPID);
+  // enableFlyPID=true;
+  // desiredFly=450;
+  // wait(2000, msec);
+  // intake.spin(reverse, 150, vex::velocityUnits::rpm);
+  
   // vex::task flyPID1(FlyPID);
   // desiredFly=400;
   //vex::task prof(profile);
-  // vex::task PID1(drivePID);
+  vex::task PID1(drivePID);
+  resetDriveSensors=true;
+  desiredTurnValue=90;
+  wait(1000, msec);
+  enableDrivePID=false;
+  pathing(pathMain[1], true);
   // PID(48);
     // wait(1000, msec);
     // PID(0, 90);
