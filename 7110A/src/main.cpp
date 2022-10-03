@@ -107,11 +107,11 @@ void getCurrLoc()
   lastRight = rightDrive.rotation(rev)*M_PI*3.25*(3.0/5);
 }
 
-double kP = 0.03; //steady minor oscillations, should stop close to the correct point
+double kP = 0.01; //steady minor oscillations, should stop close to the correct point
 double kI = 0; //compensate for undershoot
 double kD = 0; //until steady 0.0001
 
-double turnkP = 0.0664; //0.1
+double turnkP = 0.068; //0.0664
 double turnkI = 0;
 double turnkD = 0.0001; //0.006
 //Autonomous Settings
@@ -133,7 +133,7 @@ int averagePosition;
 bool resetDriveSensors = false;
 double maxLateralPower = 11.8;
 double maxTurningPower = 6;
-double maxLateralChange=0.05;
+double maxLateralChange=1;
 double lastLateralVoltage = 0;
 
 //Variables modified for use
@@ -323,7 +323,7 @@ int FlyPID(){
     Controller.Screen.print(flywheelRPM);
 
     flyPrevError = flyError;
-    vex::task::sleep(10);
+    vex::task::sleep(5);
   }
 
 
@@ -428,13 +428,32 @@ void autonomous(void) {
   //vex::task prof(profile);
   
   vex::task PID1(drivePID);
-  // desiredValue=-300;
-  // wait(1000, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  desiredTurnValue=90;
+  resetDriveSensors=true;
+  desiredValue=-300;
+  desiredTurnValue=0;
   wait(1000, msec);
-  // resetDriveSensors=true;
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=90;
+  wait(1500, msec);
+  resetDriveSensors=true;
+  desiredValue=-1300;
+  wait(1500, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=180;
+  wait(1000, msec);
+  resetDriveSensors=true;
+  desiredValue=-400;
+  wait(1000, msec);
+  intake.spinFor(reverse, 1000, deg, 100, vex::velocityUnits::pct);
+  resetDriveSensors=true;
+  desiredValue=200;
+  wait(1000,msec);
+  resetDriveSensors=true;
+  desiredTurnValue=115;
+  
+
   
   // lastLeft=0;
   // lastRight=0;
