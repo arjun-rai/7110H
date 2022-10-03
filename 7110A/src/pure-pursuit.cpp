@@ -122,14 +122,14 @@ void curv_func(std::vector<pathPoint>& p)
     double temp = (4*fabs(area_of_triangle(p1, p2, p3)/2.0));
     p[i].curve = temp/(distanceP(p1,p2)*distanceP(p2, p3)*distanceP(p3, p1));
     // if (p[i].curve)
-    if(p[i].curve==0) p[i].curve+=0.001;
+    if(p[i].curve==0) p[i].curve+=0.00001;
   }
 }
 
 double max_vel = 600*(3.25*M_PI*(3.0/5))/60.0; //rpm to in/s
 double turning_const = 4; //changes how fast it goes around turns
 double max_accel = 9; //in/s^3  used to be 6
-double starting_vel = 10*(3.25*M_PI*(3.0/5))/60; //rpm to in/s
+double starting_vel = 20*(3.25*M_PI*(3.0/5))/60.0; //rpm to in/s
 void speed_func(std::vector<pathPoint>& p)
 {
   for (int i =0;i<p.size(); i++)
@@ -180,7 +180,7 @@ int closest(double pos[], std::vector<pathPoint> p)
   return minDist[0];
 }
 
-double l = 15;
+double l = 10;
 //double angle = 0; //radians
 int t_i=0;
 void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
