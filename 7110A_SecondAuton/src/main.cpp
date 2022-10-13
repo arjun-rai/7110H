@@ -446,7 +446,7 @@ void autonomous(void) {
   wait(1000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-29;
+  desiredTurnValue=-27;
   wait(3000, msec); //1200
   // enableDrivePID=false;
   // wait(3000, msec);
@@ -455,7 +455,7 @@ void autonomous(void) {
     wait(20, msec);
   }
   //waitUntil(flywheel.velocity(rpm)>desiredFly-5&&flywheel.velocity(rpm)<desiredFly+5);
-  intake.spinFor(reverse, 0.75, rev, 50, vex::velocityUnits::pct);
+  intake.spinFor(reverse, 0.6, rev, 30, vex::velocityUnits::pct);
   //waitUntil(flywheel.velocity(rpm)>desiredFly-10&&flywheel.velocity(rpm)<desiredFly+10)
   wait(250, msec);
   while (flywheel.velocity(rpm)*6<desiredFly)
@@ -463,7 +463,7 @@ void autonomous(void) {
     wait(20, msec);
   }
   //waitUntil(flywheel.velocity(rpm)>desiredFly-10&&flywheel.velocity(rpm)<desiredFly+10);
-  intake.spinFor(reverse, 1.25, rev, 40, vex::velocityUnits::pct);
+  intake.spinFor(reverse, 2, rev, 40, vex::velocityUnits::pct);
   wait(1500, msec);
   desiredFly=0;
   flyVolt=0;
@@ -593,7 +593,7 @@ void usercontrol(void) {
       // flywheel.spin(fwd, 340, rpm);
       enableFlyPID=true;
       // 10/5: 365->390
-      desiredFly=390;
+      desiredFly=395*6;
     }
     else 
     {

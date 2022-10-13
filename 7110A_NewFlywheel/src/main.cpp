@@ -472,7 +472,7 @@ void autonomous(void) {
     wait(20, msec);
   }
   //waitUntil(flywheel.velocity(rpm)>desiredFly-10&&flywheel.velocity(rpm)<desiredFly+10);
-  intake.spinFor(reverse, 1.25, rev, 100, vex::velocityUnits::pct);
+  intake.spinFor(reverse, 1.5, rev, 100, vex::velocityUnits::pct);
   wait(1000, msec);
   desiredFly=0;
   flyVolt=0;
@@ -630,7 +630,7 @@ void usercontrol(void) {
     else {
       intake.stop();
     }
-    if (Controller.ButtonR2.pressing())
+    if (Controller.ButtonR1.pressing()||Controller.ButtonR2.pressing())
     {
       if (!flyOn)
       {
