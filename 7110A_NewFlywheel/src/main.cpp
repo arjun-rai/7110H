@@ -569,6 +569,18 @@ bool indexerOn = false;
 bool indexerToggle =false;
 bool flyOn = false;
 bool flyToggle =false;
+float initTurnSpeed = 0.6;
+float altTurnSpeed = 0.3;
+float turnSpeed = initTurnSpeed;
+bool turnOn = false;
+float initFwdIntakeSpeed = 200;
+// float altFwdIntakeSpeed = 200;
+float initBackIntakeSpeed = 125;
+float altBackIntakeSpeed = 200;
+float fwdIntakeSpeed = initFwdIntakeSpeed;
+float backIntakeSpeed = initBackIntakeSpeed;
+// bool fwdIntakeSpdIncOn = false;
+bool backIntakeSpdIncOn = false;
 void usercontrol(void) {
   vex::task flyPID1(FlyPID);
   desiredFly=0;
@@ -593,19 +605,28 @@ void usercontrol(void) {
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.print(leftEncoder.position(degrees));
 
-    leftDrive.spin(vex::directionType::fwd, 0.5*(Controller.Axis3.value() + 0.7*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    rightDrive.spin(vex::directionType::fwd,  0.5*(Controller.Axis3.value() - 0.7*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    driveBrake(brake);
+    leftDrive.spin(vex::directionType::fwd, 0.5*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    rightDrive.spin(vex::directionType::fwd,  0.5*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // if (Controller.ButtonL2.pressing())
+    // {
+    //   if (!indexerOn)
+    //   {
+    //     indexerToggle = !indexerToggle;
+    //     indexerOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   indexerOn=false;
+    // }
     if (Controller.ButtonL2.pressing())
     {
-      if (!indexerOn)
-      {
-        indexerToggle = !indexerToggle;
-        indexerOn=true;
-      }
+      indexerToggle = true;
     }
     else
     {
-      indexerOn=false;
+      indexerToggle = false;
     }
     if (Controller.ButtonL1.pressing())
     {
@@ -621,11 +642,12 @@ void usercontrol(void) {
     }
     if (intakeToggle&&indexerToggle)
     {
-      intake.spin(reverse, 150, vex::velocityUnits::rpm);
+      // 10/5: 150->125
+      intake.spin(reverse, backIntakeSpeed, vex::velocityUnits::rpm);
     }
     else if (intakeToggle)
     {
-      intake.spin(fwd, 200, vex::velocityUnits::rpm);
+      intake.spin(fwd, fwdIntakeSpeed, vex::velocityUnits::rpm);
     }
     else {
       intake.stop();
@@ -642,10 +664,57 @@ void usercontrol(void) {
     {
       flyOn=false;
     }
+    if (Controller.ButtonUp.pressing()||Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing())
+    {
+      if (!turnOn)
+      {
+        if(turnSpeed == initTurnSpeed)
+          turnSpeed = altTurnSpeed;
+        else
+          turnSpeed = initTurnSpeed;
+        turnOn = true;
+      }
+    }
+    else
+    {
+      turnOn = false;
+    }
+    // if (Controller.ButtonX.pressing()||Controller.ButtonB.pressing()||Controller.ButtonY.pressing()||Controller.ButtonA.pressing())
+    // {
+    //   if (!backIntakeSpdIncOn)
+    //   {
+    //     if(backIntakeSpeed == initBackIntakeSpeed)
+    //       backIntakeSpeed = altBackIntakeSpeed;
+    //     else
+    //       backIntakeSpeed = initBackIntakeSpeed;
+    //     backIntakeSpdIncOn = true;
+    //   }
+    // }
+    // else
+    // {
+    //   backIntakeSpdIncOn = false;
+    // }
+    if (Controller.ButtonX.pressing()||Controller.ButtonY.pressing()||Controller.ButtonA.pressing())
+    {
+      backIntakeSpeed = altBackIntakeSpeed;
+    }
+    else
+    {
+      backIntakeSpeed = initBackIntakeSpeed;
+    }
+    if (Controller.ButtonDown.pressing()||Controller.ButtonB.pressing())
+    {
+      //PUT PNEUMATIC ENDGAME THING HERE
+    }
+    else
+    {
+      //REFER TO ABOVE COMMENT
+    }
     if (flyToggle)
     {
       // flywheel.spin(fwd, 340, rpm);
       enableFlyPID=true;
+      // 10/5: 365->390
       desiredFly=395*6;
     }
     else 
