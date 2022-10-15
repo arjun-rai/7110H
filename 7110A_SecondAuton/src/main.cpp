@@ -549,11 +549,15 @@ void usercontrol(void) {
     // }
     if (Controller.ButtonL2.pressing())
     {
-      indexerToggle = true;
+      if (!indexerOn)
+      {
+        indexerToggle = !indexerToggle;
+        indexerOn=true;
+      }
     }
     else
     {
-      indexerToggle = false;
+      indexerOn=false;
     }
     if (Controller.ButtonL1.pressing())
     {
@@ -652,7 +656,6 @@ void usercontrol(void) {
       //enableFlyPID=false;
       
     }
-    
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }

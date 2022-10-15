@@ -436,7 +436,7 @@ void autonomous(void) {
   
   vex::task PID1(drivePID);
   vex::task PID2(FlyPID);
-  desiredFly=430*6; //422
+  desiredFly=425*6; //422
   resetDriveSensors=true;
   intake.spin(fwd, 100, vex::velocityUnits::pct);
   desiredValue=1400;
@@ -458,21 +458,24 @@ void autonomous(void) {
   }
   //waitUntil(flywheel.velocity(rpm)>desiredFly-5&&flywheel.velocity(rpm)<desiredFly+5);
 
-  intake.spinFor(reverse, 0.75, rev, 100, vex::velocityUnits::pct);
+  intake.spinFor(reverse, 0.75, rev, 40, vex::velocityUnits::pct);
   //waitUntil(flywheel.velocity(rpm)>desiredFly-10&&flywheel.velocity(rpm)<desiredFly+10)
-  wait(250, msec);
-  while (flywheel.velocity(rpm)*6<desiredFly)
+ while (flywheel.velocity(rpm)*6<desiredFly)
   {
     wait(20, msec);
   }
-  intake.spinFor(reverse, 0.7, rev, 100, vex::velocityUnits::pct);
+  //waitUntil(flywheel.velocity(rpm)>desiredFly-5&&flywheel.velocity(rpm)<desiredFly+5);
+  intake.spinFor(reverse, 0.6, rev, 30, vex::velocityUnits::pct);
+  //waitUntil(flywheel.velocity(rpm)>desiredFly-10&&flywheel.velocity(rpm)<desiredFly+10)
   wait(250, msec);
+  intake.spinFor(fwd, 2, rev, 50, vex::velocityUnits::pct);
+  // wait(1000, msec);
   while (flywheel.velocity(rpm)*6<desiredFly)
   {
     wait(20, msec);
   }
   //waitUntil(flywheel.velocity(rpm)>desiredFly-10&&flywheel.velocity(rpm)<desiredFly+10);
-  intake.spinFor(reverse, 1.5, rev, 100, vex::velocityUnits::pct);
+  intake.spinFor(reverse, 2.65, rev, 50, vex::velocityUnits::pct);
   wait(1000, msec);
   desiredFly=0;
   flyVolt=0;
@@ -622,11 +625,15 @@ void usercontrol(void) {
     // }
     if (Controller.ButtonL2.pressing())
     {
-      indexerToggle = true;
+      if (!indexerOn)
+      {
+        indexerToggle = !indexerToggle;
+        indexerOn=true;
+      }
     }
     else
     {
-      indexerToggle = false;
+      indexerOn=false;
     }
     if (Controller.ButtonL1.pressing())
     {
