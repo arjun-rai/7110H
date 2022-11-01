@@ -21,7 +21,7 @@ motor flywheel = motor(PORT20, ratio6_1,false);
 inertial Inertial = inertial(PORT5);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
-motor intake = motor(PORT17, ratio18_1, false);
+motor intake = motor(PORT17, ratio18_1, true);
 digital_out expansion = digital_out(Brain.ThreeWirePort.A);
 
 

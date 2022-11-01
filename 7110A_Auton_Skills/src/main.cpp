@@ -650,7 +650,7 @@ void usercontrol(void) {
       // flywheel.spin(fwd, 340, rpm);
       enableFlyPID=true;
       // 10/5: 365->390
-      desiredFly=395*6;
+      desiredFly=400*6;
     }
     else 
     {
