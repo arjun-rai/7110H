@@ -438,7 +438,7 @@ void autonomous(void) {
   resetDriveSensors=true;
   desiredValue=-325;
   wait(1000, msec);
-  intake.spinFor(reverse, 140, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(reverse, 100, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
   desiredValue = 800;
   wait(1000, msec);
@@ -451,12 +451,12 @@ void autonomous(void) {
   resetDriveSensors=true;
   desiredValue=-300;
   wait(1000, msec);
-  intake.spinFor(reverse, 140, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(reverse, 100, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
-  desiredValue=500;
+  desiredValue=600;
   wait(1000, msec);
   resetDriveSensors=true;
-  desiredTurnValue=210;
+  desiredTurnValue=50;
   wait(1000, msec);
   expansion.set(true);
   // wait(1500, msec);
@@ -650,7 +650,7 @@ void usercontrol(void) {
       // flywheel.spin(fwd, 340, rpm);
       enableFlyPID=true;
       // 10/5: 365->390
-      desiredFly=400*6;
+      desiredFly=530*6;
     }
     else 
     {
