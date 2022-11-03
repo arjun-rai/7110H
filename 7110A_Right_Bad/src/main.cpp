@@ -497,7 +497,7 @@ void autonomous(void) {
   desiredTurnValue=0;
   wait(500, msec);
   resetDriveSensors=true;
-  desiredValue=-620;
+  desiredValue=-700;
   wait(1000, msec);
   intake.spinFor(fwd, 80, deg, 100, vex::velocityUnits::pct);
 
