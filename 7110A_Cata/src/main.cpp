@@ -73,6 +73,8 @@ void pre_auton(void) {
   Inertial.resetRotation();
   Inertial.setHeading(0, degrees);
   Inertial.calibrate();
+  cataSense.setPosition(0, deg);
+  cataSense.resetPosition();
   while (Inertial.isCalibrating()) {
   wait(100, msec);
   }
@@ -445,25 +447,25 @@ void usercontrol(void) {
     if (intakeToggle)
     {
       // 10/5: 150->125
-      intake.spin(reverse, 120, vex::velocityUnits::rpm);
+      intake.spin(reverse, 600, vex::velocityUnits::rpm);
       driveIntake=false;
     }
     else {
       intake.stop();
       driveIntake=true;
     }
-    if (Controller.ButtonR1.pressing()||Controller.ButtonR2.pressing())
-    {
-      if (!CataOn)
-      {
-        CataToggle = !CataToggle;
-        CataOn=true;
-      }
-    }
-    else
-    {
-      CataOn=false;
-    }
+    // if (Controller.ButtonR1.pressing()||Controller.ButtonR2.pressing())
+    // {
+    //   if (!CataOn)
+    //   {
+    //     CataToggle = !CataToggle;
+    //     CataOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   CataOn=false;
+    // }
     if (Controller.ButtonUp.pressing()||Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonA.pressing()||Controller.ButtonY.pressing()||Controller.ButtonX.pressing())
     {
       if (!driveOn)
@@ -525,17 +527,34 @@ void usercontrol(void) {
     {
       expansion.set(false);
     }
-    if (CataToggle)
+    if (Controller.ButtonR1.pressing())
     {
       // flywheel.spin(fwd, 340, rpm);
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
-    }
-    else 
-    {
+      catapult.spin(reverse, 70, vex::velocityUnits::pct);
+      // Controller.Screen.clearLine();
+      // Controller.Screen.setCursor(0, 0);
+      // Controller.Screen.print(cataSense.angle());
+
+      waitUntil(cataSense.angle(deg)<101);
       catapult.stop();
-      //enableFlyPID=false;
-      
     }
+    if (Controller.ButtonR2.pressing())
+    {
+      // flywheel.spin(fwd, 340, rpm);
+      catapult.spin(reverse, 70, vex::velocityUnits::pct);
+      // Controller.Screen.clearLine();
+      // Controller.Screen.setCursor(0, 0);
+      // Controller.Screen.print(cataSense.angle());
+
+      waitUntil(cataSense.angle(deg)>150);
+      catapult.stop();
+    }
+    // else 
+    // {
+    //   catapult.stop();
+    //   //enableFlyPID=false;
+      
+    // }
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
