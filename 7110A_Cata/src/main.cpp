@@ -374,7 +374,7 @@ void autonomous(void) {
 bool intakeOn = false;
 bool intakeToggle =false;
 bool indexerOn = false;
-bool indexerToggle =false;
+bool indexerToggle =true;
 bool CataOn = false;
 bool CataToggle =false;
 float initTurnSpeed = 0.6;
@@ -386,6 +386,7 @@ float altDriveSpeed = 1.0;
 float driveSpeed = initDriveSpeed;
 bool driveOn = false;
 bool driveIntake = true;
+bool reload = false;
 void usercontrol(void) {
   enableDrivePID=false;
   //Controller.Screen.clearLine();
@@ -407,17 +408,26 @@ void usercontrol(void) {
     // Controller.Screen.clearLine();
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.print(leftEncoder.position(degrees));
-
-    driveBrake(brake);
-    if (driveIntake)
+    if (Controller.ButtonDown.pressing()||Controller.ButtonB.pressing())
     {
-      leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-      rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+      expansion.set(true);
     }
-    else {
-      leftDrive.spin(vex::directionType::rev, driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-      rightDrive.spin(vex::directionType::rev,  driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    else
+    {
+      expansion.set(false);
     }
+    driveBrake(brake);
+    leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // if (driveIntake)
+    // {
+    //   leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    //   rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // }
+    // else {
+    //   leftDrive.spin(vex::directionType::rev, driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    //   rightDrive.spin(vex::directionType::rev,  driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // }
     
     // if (Controller.ButtonL2.pressing())
     // {
@@ -432,7 +442,19 @@ void usercontrol(void) {
     //   indexerOn=false;
     // }
     
-    if (Controller.ButtonL1.pressing()||Controller.ButtonL2.pressing())
+     if (Controller.ButtonL2.pressing())
+    {
+      if (!indexerOn)
+      {
+        indexerToggle = !indexerToggle;
+        indexerOn=true;
+      }
+    }
+    else
+    {
+      indexerOn=false;
+    }
+    if (Controller.ButtonL1.pressing())
     {
       if (!intakeOn)
       {
@@ -444,15 +466,17 @@ void usercontrol(void) {
     {
       intakeOn=false;
     }
-    if (intakeToggle)
+    if (intakeToggle&&indexerToggle)
     {
       // 10/5: 150->125
-      intake.spin(reverse, 600, vex::velocityUnits::rpm);
-      driveIntake=false;
+      intake.spin(reverse, 500, vex::velocityUnits::rpm); //intake speed <----- this one!
+    }
+    else if (intakeToggle)
+    {
+      intake.spin(fwd, 400, vex::velocityUnits::rpm);
     }
     else {
       intake.stop();
-      driveIntake=true;
     }
     // if (Controller.ButtonR1.pressing()||Controller.ButtonR2.pressing())
     // {
@@ -519,34 +543,62 @@ void usercontrol(void) {
     // {
     //   backIntakeSpeed = initBackIntakeSpeed;
     // }
-    if (Controller.ButtonDown.pressing()||Controller.ButtonB.pressing())
-    {
-      expansion.set(true);
-    }
-    else
-    {
-      expansion.set(false);
-    }
+
+    // if (Controller.ButtonR1.pressing())
+    // {
+    //   // flywheel.spin(fwd, 340, rpm);
+    //   catapult.spin(reverse, 80, vex::velocityUnits::pct);
+    //   // Controller.Screen.clearLine();
+    //   // Controller.Screen.setCursor(0, 0);
+    //   // Controller.Screen.print(cataSense.angle());
+
+    //   waitUntil(cataSense.angle(deg)<105);
+    //   catapult.stop();
+    // }
+    // else if (Controller.ButtonR2.pressing())
+    // {
+    //   // flywheel.spin(fwd, 340, rpm);
+    //   catapult.spin(reverse, 70, vex::velocityUnits::pct);
+     
+
+    //   waitUntil(cataSense.angle(deg)>150);
+    //   catapult.stop();
+    // }
+    //  Controller.Screen.clearLine();
+    //   Controller.Screen.setCursor(0, 0);
+    //   Controller.Screen.print(cataSense.angle());
+
+
     if (Controller.ButtonR1.pressing())
     {
+      reload=true;
+      // flywheel.spin(fwd, 340, rpm);
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      // Controller.Screen.clearLine();
+      // Controller.Screen.setCursor(0, 0);
+      // Controller.Screen.print(cataSense.angle());
+
+      // waitUntil(cataSense.angle(deg)<103);
+      // catapult.stop();
+    }
+    else if (Controller.ButtonR2.pressing())
+    {
+      reload=false;
       // flywheel.spin(fwd, 340, rpm);
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
       // Controller.Screen.clearLine();
       // Controller.Screen.setCursor(0, 0);
       // Controller.Screen.print(cataSense.angle());
 
-      waitUntil(cataSense.angle(deg)<101);
+      // waitUntil(cataSense.angle(deg)>150);
+      // catapult.stop();
+    }
+    if (reload && cataSense.angle(deg)<105)
+    {
       catapult.stop();
     }
-    if (Controller.ButtonR2.pressing())
+    if (!reload && cataSense.angle(deg)>150)
     {
-      // flywheel.spin(fwd, 340, rpm);
-      catapult.spin(reverse, 70, vex::velocityUnits::pct);
-      // Controller.Screen.clearLine();
-      // Controller.Screen.setCursor(0, 0);
-      // Controller.Screen.print(cataSense.angle());
-
-      waitUntil(cataSense.angle(deg)>150);
       catapult.stop();
     }
     // else 
