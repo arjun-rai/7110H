@@ -339,8 +339,76 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
+bool load=true;
+bool fire = false;
+bool autonCata=true;
+int loadCata()
+{
+  while (autonCata)
+  {
+    if (load)
+    {
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+    }
+    if (cataSense.angle(deg)<105&&load)
+    {
+      catapult.stop(hold);
+      load=!load;
+    }
+    if (fire)
+    {
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+    }
+    if (cataSense.angle(deg)>150&&fire)
+    {
+      catapult.stop(hold);
+      fire=!fire;
+    }
+    vex::task::sleep(20);
+  }
+  return 0;
+}
 
 void autonomous(void) {
+  autonCata=true;
+  vex::task PID1(drivePID);
+  vex::task cata(loadCata);
+  resetDriveSensors=true;
+  // intake.spin(fwd, 100, vex::velocityUnits::pct);
+  desiredValue=-1600;
+  wait(2000, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=86;
+  wait(1000, msec);
+  resetDriveSensors=true;
+  desiredValue=-240;
+  wait(1000, msec);
+  intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
+  // load=true;
+  resetDriveSensors=true;
+  desiredValue=300;
+  desiredTurnValue=41;
+  wait(1000, msec);
+  resetDriveSensors=true;
+  desiredValue=3000;
+  wait(2000, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=127;
+  wait(800, msec);
+  resetDriveSensors=true;
+  desiredValue=300;
+  wait(1000, msec);
+  fire=true;
+  wait(500, msec);
+  load=true;
+  wait(3000, msec);
+  intake.spin(reverse, 500, vex::velocityUnits::rpm);
+  wait(2000, msec);
+  fire=true;
+  intake.stop();
+
   // enableOdom=true;
   // vex::task Odom(odom);
   //pathing(pathMain[0], true);
@@ -389,6 +457,7 @@ bool driveIntake = true;
 bool reload = false;
 void usercontrol(void) {
   enableDrivePID=false;
+  autonCata=false;
   //Controller.Screen.clearLine();
   //Controller.Screen.print(averagePosition);
   // User control code here, inside the loop
@@ -581,7 +650,7 @@ void usercontrol(void) {
       // waitUntil(cataSense.angle(deg)<103);
       // catapult.stop();
     }
-    else if (Controller.ButtonR2.pressing())
+    if (Controller.ButtonR2.pressing())
     {
       reload=false;
       // flywheel.spin(fwd, 340, rpm);
@@ -593,11 +662,15 @@ void usercontrol(void) {
       // waitUntil(cataSense.angle(deg)>150);
       // catapult.stop();
     }
+    //  Controller.Screen.clearLine();
+    //   Controller.Screen.setCursor(0, 0);
+    //   Controller.Screen.print(cataSense.angle());
     if (reload && cataSense.angle(deg)<105)
     {
-      catapult.stop();
+      catapult.stop(hold);
+      
     }
-    if (!reload && cataSense.angle(deg)>150)
+    else if (!reload && cataSense.angle(deg)>150)
     {
       catapult.stop();
     }
