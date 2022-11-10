@@ -339,7 +339,7 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
-bool load=true;
+bool load=false;
 bool fire = false;
 bool autonCata=true;
 int loadCata()
@@ -373,41 +373,68 @@ void autonomous(void) {
   autonCata=true;
   vex::task PID1(drivePID);
   vex::task cata(loadCata);
-  resetDriveSensors=true;
-  // intake.spin(fwd, 100, vex::velocityUnits::pct);
-  desiredValue=-1600;
-  wait(2000, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=86;
-  wait(1000, msec);
-  resetDriveSensors=true;
-  desiredValue=-240;
-  wait(1000, msec);
-  intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
   // load=true;
   resetDriveSensors=true;
-  desiredValue=300;
-  desiredTurnValue=41;
+  // intake.spin(fwd, 100, vex::velocityUnits::pct);
+  desiredValue=-300;
   wait(1000, msec);
+  intake.spinFor(fwd, 270, deg, 100, vex::velocityUnits::pct);
+  // load=true;
+  wait(1000, msec);
+  desiredValue=50;
+  wait(500, msec);
   resetDriveSensors=true;
-  desiredValue=3000;
+  desiredTurnValue=-40;
+  wait(1000, msec);
+
+  resetDriveSensors=true;
+  desiredValue=1500;
+
   wait(2000, msec);
+  resetDriveSensors=true;
+  desiredValue=-300;
+  // desiredTurnValue=180;
+  wait(1500, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=128.5;
-  wait(800, msec);
-  resetDriveSensors=true;
-  desiredValue=300;
+  desiredTurnValue=83;
   wait(1000, msec);
-  fire=true;
+  // intake.spin(reverse, 500, vex::velocityUnits::rpm);
+  desiredValue=-520;
+  wait(1000, msec);
+  // intake.stop();
   wait(500, msec);
-  load=true;
-  wait(3000, msec);
-  intake.spin(reverse, 500, vex::velocityUnits::rpm);
-  wait(2000, msec);
-  fire=true;
-  intake.stop();
+  intake.spinFor(fwd, 270, deg, 100, vex::velocityUnits::pct);
+  resetDriveSensors=true;
+  desiredValue=700;
+  wait(1500, msec);
+  resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=
+  // resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=31;
+  wait(1000, msec);
+  expansion.set(true);
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=3300;
+  // wait(2000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=-41;
+  // wait(800, msec);
+  // resetDriveSensors=true;
+  // desiredValue=300;
+  // wait(1000, msec);
+  // fire=true;
+  // wait(500, msec);
+  // load=true;
+  // wait(3000, msec);
+  // intake.spin(reverse, 500, vex::velocityUnits::rpm);
+  // wait(2000, msec);
+  // fire=true;
+  // intake.stop();
 
   // enableOdom=true;
   // vex::task Odom(odom);
