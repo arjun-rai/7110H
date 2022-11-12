@@ -538,7 +538,7 @@ void usercontrol(void) {
     if (intakeToggle&&indexerToggle)
     {
       // 10/5: 150->125
-      intake.spin(reverse, 500, vex::velocityUnits::rpm); //intake speed <----- this one!
+      intake.spin(reverse, 600, vex::velocityUnits::rpm); //intake speed <----- this one!
     }
     else if (intakeToggle)
     {
@@ -673,6 +673,8 @@ void usercontrol(void) {
     else if (!reload && cataSense.angle(deg)>150)
     {
       catapult.stop();
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      reload=true;
     }
     // else 
     // {

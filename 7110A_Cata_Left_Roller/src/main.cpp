@@ -339,7 +339,7 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
-bool load=false;
+bool load=true;
 bool fire = false;
 bool autonCata=true;
 int loadCata()
@@ -373,49 +373,15 @@ void autonomous(void) {
   autonCata=true;
   vex::task PID1(drivePID);
   vex::task cata(loadCata);
-  // load=true;
   resetDriveSensors=true;
   // intake.spin(fwd, 100, vex::velocityUnits::pct);
   desiredValue=-300;
   wait(1000, msec);
-  intake.spinFor(fwd, 270, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
   // load=true;
-  wait(1000, msec);
-  desiredValue=50;
-  wait(500, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=-40;
-  wait(1000, msec);
-
-  resetDriveSensors=true;
-  desiredValue=1500;
-
-  wait(2000, msec);
-  resetDriveSensors=true;
-  desiredValue=-300;
-  // desiredTurnValue=180;
-  wait(1500, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=83;
-  wait(1000, msec);
-  // intake.spin(reverse, 500, vex::velocityUnits::rpm);
-  desiredValue=-520;
-  wait(1000, msec);
-  // intake.stop();
-  wait(500, msec);
-  intake.spinFor(fwd, 270, deg, 100, vex::velocityUnits::pct);
-  resetDriveSensors=true;
-  desiredValue=700;
-  wait(1500, msec);
-  resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=
   // resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=31;
-  wait(1000, msec);
-  expansion.set(true);
+  // desiredValue=300;
+  // desiredTurnValue=41;
   // wait(1000, msec);
   // resetDriveSensors=true;
   // desiredValue=3300;
@@ -700,6 +666,8 @@ void usercontrol(void) {
     else if (!reload && cataSense.angle(deg)>150)
     {
       catapult.stop();
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      reload=true;
     }
     // else 
     // {
