@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<105&&load)
+    if (cataSense.angle(deg)<190&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -359,7 +359,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>150&&fire)
+    if (cataSense.angle(deg)>240&&fire)
     {
       catapult.stop(hold);
       fire=!fire;
@@ -378,6 +378,13 @@ void autonomous(void) {
   desiredValue=-300;
   wait(1000, msec);
   intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
+  resetDriveSensors=true;
+  desiredValue=300;
+  resetDriveSensors=true;
+  desiredTurnValue=87;
+  wait(1000, msec);
+  resetDriveSensors=true;
+  desiredValue=3300;
   // load=true;
   // resetDriveSensors=true;
   // desiredValue=300;
@@ -658,12 +665,12 @@ void usercontrol(void) {
     //  Controller.Screen.clearLine();
     //   Controller.Screen.setCursor(0, 0);
     //   Controller.Screen.print(cataSense.angle());
-    if (reload && cataSense.angle(deg)<105)
+    if (reload && cataSense.angle(deg)<190)
     {
       catapult.stop(hold);
       
     }
-    else if (!reload && cataSense.angle(deg)>150)
+    else if (!reload && cataSense.angle(deg)>240)
     {
       catapult.stop();
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
