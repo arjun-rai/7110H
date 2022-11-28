@@ -658,9 +658,9 @@ void usercontrol(void) {
     //  Controller.Screen.clearLine();
     //   Controller.Screen.setCursor(0, 0);
     //   Controller.Screen.print(cataSense.angle());
-    if (reload && cataSense.angle(deg)<197)
+    if (reload && cataSense.angle(deg)<194)
     {
-      catapult.stop(hold);
+      catapult.stop(coast);
       
     }
     else if (!reload && cataSense.angle(deg)>240)
