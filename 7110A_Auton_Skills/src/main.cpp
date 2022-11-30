@@ -51,7 +51,6 @@ std::vector<std::vector<pathPoint>> pathMain = {
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  flywheel.setBrake(coast);
   for (int i =0;i<pathMain.size(); i++)
   {
     pathMain[i] = inject(pathMain[i]);
@@ -82,7 +81,6 @@ void pre_auton(void) {
   // leftEncoder.resetRotation();
   // rightEncoder.resetRotation();
   driveBrake(brake);
-  flywheel.setBrake(coast);
   intake.setBrake(coast);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -254,88 +252,7 @@ int drivePID(){
   return 1;
 }
 
-double flykP = 0; //steady minor oscillations, should stop close to the correct point 0.0003 good     0.0015
-double flykI = 0; //compensate for undershoot
-double flykD = 0; //until steady 0.0001     0.048
-double flykF=0.0038888;
-//Autonomous Settings
 
-int flyError; //SensorValue - DesiredValue : Position 
-int flyPrevError = 0; //Position 2- milleseconds ago
-int flyDerivative; // error - prevError : Speed
-int flyTotalError=0; //totalError = totalError + error;
-
-double flyVolt=0;
-
-int desiredFly=0;
-int flyIntegralBound =25;
-bool resetFlySensors = false;
-
-//Variables modified for use
-bool enableFlyPID = true;
-int tempTime =0;
-std::vector<double> vals1 = {};
-std::vector<double> vals2 = {};
-int FlyPID(){
-
-  while(enableFlyPID)
-  {
-    if (resetFlySensors)
-    {
-      resetFlySensors = false;
-     // Inertial.setRotation(0, degrees);
-      flywheel.setPosition(0, degrees);
-    }
-    //Get the position of both motors
-    int flywheelRPM = flywheel.velocity(vex::velocityUnits::rpm)*6.0;
-    //////////////////////////////////////////////////////////
-    //Lateral Movement PID
-    /////////////////////////////////////////////////////////
-    //Get average of the two motors
-    
-    //Potential
-    flyError = desiredFly-flywheelRPM;
-
-    //Derivative
-    flyDerivative = flyError - flyPrevError;
-
-    //Integral (Highly suggested do not use it)
-    //Velocity -> Postion -> Absement (Position and Time)
-    flyTotalError += flyError;
-
-    //Maybe /12.0 ?
-    double flyMotorPower = (flyError*flykP) + (flyDerivative*flykD)+(flyTotalError*flykI)+(desiredFly*flykF);
-    //
-    // if (flyMotorPower>3)
-    // {
-    //   flyMotorPower=3;
-    // }
-    double newVolt = flyMotorPower;
-    // if (newVolt>=10)
-    // {
-    //   newVolt=10;
-    // }
-    if(desiredFly==0.0)
-    {
-      continue;
-    }
-    flywheel.spin(fwd, newVolt, voltageUnits::volt);
-    flyVolt = newVolt;
-    // Controller.Screen.setCursor(1, 0);
-    // Controller.Screen.clearLine();
-    // Controller.Screen.print(flywheelRPM);
-    // printf("%f\t%f\n", tempTime*0.020, flywheel.velocity(rpm)*6);
-    vals1.push_back(tempTime*0.02);
-    vals2.push_back(flywheelRPM);
-    tempTime+=1;
-
-    flyPrevError = flyError;
-    vex::task::sleep(20);
-  }
-
-
-  return 1;
-}
 
 void PID(double move, double angle)
 {
@@ -409,6 +326,37 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
   return true;
 }
 
+
+bool load=true;
+bool fire = false;
+bool autonCata=true;
+int loadCata()
+{
+  while (autonCata)
+  {
+    if (load)
+    {
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+    }
+    if (cataSense.angle(deg)<194&&load)
+    {
+      catapult.stop(hold);
+      load=!load;
+    }
+    if (fire)
+    {
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+    }
+    if (cataSense.angle(deg)>240&&fire)
+    {
+      catapult.stop(hold);
+      fire=!fire;
+    }
+    vex::task::sleep(20);
+  }
+  return 0;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              Autonomous Task                              */
@@ -478,9 +426,9 @@ void autonomous(void) {
 bool intakeOn = false;
 bool intakeToggle =false;
 bool indexerOn = false;
-bool indexerToggle =false;
-bool flyOn = false;
-bool flyToggle =false;
+bool indexerToggle =true;
+bool CataOn = false;
+bool CataToggle =false;
 float initTurnSpeed = 0.6;
 float altTurnSpeed = 0.3;
 float turnSpeed = initTurnSpeed;
@@ -489,18 +437,11 @@ float initDriveSpeed = 0.5;
 float altDriveSpeed = 1.0;
 float driveSpeed = initDriveSpeed;
 bool driveOn = false;
-float initFwdIntakeSpeed = 200;
-// float altFwdIntakeSpeed = 200;
-float initBackIntakeSpeed = 125;
-float altBackIntakeSpeed = 200;
-float fwdIntakeSpeed = initFwdIntakeSpeed;
-float backIntakeSpeed = initBackIntakeSpeed;
-// bool fwdIntakeSpdIncOn = false;
-bool backIntakeSpdIncOn = false;
+bool driveIntake = true;
+bool reload = false;
 void usercontrol(void) {
-  vex::task flyPID1(FlyPID);
-  desiredFly=0;
   enableDrivePID=false;
+  autonCata=false;
   //Controller.Screen.clearLine();
   //Controller.Screen.print(averagePosition);
   // User control code here, inside the loop
@@ -520,10 +461,27 @@ void usercontrol(void) {
     // Controller.Screen.clearLine();
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.print(leftEncoder.position(degrees));
-
+    if (Controller.ButtonDown.pressing()||Controller.ButtonB.pressing())
+    {
+      expansion.set(true);
+    }
+    else
+    {
+      expansion.set(false);
+    }
     driveBrake(brake);
     leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // if (driveIntake)
+    // {
+    //   leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    //   rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // }
+    // else {
+    //   leftDrive.spin(vex::directionType::rev, driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    //   rightDrive.spin(vex::directionType::rev,  driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // }
+    
     // if (Controller.ButtonL2.pressing())
     // {
     //   if (!indexerOn)
@@ -536,7 +494,8 @@ void usercontrol(void) {
     // {
     //   indexerOn=false;
     // }
-    if (Controller.ButtonL2.pressing())
+    
+     if (Controller.ButtonL2.pressing())
     {
       if (!indexerOn)
       {
@@ -563,27 +522,27 @@ void usercontrol(void) {
     if (intakeToggle&&indexerToggle)
     {
       // 10/5: 150->125
-      intake.spin(reverse, backIntakeSpeed, vex::velocityUnits::rpm);
+      intake.spin(reverse,600, vex::velocityUnits::rpm); //intake speed <----- this one!
     }
     else if (intakeToggle)
     {
-      intake.spin(fwd, fwdIntakeSpeed, vex::velocityUnits::rpm);
+      intake.spin(fwd, 400, vex::velocityUnits::rpm);
     }
     else {
       intake.stop();
     }
-    if (Controller.ButtonR1.pressing()||Controller.ButtonR2.pressing())
-    {
-      if (!flyOn)
-      {
-        flyToggle = !flyToggle;
-        flyOn=true;
-      }
-    }
-    else
-    {
-      flyOn=false;
-    }
+    // if (Controller.ButtonR1.pressing()||Controller.ButtonR2.pressing())
+    // {
+    //   if (!CataOn)
+    //   {
+    //     CataToggle = !CataToggle;
+    //     CataOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   CataOn=false;
+    // }
     if (Controller.ButtonUp.pressing()||Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonA.pressing()||Controller.ButtonY.pressing()||Controller.ButtonX.pressing())
     {
       if (!driveOn)
@@ -637,34 +596,80 @@ void usercontrol(void) {
     // {
     //   backIntakeSpeed = initBackIntakeSpeed;
     // }
-    if (Controller.ButtonDown.pressing()||Controller.ButtonB.pressing())
+
+    // if (Controller.ButtonR1.pressing())
+    // {
+    //   // flywheel.spin(fwd, 340, rpm);
+    //   catapult.spin(reverse, 80, vex::velocityUnits::pct);
+    //   // Controller.Screen.clearLine();
+    //   // Controller.Screen.setCursor(0, 0);
+    //   // Controller.Screen.print(cataSense.angle());
+
+    //   waitUntil(cataSense.angle(deg)<105);
+    //   catapult.stop();
+    // }
+    // else if (Controller.ButtonR2.pressing())
+    // {
+    //   // flywheel.spin(fwd, 340, rpm);
+    //   catapult.spin(reverse, 70, vex::velocityUnits::pct);
+     
+
+    //   waitUntil(cataSense.angle(deg)>150);
+    //   catapult.stop();
+    // }
+    //  Controller.Screen.clearLine();
+    //   Controller.Screen.setCursor(0, 0);
+    //   Controller.Screen.print(cataSense.angle());
+
+
+    if (Controller.ButtonR1.pressing())
     {
-      expansion.set(true);
-    }
-    else
-    {
-      expansion.set(false);
-    }
-    if (flyToggle)
-    {
+      reload=true;
       // flywheel.spin(fwd, 340, rpm);
-      enableFlyPID=true;
-      // 10/5: 365->390
-      desiredFly=530*6;
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      // Controller.Screen.clearLine();
+      // Controller.Screen.setCursor(0, 0);
+      // Controller.Screen.print(cataSense.angle());
+
+      // waitUntil(cataSense.angle(deg)<103);
+      // catapult.stop();
     }
-    else 
+    if (Controller.ButtonR2.pressing())
     {
-      flywheel.stop();
-      desiredFly=0;
-      flyVolt=0;
-      //enableFlyPID=false;
+      reload=false;
+      // flywheel.spin(fwd, 340, rpm);
+      catapult.spin(reverse, 70, vex::velocityUnits::pct);
+      // Controller.Screen.clearLine();
+      // Controller.Screen.setCursor(0, 0);
+      // Controller.Screen.print(cataSense.angle());
+
+      // waitUntil(cataSense.angle(deg)>150);
+      // catapult.stop();
+    }
+    //  Controller.Screen.clearLine();
+    //   Controller.Screen.setCursor(0, 0);
+    //   Controller.Screen.print(cataSense.angle());
+    if (reload && cataSense.angle(deg)<194)
+    {
+      catapult.stop(hold);
       
     }
+    else if (!reload && cataSense.angle(deg)>240)
+    {
+      catapult.stop();
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      reload=true;
+    }
+    // else 
+    // {
+    //   catapult.stop();
+    //   //enableFlyPID=false;
+      
+    // }
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
 }
-
 //
 // Main will set up the competition functions and callbacks.
 //
