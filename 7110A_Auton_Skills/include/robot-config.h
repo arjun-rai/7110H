@@ -15,10 +15,9 @@ extern motor_group leftDrive;
 extern motor_group rightDrive;
 // extern encoder leftEncoder;
 // extern encoder rightEncoder;
-extern motor catapult;
+extern motor flywheel;
 extern motor intake;
 extern digital_out expansion;
-extern rotation cataSense;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 
