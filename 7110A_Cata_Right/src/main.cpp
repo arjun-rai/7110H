@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<190&&load)
+    if (cataSense.angle(deg)<194&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -375,7 +375,7 @@ void autonomous(void) {
   vex::task cata(loadCata);
   resetDriveSensors=true;
   // intake.spin(fwd, 100, vex::velocityUnits::pct);
-  desiredValue=-1600;
+  desiredValue=-1550;
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
@@ -391,23 +391,23 @@ void autonomous(void) {
   desiredTurnValue=41;
   wait(1000, msec);
   resetDriveSensors=true;
-  desiredValue=3000;
+  desiredValue=3400;
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=128.5;
+  desiredTurnValue=130.5;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=300;
+  desiredValue=510;
   wait(1000, msec);
   fire=true;
   wait(500, msec);
-  load=true;
-  wait(3000, msec);
-  intake.spin(reverse, 500, vex::velocityUnits::rpm);
-  wait(2000, msec);
-  fire=true;
-  intake.stop();
+  // load=true;
+  // wait(3000, msec);
+  // intake.spin(reverse, 500, vex::velocityUnits::rpm);
+  // wait(2000, msec);
+  // fire=true;
+  // intake.stop();
 
   // enableOdom=true;
   // vex::task Odom(odom);
@@ -477,7 +477,7 @@ void usercontrol(void) {
     // Controller.Screen.clearLine();
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.print(leftEncoder.position(degrees));
-    if (Controller.ButtonDown.pressing()||Controller.ButtonB.pressing())
+    if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
     {
       expansion.set(true);
     }
@@ -665,7 +665,7 @@ void usercontrol(void) {
     //  Controller.Screen.clearLine();
     //   Controller.Screen.setCursor(0, 0);
     //   Controller.Screen.print(cataSense.angle());
-    if (reload && cataSense.angle(deg)<190)
+    if (reload && cataSense.angle(deg)<194)
     {
       catapult.stop(hold);
       
