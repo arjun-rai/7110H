@@ -429,7 +429,7 @@ void autonomous(void) {
   desiredTurnValue=124;
   wait(500, msec);
   resetDriveSensors=true;
-  desiredValue=400;
+  desiredValue=380;
   wait(500, msec);
   fire=true;
 

@@ -350,9 +350,9 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<194&&load)
+    if (cataSense.angle(deg)<187&&load)
     {
-      catapult.stop(hold);
+      catapult.stop(coast);
       load=!load;
     }
     if (fire)
@@ -361,10 +361,10 @@ int loadCata()
     }
     if (cataSense.angle(deg)>240&&fire)
     {
-      catapult.stop(hold);
+      catapult.stop();
       fire=!fire;
     }
-    vex::task::sleep(20);
+    vex::task::sleep(25);
   }
   return 0;
 }
@@ -381,19 +381,51 @@ void autonomous(void) {
   // load=true;
   resetDriveSensors=true;
   desiredValue=300;
-  desiredTurnValue=48;
-  wait(1000, msec);
+  desiredTurnValue=90;
+  wait(900, msec);
   resetDriveSensors=true;
-  desiredValue=3500;
+  desiredValue=2400;
   wait(2000, msec);
   resetDriveSensors=true;
+  desiredTurnValue=0;
+  wait(600, msec);
+  resetDriveSensors=true;
+  desiredValue=1900;
+  wait(1500, msec);
+  resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-39;
+  desiredTurnValue=-34.5;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=500;
-  wait(1000, msec);
+  desiredValue=960;
+  wait(1500, msec);
   fire=true;
+  // wait(500,msec);
+  // load=true;
+  // resetDriveSensors=true;
+  // desiredValue=-600;
+  // wait(500,msec);
+  // resetDriveSensors=true;
+  // desiredTurnValue=45;
+  // // intake.spin(reverse, 600, vex::velocityUnits::rpm);
+  // wait(550, msec);
+  // resetDriveSensors=true;
+  // desiredValue=-1100;
+
+
+
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=3500;
+  // wait(2000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=-39;
+  // wait(800, msec);
+  // resetDriveSensors=true;
+  // desiredValue=500;
+  // wait(1000, msec);
+  // fire=true;
   // wait(500, msec);
   // load=true;
   // wait(3000, msec);
@@ -679,7 +711,7 @@ void usercontrol(void) {
     //   Controller.Screen.print(cataSense.angle());
     if (reload && cataSense.angle(deg)<187)
     {
-      catapult.stop(hold);
+      catapult.stop(coast);
       
     }
     else if (!reload && cataSense.angle(deg)>240)
