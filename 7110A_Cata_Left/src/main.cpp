@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<194&&load)
+    if (cataSense.angle(deg)<187&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -384,14 +384,14 @@ void autonomous(void) {
   desiredTurnValue=48;
   wait(1000, msec);
   resetDriveSensors=true;
-  desiredValue=3500;
+  desiredValue=3100;
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-39;
+  desiredTurnValue=-38;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=500;
+  desiredValue=450;
   wait(1000, msec);
   fire=true;
   // wait(500, msec);
