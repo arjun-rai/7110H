@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<194&&load)
+    if (cataSense.angle(deg)<187&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -463,6 +463,7 @@ float driveSpeed = initDriveSpeed;
 bool driveOn = false;
 bool driveIntake = true;
 bool reload = false;
+bool expand = false;
 void usercontrol(void) {
   enableDrivePID=false;
   autonCata=false;
@@ -487,6 +488,10 @@ void usercontrol(void) {
     // Controller.Screen.print(leftEncoder.position(degrees));
     if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
     {
+      expand = true;
+      reload=false;
+      catapult.spin(reverse, 70, vex::velocityUnits::pct);
+      wait(450, msec);
       expansion.set(true);
     }
     else
@@ -546,7 +551,7 @@ void usercontrol(void) {
     if (intakeToggle&&indexerToggle)
     {
       // 10/5: 150->125
-      intake.spin(reverse,600, vex::velocityUnits::rpm); //intake speed <----- this one!
+      intake.spin(reverse, 600, vex::velocityUnits::rpm); //intake speed <----- this one!
     }
     else if (intakeToggle)
     {
@@ -555,6 +560,20 @@ void usercontrol(void) {
     else {
       intake.stop();
     }
+
+    // if (Controller.ButtonL2.pressing())
+    // {
+    //   intake.spin(fwd, 400, vex::velocityUnits::rpm);
+    // }
+    // else if (Controller.ButtonL1.pressing())
+    // {
+    //   intake.spin(reverse, 600, vex::velocityUnits::rpm);
+    // }
+    // else 
+    // {
+    //   intake.stop();
+    // }
+
     // if (Controller.ButtonR1.pressing()||Controller.ButtonR2.pressing())
     // {
     //   if (!CataOn)
@@ -673,7 +692,7 @@ void usercontrol(void) {
     //  Controller.Screen.clearLine();
     //   Controller.Screen.setCursor(0, 0);
     //   Controller.Screen.print(cataSense.angle());
-    if (reload && cataSense.angle(deg)<194)
+    if (reload && cataSense.angle(deg)<187)
     {
       catapult.stop(hold);
       
@@ -681,8 +700,11 @@ void usercontrol(void) {
     else if (!reload && cataSense.angle(deg)>240)
     {
       catapult.stop();
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
-      reload=true;
+      if (!expand)
+      {
+        reload=true;
+        catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      }
     }
     // else 
     // {
@@ -694,6 +716,7 @@ void usercontrol(void) {
                     // prevent wasted resources.
   }
 }
+
 
 //
 // Main will set up the competition functions and callbacks.

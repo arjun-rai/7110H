@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<194&&load)
+    if (cataSense.angle(deg)<187&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -382,7 +382,7 @@ void autonomous(void) {
   desiredTurnValue=86;
   wait(1000, msec);
   resetDriveSensors=true;
-  desiredValue=-240;
+  desiredValue=-250;
   wait(1000, msec);
   intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
   // load=true;
@@ -398,7 +398,7 @@ void autonomous(void) {
   desiredTurnValue=130.5;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=510;
+  desiredValue=455;
   wait(1000, msec);
   fire=true;
   wait(500, msec);
@@ -483,7 +483,7 @@ void usercontrol(void) {
       expand = true;
       reload=false;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
-      wait(150, msec);
+      wait(450, msec);
       expansion.set(true);
     }
     else
@@ -516,55 +516,55 @@ void usercontrol(void) {
     //   indexerOn=false;
     // }
     
-    //  if (Controller.ButtonL2.pressing())
-    // {
-    //   if (!indexerOn)
-    //   {
-    //     indexerToggle = !indexerToggle;
-    //     indexerOn=true;
-    //   }
-    // }
-    // else
-    // {
-    //   indexerOn=false;
-    // }
-    // if (Controller.ButtonL1.pressing())
-    // {
-    //   if (!intakeOn)
-    //   {
-    //     intakeToggle = !intakeToggle;
-    //     intakeOn=true;
-    //   }
-    // }
-    // else
-    // {
-    //   intakeOn=false;
-    // }
-    // if (intakeToggle&&indexerToggle)
-    // {
-    //   // 10/5: 150->125
-    //   intake.spin(reverse, 600, vex::velocityUnits::rpm); //intake speed <----- this one!
-    // }
-    // else if (intakeToggle)
-    // {
-    //   intake.spin(fwd, 400, vex::velocityUnits::rpm);
-    // }
-    // else {
-    //   intake.stop();
-    // }
-
-    if (Controller.ButtonL2.pressing())
+     if (Controller.ButtonL2.pressing())
+    {
+      if (!indexerOn)
+      {
+        indexerToggle = !indexerToggle;
+        indexerOn=true;
+      }
+    }
+    else
+    {
+      indexerOn=false;
+    }
+    if (Controller.ButtonL1.pressing())
+    {
+      if (!intakeOn)
+      {
+        intakeToggle = !intakeToggle;
+        intakeOn=true;
+      }
+    }
+    else
+    {
+      intakeOn=false;
+    }
+    if (intakeToggle&&indexerToggle)
+    {
+      // 10/5: 150->125
+      intake.spin(reverse, 600, vex::velocityUnits::rpm); //intake speed <----- this one!
+    }
+    else if (intakeToggle)
     {
       intake.spin(fwd, 400, vex::velocityUnits::rpm);
     }
-    else if (Controller.ButtonL1.pressing())
-    {
-      intake.spin(reverse, 600, vex::velocityUnits::rpm);
-    }
-    else 
-    {
+    else {
       intake.stop();
     }
+
+    // if (Controller.ButtonL2.pressing())
+    // {
+    //   intake.spin(fwd, 400, vex::velocityUnits::rpm);
+    // }
+    // else if (Controller.ButtonL1.pressing())
+    // {
+    //   intake.spin(reverse, 600, vex::velocityUnits::rpm);
+    // }
+    // else 
+    // {
+    //   intake.stop();
+    // }
 
     // if (Controller.ButtonR1.pressing()||Controller.ButtonR2.pressing())
     // {
@@ -684,7 +684,7 @@ void usercontrol(void) {
     //  Controller.Screen.clearLine();
     //   Controller.Screen.setCursor(0, 0);
     //   Controller.Screen.print(cataSense.angle());
-    if (reload && cataSense.angle(deg)<194)
+    if (reload && cataSense.angle(deg)<187)
     {
       catapult.stop(hold);
       
@@ -708,6 +708,7 @@ void usercontrol(void) {
                     // prevent wasted resources.
   }
 }
+
 
 //
 // Main will set up the competition functions and callbacks.
