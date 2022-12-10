@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<194&&load)
+    if (cataSense.angle(deg)<187&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -384,41 +384,89 @@ void autonomous(void) {
   desiredValue=50;
   wait(500, msec);
   resetDriveSensors=true;
-  desiredTurnValue=-40;
+  desiredTurnValue=-220;
   wait(1000, msec);
-
+  intake.spin(reverse, 600, rpm);
   resetDriveSensors=true;
-  desiredValue=1500;
+  desiredValue=-1500;
 
   wait(2000, msec);
   resetDriveSensors=true;
-  desiredValue=-300;
+  desiredValue=300;
   // desiredTurnValue=180;
   wait(1500, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=83;
+  desiredTurnValue=-270;
   wait(1000, msec);
   // intake.spin(reverse, 500, vex::velocityUnits::rpm);
   desiredValue=-520;
+  intake.stop();
   wait(1000, msec);
-  // intake.stop();
+  
   wait(500, msec);
   intake.spinFor(fwd, 270, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
-  desiredValue=900;
+  desiredValue=350;
+  wait(500, msec);
+  resetDriveSensors=true;
+  desiredTurnValue=-357;
+  wait(800, msec);
+  resetDriveSensors=true;
+  desiredValue=3700;
+  wait(2000, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=-325;
+  wait(500, msec);
+  fire=true;
+  wait(250, msec);
+  resetDriveSensors=true;
+  desiredTurnValue=-365;
+  desiredValue=0;
+  wait(500, msec);
+  load=true;
+  resetDriveSensors=true;
+  desiredValue=-3300;
+  wait(2000, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=-140;
+  wait(1000, msec);
+  intake.spin(reverse, 600, rpm);
+  resetDriveSensors=true;
+  desiredValue=-7300;
+  wait(2000, msec);
+  intake.stop();
   wait(1500, msec);
   resetDriveSensors=true;
+  desiredTurnValue=-84;
+  desiredValue=0;
+  wait(700, msec);
+  resetDriveSensors=true;
+  desiredValue=3500;
+  wait(2000, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=-100;
+  wait(700, msec);
+  fire=true;
+  // resetDriveSensors=true;
+  // desiredValue=900;
+  // wait(1500, msec);
+  // resetDriveSensors=true;
   // desiredValue=0;
   // desiredTurnValue=
   // resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=31;
-  wait(1000, msec);
-  resetDriveSensors=true;
-  desiredValue=-450;
-  wait(1000, msec);
-  expansion.set(true);
+  // desiredValue=0;
+  // desiredTurnValue=31;
+
+
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=-450;
+  // wait(1000, msec);
+  // expansion.set(true);
   // wait(2000, msec);
   // resetDriveSensors=true;
   // desiredValue=0;
