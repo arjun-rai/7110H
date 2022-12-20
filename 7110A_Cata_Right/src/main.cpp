@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<187&&load)
+    if (cataSense.angle(deg)<186&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -382,56 +382,61 @@ void autonomous(void) {
   desiredTurnValue=86;
   wait(500, msec);
   resetDriveSensors=true;
-  desiredValue=-250;
+  desiredValue=-350;
   wait(600, msec);
   intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
-  // load=true;
+  // resetDriveSensors=true;
+  // desiredValue=100;
+  // wait(500, msec);
+  // resetDriveSensors=true;
+  // desiredTurnValue=130;
+  load=true;
   resetDriveSensors=true;
-  desiredValue=300;
-  desiredTurnValue=0;
+  desiredValue=400;
+  desiredTurnValue=4;
   wait(1000, msec);
   resetDriveSensors=true;
-  desiredValue=2700;
+  desiredValue=2400;
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
   desiredTurnValue=90;
   wait(750, msec);
   resetDriveSensors=true;
-  desiredValue=2000;
+  desiredValue=1800;
   wait(1000, msec);
   // resetDriveSensors=true;
-  desiredTurnValue=136;
+  desiredTurnValue=132.5;
   // desiredValue=0;
   wait(1000, msec);
   resetDriveSensors=true;
-  desiredValue=900;
+  desiredValue=760;
   wait(1000, msec);
   fire=true;
-  wait(500, msec);
-  load=true;
-  resetDriveSensors=true;
-  desiredValue=-500;
-  wait(700, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=45;
-  wait(500, msec);
-  intake.spin(reverse, 600, vex::velocityUnits::rpm);
-  resetDriveSensors=true;
-  desiredValue=-800;
-  wait(800, msec);
-  resetDriveSensors=true;
-  desiredValue=1000;
-  wait(800, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=122.5;
-  wait(500, msec);
-  resetDriveSensors=true;
-  desiredValue=400;
-  wait(500, msec);
-  fire=true;
+  // wait(500, msec);
+  // load=true;
+  // resetDriveSensors=true;
+  // desiredValue=-500;
+  // wait(700, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=45;
+  // wait(500, msec);
+  // intake.spin(reverse, 600, vex::velocityUnits::rpm);
+  // resetDriveSensors=true;
+  // desiredValue=-1000;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=1200;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=120.5;
+  // wait(500, msec);
+  // resetDriveSensors=true;
+  // desiredValue=310;
+  // wait(500, msec);
+  // fire=true;
 
 
 
@@ -732,9 +737,9 @@ void usercontrol(void) {
     //  Controller.Screen.clearLine();
     //   Controller.Screen.setCursor(0, 0);
     //   Controller.Screen.print(cataSense.angle());
-    if (reload && cataSense.angle(deg)<187)
+    if (reload && cataSense.angle(deg)<186)
     {
-      catapult.stop(coast);
+      catapult.stop(hold);
       
     }
     else if (!reload && cataSense.angle(deg)>240)

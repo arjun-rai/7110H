@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<187&&load)
+    if (cataSense.angle(deg)<186&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -361,7 +361,7 @@ int loadCata()
     }
     if (cataSense.angle(deg)>240&&fire)
     {
-      catapult.stop(hold);
+      catapult.stop(coast);
       fire=!fire;
     }
     vex::task::sleep(20);
@@ -378,7 +378,7 @@ void autonomous(void) {
   // intake.spin(fwd, 100, vex::velocityUnits::pct);
   desiredValue=-300;
   wait(1000, msec);
-  intake.spinFor(fwd, 270, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(fwd, 540, deg, 100, vex::velocityUnits::pct);
   // load=true;
   wait(1000, msec);
   desiredValue=50;
@@ -405,7 +405,7 @@ void autonomous(void) {
   wait(1000, msec);
   
   wait(500, msec);
-  intake.spinFor(fwd, 270, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(fwd, 540, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
   desiredValue=350;
   wait(500, msec);
@@ -473,7 +473,7 @@ void autonomous(void) {
   resetDriveSensors=true;
   desiredValue=-400;
   wait(1000, msec);
-  intake.spinFor(fwd, 270, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(fwd, 540, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
   desiredValue=100;
   wait(300, msec);
@@ -494,7 +494,7 @@ void autonomous(void) {
   wait(500, msec);
   intake.stop();
   wait(1000,msec);
-  intake.spinFor(fwd, 270, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(fwd, 540, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
   desiredValue=1400;
   wait(1500, msec);
