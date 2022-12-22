@@ -24,6 +24,7 @@ motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
 motor intake = motor(PORT12, ratio6_1, true);
 digital_out expansion = digital_out(Brain.ThreeWirePort.A);
 rotation cataSense = rotation(PORT20);
+digital_out cataBoost = digital_out(Brain.ThreeWirePort.B);
 
 
 // VEXcode generated functions

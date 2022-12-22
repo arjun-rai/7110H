@@ -357,11 +357,14 @@ int loadCata()
     }
     if (fire)
     {
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      catapult.spin(reverse, 70, vex::velocityUnits::pct);
+      wait(20, msec);
+      cataBoost.set(true);
     }
     if (cataSense.angle(deg)>240&&fire)
     {
       catapult.stop(coast);
+      cataBoost.set(false);
       fire=!fire;
     }
     vex::task::sleep(20);
@@ -388,10 +391,10 @@ void autonomous(void) {
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-42;
+  desiredTurnValue=-39.5;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=510;
+  desiredValue=440;
   wait(1000, msec);
   fire=true;
   // wait(500, msec);
@@ -449,6 +452,8 @@ bool driveOn = false;
 bool driveIntake = true;
 bool reload = false;
 bool expand = false;
+bool boostOn = false;
+bool boostToggle = false;
 void usercontrol(void) {
   enableDrivePID=false;
   autonCata=false;
@@ -571,7 +576,7 @@ void usercontrol(void) {
     // {
     //   CataOn=false;
     // }
-    if (Controller.ButtonUp.pressing()||Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonA.pressing()||Controller.ButtonY.pressing()||Controller.ButtonX.pressing())
+    if (Controller.ButtonUp.pressing()||Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing()||Controller.ButtonX.pressing())
     {
       if (!driveOn)
       {
@@ -586,6 +591,21 @@ void usercontrol(void) {
     {
       driveOn = false;
     }
+
+    
+     if (Controller.ButtonA.pressing())
+    {
+      if (!boostOn)
+      {
+        boostToggle = !boostToggle;
+        boostOn=true;
+      }
+    }
+    else
+    {
+      boostOn=false;
+    }
+
     // if (Controller.ButtonUp.pressing()||Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing())
     // {
     //   if (!turnOn)
@@ -667,6 +687,9 @@ void usercontrol(void) {
       reload=false;
       // flywheel.spin(fwd, 340, rpm);
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
+      wait(20, msec);
+      if (boostToggle)
+        cataBoost.set(true);
       // Controller.Screen.clearLine();
       // Controller.Screen.setCursor(0, 0);
       // Controller.Screen.print(cataSense.angle());
@@ -685,6 +708,7 @@ void usercontrol(void) {
     else if (!reload && cataSense.angle(deg)>240)
     {
       catapult.stop(coast);
+      cataBoost.set(false);
       if (!expand)
       {
         reload=true;

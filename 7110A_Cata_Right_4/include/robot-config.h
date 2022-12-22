@@ -18,7 +18,6 @@ extern motor_group rightDrive;
 extern motor catapult;
 extern motor intake;
 extern digital_out expansion;
-extern digital_out cataBoost;
 extern rotation cataSense;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

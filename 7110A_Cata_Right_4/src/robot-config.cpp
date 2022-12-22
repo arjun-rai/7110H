@@ -23,7 +23,6 @@ motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
 motor intake = motor(PORT12, ratio6_1, true);
 digital_out expansion = digital_out(Brain.ThreeWirePort.A);
-digital_out cataBoost = digital_out(Brain.ThreeWirePort.B);
 rotation cataSense = rotation(PORT20);
 
 
