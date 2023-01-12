@@ -521,7 +521,12 @@ void usercontrol(void) {
       intake.stop();
     }
 
-    if (Controller.ButtonUp.pressing()||Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing()||Controller.ButtonX.pressing())
+    if (Controller.ButtonUp.pressing()&&Controller.ButtonX.pressing())
+    {
+      blocker.set(true);
+    }
+
+    if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
     {
       if (!driveOn)
       {
