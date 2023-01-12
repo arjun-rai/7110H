@@ -398,10 +398,10 @@ void autonomous(void) {
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=126;
+  desiredTurnValue=129;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=450;//455
+  desiredValue=430;//455
   wait(1000, msec);
   fire=true;
   // wait(500, msec);

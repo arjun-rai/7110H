@@ -339,7 +339,7 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
-bool load=false;
+bool load=true;
 bool fire = false;
 bool autonCata=true;
 int loadCata()
@@ -357,11 +357,14 @@ int loadCata()
     }
     if (fire)
     {
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      catapult.spin(reverse, 70, vex::velocityUnits::pct);
+      wait(20, msec);
+      cataBoost.set(true);
     }
     if (cataSense.angle(deg)>240&&fire)
     {
       catapult.stop(coast);
+      cataBoost.set(false);
       fire=!fire;
     }
     vex::task::sleep(20);
@@ -373,256 +376,37 @@ void autonomous(void) {
   autonCata=true;
   vex::task PID1(drivePID);
   vex::task cata(loadCata);
-  // load=true;
   resetDriveSensors=true;
   // intake.spin(fwd, 100, vex::velocityUnits::pct);
-  desiredValue=-280;
+  desiredValue=-300;
   wait(1000, msec);
-  intake.spinFor(fwd, 540, deg, 100, vex::velocityUnits::pct);
-  // load=true;
-  wait(1000, msec);
-  desiredValue=50;
-  wait(500, msec);
+  intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
+  load=true;
   resetDriveSensors=true;
-  desiredTurnValue=-220;
+  desiredValue=300;
+  desiredTurnValue=48;
   wait(1000, msec);
-  intake.spin(reverse, 600, rpm);
   resetDriveSensors=true;
-  desiredValue=-1500;
-
+  desiredValue=2800;
   wait(2000, msec);
   resetDriveSensors=true;
-  desiredValue=250;
-  // desiredTurnValue=180;
-  wait(1500, msec);
-  resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-280;
-  wait(1000, msec);
-  // intake.spin(reverse, 500, vex::velocityUnits::rpm);
-  desiredValue=-360;
-  intake.stop();
-  wait(1000, msec);
-  
-  wait(500, msec);
-  intake.spinFor(fwd, 540, deg, 100, vex::velocityUnits::pct);
-  resetDriveSensors=true;
-  desiredValue=230;
-  wait(500, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=-357;
+  desiredTurnValue=-36.5;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=3500;
-  wait(2000, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-330;
-  wait(500, msec);
-  fire=true;
-  wait(250, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=-365;
-  desiredValue=0;
-  wait(500, msec);
-  load=true;
-  resetDriveSensors=true;
-  desiredValue=-3100;
-  wait(2000, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-140;
-  wait(1000, msec);
-  intake.spin(reverse, 600, rpm);
-  resetDriveSensors=true;
-  desiredValue=-4500;
-  wait(3200, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-180;
-  wait(700, msec);
-  resetDriveSensors=true;
-  desiredValue=-2200; //2100
-  wait(2500, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=-90;
-  desiredValue=0;
-  wait(750, msec);
-  resetDriveSensors=true;
-  desiredValue=1500;
-  intake.stop();
-  wait(2000, msec);
-  resetDriveSensors =true;
-  desiredValue=0;
-  desiredTurnValue=-118;
-  wait(750, msec);
-  fire=true;
-  wait(250, msec);
-  load=true;
-  resetDriveSensors=true;
-  desiredTurnValue=-88;
-  desiredValue=0;
-  wait(700, msec);
-  resetDriveSensors=true;
-  desiredValue=-4000;
-  wait(3500, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-180;
-  wait(750, msec);
-  resetDriveSensors=true;
-  desiredValue=-440;
-  wait(1000, msec);
-  intake.spinFor(fwd, 540, deg, 100, vex::velocityUnits::pct);
-  resetDriveSensors=true;
-  desiredValue=100;
-  wait(300, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=-45;
-  desiredValue=0;
-  intake.spin(reverse, 600, rpm);
-  wait(750, msec);
-  resetDriveSensors=true;
-  desiredValue=-1300;
-  wait(1500, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=-105;
-  desiredValue=0;
-  wait(700, msec);
-  resetDriveSensors=true;
-  desiredValue=-320;
-  wait(100, msec);
-  intake.stop();
-  wait(1500,msec);
-  intake.spinFor(fwd, 540, deg, 100, vex::velocityUnits::pct);
-
-
-  resetDriveSensors=true;
-  desiredValue=150;
-  wait(500, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=30;
-  wait(500, msec);
-  resetDriveSensors=true;
-  intake.spin(reverse, 600, rpm);
-  desiredValue=-3200;
-  wait(2000, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=90;
-  desiredValue=0;
-  wait(1000, msec);
-  resetDriveSensors=true;
-  desiredValue=2500;
-  wait(2000, msec);
-  resetDriveSensors=true;
-  desiredValue=-400;
-  wait(800,msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=175;
-  wait(1000, msec);
-  resetDriveSensors=true;
-  desiredValue=1100;
-  wait(1400, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=210;
-  desiredValue=0;
+  desiredValue=140;
   wait(1000, msec);
   fire=true;
   wait(500, msec);
   resetDriveSensors=true;
-  desiredTurnValue=165;
-  desiredValue=0;
-  wait(1000, msec);
+  desiredValue=-140;
+  wait(600,msec);
   resetDriveSensors=true;
-  desiredValue=-4100;
-  wait(3500, msec);
-  resetDriveSensors=true;
+  desiredTurnValue=48;
   desiredValue=0;
-  desiredTurnValue=240;
-
-
-
-  // resetDriveSensors=true;
-  // desiredValue=1400;
-  // wait(1500, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-145;
-  // desiredValue=0;
-  // wait(800, msec);
-  // resetDriveSensors=true;
-  // desiredValue=-800;
-  // wait(1000, msec);
-  // fire=true;
-  // wait(1000, msec);
-  // expansion.set(true);
-  
-
-
-
-
-  // resetDriveSensors=true;
-  // desiredValue=-7300;
-  // wait(2400, msec);
-  // intake.stop();
-  // wait(1100, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-84; //thing
-  // desiredValue=0;
-  // wait(700, msec);
-  // resetDriveSensors=true;
-  // intake.spin(fwd, 600, rpm);
-  // desiredValue=3200;
-  // wait(2000, msec);
-  // intake.stop();
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-127;
-  // wait(700, msec);
-  // fire=true;
-  // wait(250, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-81;
-  // load=true;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredValue=-4200;
-  // wait(4000, msec);
-  // resetDriveSensors=true;
-  // intake.spin(reverse, 600, rpm);
-  // desiredValue=0;
-  // desiredTurnValue=-179;
-  // wait(900, msec);
-  // resetDriveSensors=true;
-  // desiredValue=-600;
-
-  // resetDriveSensors=true;
-  // desiredValue=900;
-  // wait(1500, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=31;
-
-
-  // wait(1000, msec);
-  // resetDriveSensors=true;
-  // desiredValue=-450;
-  // wait(1000, msec);
-  // expansion.set(true);
-  // wait(2000, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-41;
-  // wait(800, msec);
-  // resetDriveSensors=true;
-  // desiredValue=300;
-  // wait(1000, msec);
-  // fire=true;
-  // wait(500, msec);
+  wait(800, msec);
+  resetDriveSensors=true;
+  desiredValue=4000;
   // load=true;
   // wait(3000, msec);
   // intake.spin(reverse, 500, vex::velocityUnits::rpm);
@@ -739,7 +523,12 @@ void usercontrol(void) {
       intake.stop();
     }
 
-    if (Controller.ButtonUp.pressing()||Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing()||Controller.ButtonX.pressing())
+    if (Controller.ButtonUp.pressing()&&Controller.ButtonX.pressing())
+    {
+      blocker.set(true);
+    }
+
+    if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
     {
       if (!driveOn)
       {
