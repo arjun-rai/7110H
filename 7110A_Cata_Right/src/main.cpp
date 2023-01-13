@@ -378,14 +378,14 @@ void autonomous(void) {
   vex::task cata(loadCata);
   resetDriveSensors=true;
   // intake.spin(fwd, 100, vex::velocityUnits::pct);
-  desiredValue=-1550;
+  desiredValue=-1450;
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
   desiredTurnValue=86;
   wait(1000, msec);
   resetDriveSensors=true;
-  desiredValue=-250;
+  desiredValue=-300;
   wait(1000, msec);
   intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
   // load=true;
@@ -401,7 +401,7 @@ void autonomous(void) {
   desiredTurnValue=129;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=430;//455
+  desiredValue=150;//455
   wait(1000, msec);
   fire=true;
   // wait(500, msec);
