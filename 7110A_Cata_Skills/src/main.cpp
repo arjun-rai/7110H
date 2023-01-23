@@ -465,7 +465,7 @@ void autonomous(void) {
   wait(250, msec);
   load=true;
   resetDriveSensors=true;
-  desiredTurnValue=-86;
+  desiredTurnValue=-83; //-86
   desiredValue=0;
   wait(700, msec);
   resetDriveSensors=true;
@@ -473,7 +473,7 @@ void autonomous(void) {
   wait(3500, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-180;
+  desiredTurnValue=-175; //-180
   wait(750, msec);
   resetDriveSensors=true;
   desiredValue=-440;
@@ -487,8 +487,8 @@ void autonomous(void) {
   resetDriveSensors=true;
   desiredTurnValue=-45;
   desiredValue=0;
-  intake.spin(reverse, 600, rpm);
   wait(750, msec);
+  intake.spin(reverse, 600, rpm);
   resetDriveSensors=true;
   desiredValue=-1300;
   wait(1500, msec);
