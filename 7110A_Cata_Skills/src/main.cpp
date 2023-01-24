@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<186&&load)
+    if (cataSense.angle(deg)<275&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -359,7 +359,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>240&&fire)
+    if (cataSense.angle(deg)>339&&fire)
     {
       catapult.stop(coast);
       fire=!fire;
@@ -803,12 +803,12 @@ void usercontrol(void) {
       if (boostToggle)
         cataBoost.set(true);
     }
-    if (reload && cataSense.angle(deg)<186)
+    if (reload && cataSense.angle(deg)<275)
     {
       catapult.stop(hold);
       
     }
-    else if (!reload && cataSense.angle(deg)>240)
+    else if (!reload && cataSense.angle(deg)>339)
     {
       catapult.stop(coast);
       cataBoost.set(false);

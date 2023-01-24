@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<186&&load)
+    if (cataSense.angle(deg)<275&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -361,7 +361,7 @@ int loadCata()
       wait(20, msec);
       cataBoost.set(true);
     }
-    if (cataSense.angle(deg)>240&&fire)
+    if (cataSense.angle(deg)>339&&fire)
     {
       catapult.stop(coast);
       cataBoost.set(false);
@@ -454,6 +454,9 @@ bool reload = false;
 bool expand = false;
 bool boostOn = false;
 bool boostToggle = false;
+
+int discCount =0;
+
 void usercontrol(void) {
   enableDrivePID=false;
   autonCata=false;
@@ -569,12 +572,12 @@ void usercontrol(void) {
       if (boostToggle)
         cataBoost.set(true);
     }
-    if (reload && cataSense.angle(deg)<186)
+    if (reload && cataSense.angle(deg)<275)
     {
       catapult.stop(hold);
       
     }
-    else if (!reload && cataSense.angle(deg)>240)
+    else if (!reload && cataSense.angle(deg)>339)
     {
       catapult.stop(coast);
       cataBoost.set(false);
@@ -584,6 +587,28 @@ void usercontrol(void) {
         catapult.spin(reverse, 80, vex::velocityUnits::pct);
       }
     }
+
+    // if (intakeSense.objectDistance(mm)<=23)
+    // {
+    //   // Controller.Screen.setCursor(0,0);
+    //   // Controller.Screen.clearLine();
+    //   // Controller.Screen.print(1);
+    //   discCount+=1;
+    // }
+    // else {
+    //   //  Controller.Screen.setCursor(0,0);
+    //   // Controller.Screen.clearLine();
+    //   // Controller.Screen.print(0);
+    // }
+
+    // if (discCount>=6 && intakeSense.objectDistance(mm)>30)
+    // {
+    //   intakeToggle=false;
+    // }
+
+
+
+
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
