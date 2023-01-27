@@ -391,7 +391,7 @@ void autonomous(void) {
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-36.5;
+  desiredTurnValue=-36.5; 
   wait(800, msec);
   resetDriveSensors=true;
   desiredValue=140;
@@ -572,12 +572,12 @@ void usercontrol(void) {
       if (boostToggle)
         cataBoost.set(true);
     }
-    if (reload && cataSense.angle(deg)<275)
+    if (reload && cataSense.angle(deg)<96)
     {
       catapult.stop(hold);
       
     }
-    else if (!reload && cataSense.angle(deg)>339)
+    else if (!reload && cataSense.angle(deg)>176)
     {
       catapult.stop(coast);
       cataBoost.set(false);
