@@ -426,6 +426,28 @@ void autonomous(void) {
  
 }
 
+void leftExpo (vex::directionType type, int percentage){
+  if(percentage >= 0){
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  }else{
+    percentage = -percentage;
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = -percentage;
+  }
+  leftDrive.spin (type, percentage, vex::velocityUnits::pct);
+}
+
+void rightExpo (vex::directionType type, int percentage){
+  if(percentage >= 0){
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  }else{
+    percentage = -percentage;
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = -percentage;
+  }
+  rightDrive.spin (type, percentage, vex::velocityUnits::pct);
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */
@@ -477,9 +499,11 @@ void usercontrol(void) {
       expansion.set(false);
     }
     driveBrake(brake);
-    leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    
+    // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    leftExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
+    rightExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));
+
      if (Controller.ButtonL2.pressing())
     {
       if (!indexerOn)
