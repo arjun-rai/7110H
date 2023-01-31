@@ -406,7 +406,7 @@ void autonomous(void) {
   desiredTurnValue=-280;
   wait(1000, msec);
   // intake.spin(reverse, 500, vex::velocityUnits::rpm);
-  desiredValue=-400;
+  desiredValue=-480;
   intake.stop();
   wait(1000, msec);
   
@@ -415,7 +415,7 @@ void autonomous(void) {
   desiredValue=0;
   intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
-  desiredValue=270;
+  desiredValue=350;
   wait(500, msec);
   resetDriveSensors=true;
   desiredTurnValue=-220;
@@ -444,16 +444,16 @@ void autonomous(void) {
   resetDriveSensors=true;
   desiredValue=-850;
 
-  wait(2000, msec);
+  // wait(2000, msec);
 
-  // for (int i =0;i<3;i++)
-  // {
-  // wait(3000, msec);
-  // // fire=true;
-  // wait(200, msec);
-  // // load=true;
-  // wait(300, msec);
-  // }
+  for (int i =0;i<3;i++)
+  {
+  wait(2000, msec);
+  // fire=true;
+  wait(100, msec);
+  // load=true;
+  wait(200, msec);
+  }
   resetDriveSensors=true;
   desiredValue=0;
   desiredTurnValue=-360;
@@ -470,6 +470,72 @@ void autonomous(void) {
   wait(800, msec);
   resetDriveSensors=true;
   desiredValue=-550;
+  wait(1000, msec);
+   for (int i =0;i<4;i++)
+  {
+  wait(2000, msec);
+  // fire=true;
+  wait(100, msec);
+  // load=true;
+  wait(200, msec);
+  }
+  resetDriveSensors=true;
+  desiredTurnValue=-430;
+  desiredValue=0;
+  wait(900,msec);
+  resetDriveSensors=true;
+  desiredValue=-2000;
+  wait(2000, msec);
+  resetDriveSensors=true;
+  desiredTurnValue=-540;
+  desiredValue=0;
+  wait(700, msec);
+  resetDriveSensors=true;
+  desiredValue=-400;
+  wait(700, msec);
+  intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
+  
+
+  desiredValue=50;
+  wait(200, msec);
+  resetDriveSensors=true;
+  desiredTurnValue=-220-540;
+  wait(1000, msec);
+  intake.spin(reverse, 600, rpm);
+  resetDriveSensors=true;
+  desiredValue=-750;
+
+  wait(1000, msec);
+  resetDriveSensors=true;
+  desiredValue=-750;
+
+  wait(1000, msec);
+  resetDriveSensors=true;
+  desiredValue=250;
+  // desiredTurnValue=180;
+  wait(1500, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=-280-540;
+  wait(1000, msec);
+  // intake.spin(reverse, 500, vex::velocityUnits::rpm);
+  desiredValue=-520;
+  intake.stop();
+  wait(1000, msec);
+  
+  // wait(500, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
+  resetDriveSensors=true;
+  desiredValue=540;
+  wait(700, msec);
+  resetDriveSensors=true;
+  desiredTurnValue=-310-540;
+  wait(1000, msec);
+  resetDriveSensors=true;
+  desiredValue=-200;
+ 
   
 }
 
