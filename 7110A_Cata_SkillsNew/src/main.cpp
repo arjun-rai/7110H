@@ -373,7 +373,7 @@ void autonomous(void) {
   autonCata=true;
   vex::task PID1(drivePID);
   vex::task cata(loadCata);
-  // load=true;
+  load=true;
   resetDriveSensors=true;
   // intake.spin(fwd, 100, vex::velocityUnits::pct);
   desiredValue=-280;
@@ -388,7 +388,7 @@ void autonomous(void) {
   resetDriveSensors=true;
   desiredTurnValue=-220;
   wait(1000, msec);
-  intake.spin(reverse, 600, rpm);
+  intake.spin(reverse, 350, rpm);
   resetDriveSensors=true;
   desiredValue=-750;
 
@@ -421,7 +421,7 @@ void autonomous(void) {
   desiredTurnValue=-220;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=1000;
+  desiredValue=900;
   wait(1000, msec);
   resetDriveSensors=true;
   desiredValue=0;
@@ -432,28 +432,29 @@ void autonomous(void) {
   wait(3000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-300;
+  desiredTurnValue=-298;
   wait(600, msec);
-  // fire=true;
+  fire=true;
   wait(500, msec);
-  // load=true;
+  load=true;
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-280;
-  wait(500, msec);
+  desiredTurnValue=-278;
+  wait(900, msec);
   resetDriveSensors=true;
-  desiredValue=-850;
+  desiredValue=-900;
 
   // wait(2000, msec);
 
   for (int i =0;i<3;i++)
   {
-  wait(2000, msec);
-  // fire=true;
-  wait(100, msec);
-  // load=true;
+  wait(3500, msec);
+  fire=true;
   wait(200, msec);
+  load=true;
+  wait(300, msec);
   }
+  wait(2000 ,msec);
   resetDriveSensors=true;
   desiredValue=0;
   desiredTurnValue=-360;
@@ -466,25 +467,25 @@ void autonomous(void) {
   wait(1000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-460;
+  desiredTurnValue=-458;
   wait(800, msec);
   resetDriveSensors=true;
-  desiredValue=-550;
+  desiredValue=-640;
   wait(1000, msec);
    for (int i =0;i<4;i++)
   {
-  wait(2000, msec);
-  // fire=true;
-  wait(100, msec);
-  // load=true;
+  wait(3500, msec);
+  fire=true;
   wait(200, msec);
+  load=true;
+  wait(300, msec);
   }
   resetDriveSensors=true;
   desiredTurnValue=-430;
   desiredValue=0;
   wait(900,msec);
   resetDriveSensors=true;
-  desiredValue=-2000;
+  desiredValue=-2200;
   wait(2000, msec);
   resetDriveSensors=true;
   desiredTurnValue=-540;

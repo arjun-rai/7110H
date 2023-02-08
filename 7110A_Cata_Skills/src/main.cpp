@@ -350,7 +350,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<96.7&&load)
+    if (cataSense.angle(deg)<96&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -388,7 +388,7 @@ void autonomous(void) {
   resetDriveSensors=true;
   desiredTurnValue=-220;
   wait(1000, msec);
-  intake.spin(reverse, 600, rpm);
+  intake.spin(reverse, 400, rpm);
   resetDriveSensors=true;
   desiredValue=-1500;
 
@@ -414,7 +414,7 @@ void autonomous(void) {
   desiredValue=230;
   wait(500, msec);
   resetDriveSensors=true;
-  desiredTurnValue=-362;
+  desiredTurnValue=-359;
   wait(800, msec);
   resetDriveSensors=true;
   desiredValue=3500;
@@ -431,7 +431,7 @@ void autonomous(void) {
   wait(500, msec);
   load=true;
   resetDriveSensors=true;
-  desiredValue=-3100;
+  desiredValue=-3000;
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
@@ -446,15 +446,15 @@ void autonomous(void) {
   desiredTurnValue=-180;
   wait(700, msec);
   resetDriveSensors=true;
-  desiredValue=-2160; //2100
+  desiredValue=-2300; //2100
   wait(2500, msec);
   resetDriveSensors=true;
   desiredTurnValue=-90;
   desiredValue=0;
   wait(750, msec);
   resetDriveSensors=true;
-  desiredValue=1300;
-  intake.spin(fwd, 600, rpm);
+  desiredValue=1100;
+  intake.spin(fwd, 400, rpm);
   wait(2000, msec);
   resetDriveSensors =true;
   desiredValue=0;
@@ -469,7 +469,7 @@ void autonomous(void) {
   desiredValue=0;
   wait(700, msec);
   resetDriveSensors=true;
-  desiredValue=-4000;
+  desiredValue=-3600;
   wait(3500, msec);
   resetDriveSensors=true;
   desiredValue=0;
@@ -488,7 +488,7 @@ void autonomous(void) {
   desiredTurnValue=-45;
   desiredValue=0;
   wait(750, msec);
-  intake.spin(reverse, 600, rpm);
+  intake.spin(reverse, 400, rpm);
   resetDriveSensors=true;
   desiredValue=-1300;
   wait(1500, msec);
@@ -513,7 +513,7 @@ void autonomous(void) {
   desiredTurnValue=30;
   wait(500, msec);
   resetDriveSensors=true;
-  intake.spin(reverse, 600, rpm);
+  intake.spin(reverse, 400, rpm);
   desiredValue=-3200;
   wait(2000, msec);
   resetDriveSensors=true;
@@ -531,7 +531,7 @@ void autonomous(void) {
   desiredTurnValue=175;
   wait(1000, msec);
   resetDriveSensors=true;
-  desiredValue=1100;
+  desiredValue=900;
   wait(1400, msec);
   resetDriveSensors=true;
   desiredTurnValue=210;
@@ -544,7 +544,7 @@ void autonomous(void) {
   desiredValue=0;
   wait(1000, msec);
   resetDriveSensors=true;
-  desiredValue=-4100;
+  desiredValue=-3900;
   wait(3500, msec);
   resetDriveSensors=true;
   desiredValue=0;
