@@ -26,6 +26,7 @@ digital_out expansion = digital_out(Brain.ThreeWirePort.A);
 rotation cataSense = rotation(PORT20);
 digital_out cataBoost = digital_out(Brain.ThreeWirePort.B);
 digital_out blocker = digital_out(Brain.ThreeWirePort.C);
+distance intakeSense = distance(PORT9);
 
 
 // VEXcode generated functions

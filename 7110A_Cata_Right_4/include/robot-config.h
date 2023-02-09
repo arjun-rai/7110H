@@ -21,6 +21,7 @@ extern digital_out expansion;
 extern rotation cataSense;
 extern digital_out cataBoost;
 extern digital_out blocker;
+extern distance intakeSense;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

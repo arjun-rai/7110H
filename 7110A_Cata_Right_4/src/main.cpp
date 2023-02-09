@@ -118,6 +118,8 @@ double turnkD = 0.0001; //0.006
 //Autonomous Settings
 double desiredValue = 0;
 double desiredTurnValue = 0;
+double tuckyLeftVar = 1;
+double tuckyRightVar = 1;
 
 int error; //SensorValue - DesiredValue : Position 
 int prevError = 0; //Position 2- milleseconds ago
@@ -244,8 +246,8 @@ int drivePID(){
 
     lastLateralVoltage=lateralMotorPower;
     
-    leftDrive.spin(fwd, lateralMotorPower + turnMotorPower, voltageUnits::volt);
-    rightDrive.spin(fwd, lateralMotorPower - turnMotorPower, voltageUnits::volt);
+    leftDrive.spin(fwd, tuckyLeftVar * (lateralMotorPower + turnMotorPower), voltageUnits::volt);
+    rightDrive.spin(fwd, tuckyRightVar * (lateralMotorPower - turnMotorPower), voltageUnits::volt);
     prevError = error;
     turnPrevError = turnError;
     vex::task::sleep(10);
@@ -376,51 +378,60 @@ void autonomous(void) {
   autonCata=true;
   vex::task PID1(drivePID);
   vex::task cata(loadCata);
+  load=true;
   resetDriveSensors=true;
-  desiredValue=1400;
+  desiredValue=1200;
   wait(2000, msec);
   fire=true;
   wait(500, msec);
-  resetDriveSensors=true;
-  desiredValue=-200;
-  wait(700, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-70;
-  wait(1000,msec);
-  resetDriveSensors=true;
-  desiredValue=-1300;
-  wait(1500, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=0;
-  wait(700, msec);
-  resetDriveSensors=true;
   load=true;
-  desiredValue=-300;
+  resetDriveSensors=true;
+  desiredValue=0;//-200
+  wait(700, msec);
+  resetDriveSensors=true;
+  tuckyRightVar=0;
+  tuckyLeftVar=1;
+  desiredValue=-1100;//0
+  //desiredTurnValue=-70;
+  wait(1500,msec);
+  desiredTurnValue=-74;
+  tuckyRightVar=1;
+  tuckyLeftVar=1;
+  resetDriveSensors=true;
+  desiredValue=-900;
+  wait(1000, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=-10;
+  wait(700, msec);
+  resetDriveSensors=true;
+  desiredValue=-180;
   wait(800, msec);
   intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
-  desiredValue=150;
+  desiredValue=190;
   wait(600, msec);
   resetDriveSensors=true;
   desiredValue=0;
   desiredTurnValue=110;
-  wait(1000, msec);
+  wait(1000, msec);//.
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
   resetDriveSensors=true;
-  desiredValue=-1600;
-  wait(1600, msec);
+  desiredValue=-1700;
+  wait(2000, msec);
   resetDriveSensors=true;
-  desiredValue=-1400;
-  wait(1600, msec);
+  desiredValue=-1700;
+  wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
   desiredTurnValue=23;
   wait(500, msec);
   intake.spin(fwd, 600, vex::velocityUnits::rpm);
   wait(500, msec);
-  fire=true;
+  if (intakeSense.objectDistance(mm)>40)
+  {
+    fire=true;
+  }
 
 
 
