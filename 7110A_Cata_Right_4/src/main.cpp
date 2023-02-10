@@ -381,7 +381,7 @@ void autonomous(void) {
   load=true;
   resetDriveSensors=true;
   desiredValue=1200;
-  wait(2000, msec);
+  wait(1500, msec);
   fire=true;
   wait(500, msec);
   load=true;
@@ -398,34 +398,37 @@ void autonomous(void) {
   tuckyRightVar=1;
   tuckyLeftVar=1;
   resetDriveSensors=true;
-  desiredValue=-900;
+  desiredValue=-850;
   wait(1000, msec);
   resetDriveSensors=true;
   desiredValue=0;
   desiredTurnValue=-10;
   wait(700, msec);
   resetDriveSensors=true;
-  desiredValue=-180;
+  desiredValue=-400;
   wait(800, msec);
   intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
-  desiredValue=190;
-  wait(600, msec);
+  desiredValue=600;//700
+  wait(1000, msec);
   resetDriveSensors=true;
   desiredValue=0;
   desiredTurnValue=110;
   wait(1000, msec);//.
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
   resetDriveSensors=true;
-  desiredValue=-1700;
-  wait(2000, msec);
+  desiredValue=-1600;
+  wait(1700, msec);
   resetDriveSensors=true;
-  desiredValue=-1700;
-  wait(2000, msec);
+  desiredValue=-1600;
+  wait(1700, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=23;
-  wait(500, msec);
+  desiredTurnValue=21;
+  wait(700, msec);
+  resetDriveSensors=true;
+  desiredValue=100;
+  wait(700, msec);
   intake.spin(fwd, 600, vex::velocityUnits::rpm);
   wait(500, msec);
   if (intakeSense.objectDistance(mm)>40)
