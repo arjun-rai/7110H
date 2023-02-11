@@ -642,7 +642,7 @@ void usercontrol(void) {
       reload=true;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
     }
-    if (Controller.ButtonR2.pressing())
+    if (Controller.ButtonR2.pressing()&&intakeSense.objectDistance(mm)>40)
     {
       intakeToggle=false;
       reload=false;
@@ -658,6 +658,7 @@ void usercontrol(void) {
     }
     else if (!reload && cataSense.angle(deg)>172)
     {
+      intakeToggle=false;
       catapult.stop(coast);
       cataBoost.set(false);
       if (!expand)
