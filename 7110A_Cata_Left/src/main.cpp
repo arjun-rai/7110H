@@ -443,9 +443,11 @@ void autonomous(void) {
   if (intakeSense.objectDistance(mm)>40)
   {
     fire=true;
+    wait(400, msec);
+    load=true;
   }
-  wait(400, msec);
-  load=true;
+
+
   // wait(500, msec);
   // load=true;
   // wait(3000, msec);
@@ -537,6 +539,7 @@ void usercontrol(void) {
   while (1) {
     if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
     {
+      intakeToggle=false;
       expand = true;
       reload=false;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
@@ -571,6 +574,7 @@ void usercontrol(void) {
       {
         intakeToggle = !intakeToggle;
         intakeOn=true;
+        indexerToggle=true;
       }
     }
     else
@@ -634,11 +638,13 @@ void usercontrol(void) {
 
     if (Controller.ButtonR1.pressing())
     {
+      intakeToggle=false;
       reload=true;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
     }
     if (Controller.ButtonR2.pressing())
     {
+      intakeToggle=false;
       reload=false;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
       wait(20, msec);
@@ -656,6 +662,7 @@ void usercontrol(void) {
       cataBoost.set(false);
       if (!expand)
       {
+        intakeToggle=false;
         reload=true;
         catapult.spin(reverse, 80, vex::velocityUnits::pct);
       }

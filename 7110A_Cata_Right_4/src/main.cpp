@@ -378,7 +378,7 @@ void autonomous(void) {
   autonCata=true;
   vex::task PID1(drivePID);
   vex::task cata(loadCata);
-  load=true;
+  // load=true;
   resetDriveSensors=true;
   desiredValue=1200;
   wait(1500, msec);
@@ -428,15 +428,16 @@ void autonomous(void) {
   wait(700, msec);
   resetDriveSensors=true;
   desiredValue=100;
-  wait(700, msec);
+  wait(300, msec);//700
   intake.spin(fwd, 600, vex::velocityUnits::rpm);
   wait(500, msec);
   if (intakeSense.objectDistance(mm)>40)
   {
     fire=true;
+    wait(400, msec);
+    load=true;
   }
-
-
+  
 
 
 
@@ -553,6 +554,28 @@ void autonomous(void) {
  
 }
 
+void leftExpo (vex::directionType type, int percentage){
+  if(percentage >= 0){
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  }else{
+    percentage = -percentage;
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = -percentage;
+  }
+  leftDrive.spin (type, percentage, vex::velocityUnits::pct);
+}
+
+void rightExpo (vex::directionType type, int percentage){
+  if(percentage >= 0){
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  }else{
+    percentage = -percentage;
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = -percentage;
+  }
+  rightDrive.spin (type, percentage, vex::velocityUnits::pct);
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */
@@ -577,10 +600,13 @@ float altDriveSpeed = 1.0;
 float driveSpeed = initDriveSpeed;
 bool driveOn = false;
 bool driveToggle = true;
-bool reload = false;
+bool reload = true;
 bool expand = false;
 bool boostOn = false;
 bool boostToggle = false;
+
+int discCount =0;
+
 void usercontrol(void) {
   enableDrivePID=false;
   autonCata=false;
@@ -590,6 +616,7 @@ void usercontrol(void) {
   while (1) {
     if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
     {
+      intakeToggle=false;
       expand = true;
       reload=false;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
@@ -601,9 +628,11 @@ void usercontrol(void) {
       expansion.set(false);
     }
     driveBrake(brake);
-    leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    
+    // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    leftExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
+    rightExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));
+
      if (Controller.ButtonL2.pressing())
     {
       if (!indexerOn)
@@ -622,6 +651,7 @@ void usercontrol(void) {
       {
         intakeToggle = !intakeToggle;
         intakeOn=true;
+        indexerToggle=true;
       }
     }
     else
@@ -685,11 +715,13 @@ void usercontrol(void) {
 
     if (Controller.ButtonR1.pressing())
     {
+      intakeToggle=false;
       reload=true;
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      catapult.spin(reverse, 70, vex::velocityUnits::pct);
     }
     if (Controller.ButtonR2.pressing())
     {
+      intakeToggle=false;
       reload=false;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
       wait(20, msec);
@@ -707,10 +739,33 @@ void usercontrol(void) {
       cataBoost.set(false);
       if (!expand)
       {
+        intakeToggle=false;
         reload=true;
         catapult.spin(reverse, 80, vex::velocityUnits::pct);
       }
     }
+
+    // if (intakeSense.objectDistance(mm)<=23)
+    // {
+    //   // Controller.Screen.setCursor(0,0);
+    //   // Controller.Screen.clearLine();
+    //   // Controller.Screen.print(1);
+    //   discCount+=1;
+    // }
+    // else {
+    //   //  Controller.Screen.setCursor(0,0);
+    //   // Controller.Screen.clearLine();
+    //   // Controller.Screen.print(0);
+    // }
+
+    // if (discCount>=6 && intakeSense.objectDistance(mm)>30)
+    // {
+    //   intakeToggle=false;
+    // }
+
+
+
+
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
