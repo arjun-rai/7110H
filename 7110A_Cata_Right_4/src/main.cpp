@@ -381,8 +381,8 @@ void autonomous(void) {
   // load=true;
   resetDriveSensors=true;
   tuckyRightVar=1;
-  tuckyLeftVar=0.94;//-1.19
-  desiredValue=1300;
+  tuckyLeftVar=0.94;//0.94
+  desiredValue=1250;//1300
   wait(1500, msec);
   fire=true;
   wait(500, msec);
@@ -390,7 +390,7 @@ void autonomous(void) {
   // wait(10000000, msec);
   //.
   wait(500, msec);
-  desiredTurnValue=-1.19;
+  desiredTurnValue=-1.15;//1.19
   tuckyRightVar=1;
   tuckyLeftVar=1;
   resetDriveSensors=true;
@@ -406,7 +406,7 @@ void autonomous(void) {
   tuckyRightVar=1;
   tuckyLeftVar=1;
   resetDriveSensors=true;
-  desiredValue=-850;
+  desiredValue=-810;
   wait(1000, msec);
   resetDriveSensors=true;
   desiredValue=0;
@@ -432,10 +432,10 @@ void autonomous(void) {
   wait(1700, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=20;
+  desiredTurnValue=16.5;//20
   wait(700, msec);
   resetDriveSensors=true;
-  desiredValue=100;
+  desiredValue=0;
   wait(300, msec);//700
   intake.spin(fwd, 600, vex::velocityUnits::rpm);
   wait(500, msec);
