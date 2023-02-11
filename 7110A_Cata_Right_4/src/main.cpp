@@ -380,15 +380,23 @@ void autonomous(void) {
   vex::task cata(loadCata);
   // load=true;
   resetDriveSensors=true;
-  desiredValue=1200;
+  tuckyRightVar=1;
+  tuckyLeftVar=0.94;//-1.19
+  desiredValue=1300;
   wait(1500, msec);
   fire=true;
   wait(500, msec);
   load=true;
+  // wait(10000000, msec);
+  //.
+  wait(500, msec);
+  desiredTurnValue=-1.19;
+  tuckyRightVar=1;
+  tuckyLeftVar=1;
   resetDriveSensors=true;
-  desiredValue=0;//-200
-  wait(700, msec);
-  resetDriveSensors=true;
+  // desiredValue=0;//-200
+  // wait(700, msec);
+  // resetDriveSensors=true;
   tuckyRightVar=0;
   tuckyLeftVar=1;
   desiredValue=-1100;//0
@@ -409,7 +417,7 @@ void autonomous(void) {
   wait(800, msec);
   intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
   resetDriveSensors=true;
-  desiredValue=600;//700
+  desiredValue=200;//700
   wait(1000, msec);
   resetDriveSensors=true;
   desiredValue=0;
@@ -424,7 +432,7 @@ void autonomous(void) {
   wait(1700, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=21;
+  desiredTurnValue=20;
   wait(700, msec);
   resetDriveSensors=true;
   desiredValue=100;
@@ -719,7 +727,7 @@ void usercontrol(void) {
       reload=true;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
     }
-    if (Controller.ButtonR2.pressing())
+    if (Controller.ButtonR2.pressing()&&intakeSense.objectDistance(mm)>40)
     {
       intakeToggle=false;
       reload=false;
@@ -735,6 +743,7 @@ void usercontrol(void) {
     }
     else if (!reload && cataSense.angle(deg)>172)
     {
+      intakeToggle=false;
       catapult.stop(coast);
       cataBoost.set(false);
       if (!expand)

@@ -391,7 +391,7 @@ void autonomous(void) {
   wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-27; 
+  desiredTurnValue=-25; 
   wait(800, msec);
   resetDriveSensors=true;
   desiredValue=140;
@@ -411,17 +411,20 @@ void autonomous(void) {
   // wait(800, msec);
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
   resetDriveSensors=true;
-  desiredValue=-200;
-  wait(350, msec);
+  desiredValue=-100;
+  wait(300, msec);
+  resetDriveSensors=true;
+  desiredValue=-100;
+  wait(300, msec);
   resetDriveSensors=true;
   desiredValue=-200;
-  wait(500, msec);
+  wait(600, msec);
   resetDriveSensors=true;
   desiredValue=-200;
-  wait(350, msec);
+  wait(600, msec);
   resetDriveSensors=true;
   desiredValue=-200;
-  wait(500, msec);
+  wait(600, msec);
   // resetDriveSensors=true;
   // desiredValue=200;
   // wait(600, msec);
@@ -433,8 +436,8 @@ void autonomous(void) {
   wait(800, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-27; 
-  wait(1000, msec);
+  desiredTurnValue=-25; 
+  wait(800, msec);
   resetDriveSensors=true;
   desiredValue=300; //400
   wait(500, msec);
