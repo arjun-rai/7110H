@@ -616,6 +616,7 @@ bool boostToggle = false;
 int discCount =0;
 
 void usercontrol(void) {
+  cataBoost.set(false);
   enableDrivePID=false;
   autonCata=false;
   //Controller.Screen.clearLine();
@@ -712,7 +713,7 @@ void usercontrol(void) {
     {
       if (!boostOn)
       {
-        boostToggle = !boostToggle;
+        boostToggle = false;//!boostToggle
         boostOn=true;
       }
     }
