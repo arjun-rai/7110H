@@ -655,12 +655,12 @@ void usercontrol(void) {
       if (boostToggle)
         cataBoost.set(true);
     }
-    if (reload && cataSense.angle(deg)<93)
+    if (reload && cataSense.angle(deg)<96)//93
     {
       catapult.stop(hold);
       
     }
-    else if (!reload && cataSense.angle(deg)>172)
+    else if (!reload && cataSense.angle(deg)>168)
     {
       intakeToggle=false;
       catapult.stop(coast);
