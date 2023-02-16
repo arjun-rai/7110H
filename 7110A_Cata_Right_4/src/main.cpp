@@ -352,7 +352,7 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<93&&load)
+    if (cataSense.angle(deg)<94.5&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -363,7 +363,7 @@ int loadCata()
       wait(20, msec);
       cataBoost.set(true);
     }
-    if (cataSense.angle(deg)>172&&fire)
+    if (cataSense.angle(deg)>168&&fire)
     {
       catapult.stop(coast);
       cataBoost.set(false);
@@ -613,6 +613,9 @@ bool expand = false;
 bool boostOn = false;
 bool boostToggle = false;
 
+bool loaderOn = false;
+bool loaderToggle = false;
+
 int discCount =0;
 
 void usercontrol(void) {
@@ -685,28 +688,42 @@ void usercontrol(void) {
       blocker.set(true);
     }
 
-    if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
+    // if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
+    // {
+    //   if (!driveOn)
+    //   {
+    //     driveToggle = !driveToggle;
+    //     driveOn = true;
+    //   }
+    // }
+    // else
+    // {
+    //   driveOn = false;
+    // }
+    // if (driveToggle)
+    // {
+    //   driveSpeed = altDriveSpeed;
+    //   turnSpeed = altTurnSpeed;
+    // }
+    // else
+    // {
+    //   driveSpeed = initDriveSpeed;
+    //   turnSpeed=initTurnSpeed;
+    // }
+    if (Controller.ButtonY.pressing())
     {
-      if (!driveOn)
+      if (!loaderOn)
       {
-        driveToggle = !driveToggle;
-        driveOn = true;
+        loaderToggle = !loaderToggle;
+        loaderOn=true;
+        loaderToggle=true;
       }
     }
     else
     {
-      driveOn = false;
+      loaderOn=false;
     }
-    if (driveToggle)
-    {
-      driveSpeed = altDriveSpeed;
-      turnSpeed = altTurnSpeed;
-    }
-    else
-    {
-      driveSpeed = initDriveSpeed;
-      turnSpeed=initTurnSpeed;
-    }
+
 
     
      if (Controller.ButtonA.pressing())
@@ -737,12 +754,16 @@ void usercontrol(void) {
       if (boostToggle)
         cataBoost.set(true);
     }
-    if (reload && cataSense.angle(deg)<93)
+    if (reload&&loaderToggle&&cataSense.angle(deg)<107)
+    {
+      catapult.stop(hold);
+    }
+    else if (reload && cataSense.angle(deg)<94.5)//93
     {
       catapult.stop(hold);
       
     }
-    else if (!reload && cataSense.angle(deg)>172)
+    else if (!reload && cataSense.angle(deg)>168)
     {
       intakeToggle=false;
       catapult.stop(coast);
