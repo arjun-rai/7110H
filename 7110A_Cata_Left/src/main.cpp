@@ -45,19 +45,19 @@ void driveBrake(vex::brakeType b)
 int autonNum =-1;
 //point(10, 20), point(15, 30), point(10, 50),
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(0, -10)},
-  {point(0, -10), point(-10,-10)}
+  {point(0, 0), point(0, 24)},
+  {point(0, 24), point(-18,24)}
   };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  for (int i =0;i<pathMain.size(); i++)
-  {
-    pathMain[i] = inject(pathMain[i]);
-    pathMain[i] = smooth(pathMain[i]);
-    curv_func(pathMain[i]);
-    speed_func(pathMain[i]);
-  }
+  // for (int i =0;i<pathMain.size(); i++)
+  // {
+  //   pathMain[i] = inject(pathMain[i]);
+  //   pathMain[i] = smooth(pathMain[i]);
+  //   curv_func(pathMain[i]);
+  //   speed_func(pathMain[i]);
+  // }
   //double test[] = {0,0};
   
   // for (int i =0;i<path.size(); i++)
@@ -73,11 +73,15 @@ void pre_auton(void) {
   Inertial.resetRotation();
   Inertial.setHeading(0, degrees);
   Inertial.calibrate();
+  Inertial2.resetRotation();
+  Inertial2.setHeading(0, degrees);
+  Inertial2.calibrate();
   cataSense.setPosition(0, deg);
   cataSense.resetPosition();
-  while (Inertial.isCalibrating()) {
+  while (Inertial.isCalibrating()||Inertial2.isCalibrating()) {
   wait(100, msec);
   }
+  
   leftDrive.resetRotation();
   rightDrive.resetRotation();
   // leftEncoder.resetRotation();
@@ -100,10 +104,10 @@ void getCurrLoc()
   // Controller.Screen.setCursor(0,0);
   // Controller.Screen.clearLine();
   // Controller.Screen.print(pos[0]);
-  printf("%f\t%f\t%f\n", pos[0], pos[1], Inertial.rotation());
+  // printf("%f\t%f\t%f\n", pos[0], pos[1], (Inertial.rotation()+Inertial2.rotation())/2.0);
   //printf("%f\t%f\n", wheels[0], wheels[1]);
-  pos[0] += dist*sin(radians(Inertial.rotation()));
-  pos[1] += dist*cos(radians(Inertial.rotation()));
+  pos[0] += dist*sin(radians((Inertial.rotation()+Inertial2.rotation())/2.0));
+  pos[1] += dist*cos(radians((Inertial.rotation()+Inertial2.rotation())/2.0));
   lastLeft = leftDrive.rotation(rev)*M_PI*3.25*(3.0/5);
   lastRight = rightDrive.rotation(rev)*M_PI*3.25*(3.0/5);
 }
@@ -112,9 +116,9 @@ double kP = 0.01; //steady minor oscillations, should stop close to the correct 
 double kI = 0; //compensate for undershoot
 double kD = 0; //until steady 0.0001
 
-double turnkP = 0.068; //0.0664
-double turnkI = 0;
-double turnkD = 0.0001; //0.006
+double turnkP = 0.063; //0.068 0.0517
+double turnkI = 0.0044;//.0044
+double turnkD = 0; //0.0001
 //Autonomous Settings
 double desiredValue = 0;
 double desiredTurnValue = 0;
@@ -129,11 +133,11 @@ int turnPrevError = 0; //Position 2- milleseconds ago
 int turnDerivative; // error - prevError : Speed
 int turnTotalError=0; //totalError = totalError + error;
 
-int integralBound =25;
+int integralBound =46;
 int averagePosition;
 bool resetDriveSensors = false;
 double maxLateralPower = 11.8;
-double maxTurningPower = 6;
+double maxTurningPower = 12;
 double maxLateralChange=1;
 double lastLateralVoltage = 0;
 
@@ -187,7 +191,12 @@ int drivePID(){
     //int turnDifference = leftMotorPosition - rightMotorPosition;
 
     //Potential
-    turnError =desiredTurnValue-Inertial.rotation();
+    turnError =desiredTurnValue-((Inertial.rotation()+Inertial2.rotation())/2.0);
+    // if (abs(turnDerivative)<0.1&&abs(turnError)<7&&abs(derivative)<0.1&&abs(error)<50)
+    // {
+    //   break;
+    // }
+
     //getCurrLoc();
     
     // printf("%f\n", Inertial.rotation());
@@ -200,13 +209,15 @@ int drivePID(){
 
     //Integral (Highly suggested do not use it)
     //Velocity -> Postion -> Absement (Position and Time)
-    if (abs(turnError)<integralBound)
+    if (abs(turnError)<integralBound&&turnDerivative<0.1)
     {
       turnTotalError += turnError;
     }
     else {
       turnTotalError=0;
     }
+
+   
     
 
     //Maybe /12.0 ?
@@ -232,7 +243,7 @@ int drivePID(){
     }
     Controller.Screen.setCursor(0,0);
     Controller.Screen.clearLine();
-    Controller.Screen.print(Inertial.rotation());
+    Controller.Screen.print((Inertial.rotation()+Inertial2.rotation())/2.0);//(Inertial.rotation()+Inertial2.rotation())/2.0
     if (lateralMotorPower>0 && lateralMotorPower-lastLateralVoltage>maxLateralChange)
     {
       lateralMotorPower = lastLateralVoltage+maxLateralChange;
@@ -257,33 +268,41 @@ int drivePID(){
 
 
 
-void PID(double move, double angle)
+void PID(double x, double y)
 {
   resetDriveSensors=true;
-  desiredValue=((move)/(M_PI*3.25))*360.0;
+  double angle = degree(atan2(x-pos[0], y-pos[1]));
   desiredTurnValue=angle;
+  drivePID();
+  resetDriveSensors=true;
+  desiredValue=((distanceP(pos[0], pos[1], x, y))/(M_PI*3.25))*360.0;
+  drivePID();  
 }
 void PID(double move)
 {
   resetDriveSensors=true;
-  desiredValue=((move)/(M_PI*3.25))*360.0;
+  desiredValue=move;
+  drivePID();
 }
 
 
 
 
+bool enableOdom=true;
+int odom()
+{
+  while (enableOdom)
+  {
+    // Controller.Screen.setCursor(0,0);
+    // Controller.Screen.clearLine();
+    // Controller.Screen.print(pos[1]);
+    getCurrLoc();
+    vex::task::sleep(20);
+  }
+  return 1;
+}
 
-// bool enableOdom=false;
-// int odom()
-// {
-//   while (enableOdom)
-//   {
-//     getCurrLoc();
-//   }
-//   return 1;
-// }
-
-double track_width = 15;
+double track_width = 12;
 //double dt = 0.005;
 double maxVelChange=3;
 bool pathing(std::vector<pathPoint> path, bool backwards)
@@ -298,7 +317,7 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
     double curv;
     if (look[2]>close)
     {
-      curv = curvature(path, pos, look, radians(Inertial.rotation()));
+      curv = curvature(path, pos, look, radians((Inertial.rotation()+Inertial2.rotation())/2.0));
       //curv = curvature(path, pos, look, radians(0));
     }
     else
@@ -326,6 +345,8 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
     //printf("%f\n", look[2]);
     wait(10, msec);
   }
+  rightDrive.stop();
+  leftDrive.stop();
   return true;
 }
 
@@ -339,9 +360,10 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
-bool load=true;
+bool load=false;
 bool fire = false;
 bool autonCata=true;
+bool loader=false;
 int loadCata()
 {
   while (autonCata)
@@ -350,6 +372,11 @@ int loadCata()
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
+    if (cataSense.angle(deg)<103&&load&&loader)
+    {
+      catapult.stop(hold);
+      load=!load;
+    }
     if (cataSense.angle(deg)<93&&load)
     {
       catapult.stop(hold);
@@ -357,14 +384,11 @@ int loadCata()
     }
     if (fire)
     {
-      catapult.spin(reverse, 70, vex::velocityUnits::pct);
-      wait(20, msec);
-      cataBoost.set(true);
+      catapult.spin(reverse, 80, vex::velocityUnits::pct);
     }
     if (cataSense.angle(deg)>168&&fire)
     {
       catapult.stop(coast);
-      cataBoost.set(false);
       fire=!fire;
     }
     vex::task::sleep(20);
@@ -372,83 +396,91 @@ int loadCata()
   return 0;
 }
 
+
+
 void autonomous(void) {
-  autonCata=true;
+  // autonCata=true;
+  // vex::task odometry(odom);
+  // PID(12,12);
+
   vex::task PID1(drivePID);
-  vex::task cata(loadCata);
-  resetDriveSensors=true;
-  // intake.spin(fwd, 100, vex::velocityUnits::pct);
-  desiredValue=-300;
-  wait(1000, msec);
-  intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
-  load=true;
-  resetDriveSensors=true;
-  desiredValue=300;
-  desiredTurnValue=48;
-  wait(1000, msec);
-  resetDriveSensors=true;
-  desiredValue=1200;
-  wait(2000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-25; 
-  wait(800, msec);
-  resetDriveSensors=true;
-  desiredValue=140;
-  wait(1000, msec);
-  fire=true;
-  wait(500, msec);
-  load=true;
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-115; //-110
-  wait(800, msec);
-  resetDriveSensors=true;
-  desiredValue=-400;
-  wait(800, msec);
+  desiredTurnValue=180;
+  // vex::task cata(loadCata);
   // resetDriveSensors=true;
-  // desiredValue=200;
+  // // intake.spin(fwd, 100, vex::velocityUnits::pct);
+  // desiredValue=-300;
+  // wait(1000, msec);
+  // intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
+  // load=true;
+  // resetDriveSensors=true;
+  // desiredValue=300;
+  // desiredTurnValue=48;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=1200;
+  // wait(2000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=-25; 
   // wait(800, msec);
-  intake.spin(reverse, 600, vex::velocityUnits::rpm);
-  resetDriveSensors=true;
-  desiredValue=-100;
-  wait(300, msec);
-  resetDriveSensors=true;
-  desiredValue=-100;
-  wait(300, msec);
-  resetDriveSensors=true;
-  desiredValue=-200;
-  wait(600, msec);
-  resetDriveSensors=true;
-  desiredValue=-200;
-  wait(600, msec);
-  resetDriveSensors=true;
-  desiredValue=-200;
-  wait(600, msec);
   // resetDriveSensors=true;
-  // desiredValue=200;
+  // desiredValue=140;
+  // wait(1000, msec);
+  // fire=true;
+  // wait(500, msec);
+  // load=true;
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=-115; //-110
+  // wait(800, msec);
+  // resetDriveSensors=true;
+  // desiredValue=-400;
+  // wait(800, msec);
+  // // resetDriveSensors=true;
+  // // desiredValue=200;
+  // // wait(800, msec);
+  // intake.spin(reverse, 600, vex::velocityUnits::rpm);
+  // resetDriveSensors=true;
+  // desiredValue=-100;
+  // wait(300, msec);
+  // resetDriveSensors=true;
+  // desiredValue=-100;
+  // wait(300, msec);
+  // resetDriveSensors=true;
+  // desiredValue=-200;
   // wait(600, msec);
-  resetDriveSensors=true;
-  desiredValue=-400;
-  wait(1000, msec);
-  resetDriveSensors=true;
-  desiredValue=-400;
-  wait(800, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-25; 
-  wait(800, msec);
-  resetDriveSensors=true;
-  desiredValue=300; //400
-  wait(500, msec);
-  intake.spin(fwd, 600, vex::velocityUnits::rpm);
-  wait(500, msec);
-  if (intakeSense.objectDistance(mm)>40)
-  {
-    fire=true;
-    wait(400, msec);
-    load=true;
-  }
+  // resetDriveSensors=true;
+  // desiredValue=-200;
+  // wait(600, msec);
+  // resetDriveSensors=true;
+  // desiredValue=-200;
+  // wait(600, msec);
+  // // resetDriveSensors=true;
+  // // desiredValue=200;
+  // // wait(600, msec);
+  // resetDriveSensors=true;
+  // desiredValue=-400;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=-400;
+  // wait(800, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=-25; 
+  // wait(800, msec);
+  // resetDriveSensors=true;
+  // desiredValue=300; //400
+  // wait(500, msec);
+  // intake.spin(fwd, 600, vex::velocityUnits::rpm);
+  // wait(500, msec);
+  // if (intakeSense.objectDistance(mm)>40)
+  // {
+  //   fire=true;
+  //   wait(400, msec);
+  //   load=true;
+  // }
 
 
   // wait(500, msec);
@@ -535,11 +567,13 @@ bool loaderOn = false;
 bool loaderToggle = false;
 
 int discCount =0;
+int loaderCount=0;
 
 void usercontrol(void) {
+  
   cataBoost.set(false);
-  enableDrivePID=false;
   autonCata=false;
+  enableDrivePID=false;
   //Controller.Screen.clearLine();
   //Controller.Screen.print(averagePosition);
   // User control code here, inside the loop
@@ -634,12 +668,19 @@ void usercontrol(void) {
       {
         loaderToggle = !loaderToggle;
         loaderOn=true;
+        loaderCount=0;
       }
     }
     else
     {
+      if (loaderCount==5)
+      {
+        loaderToggle=false;
+      }
       loaderOn=false;
     }
+
+  
 
 
     
@@ -647,7 +688,7 @@ void usercontrol(void) {
     {
       if (!boostOn)
       {
-        boostToggle = false;//!boostToggle
+        boostToggle = !boostToggle;//!boostToggle
         boostOn=true;
       }
     }
@@ -674,6 +715,7 @@ void usercontrol(void) {
     if (reload&&loaderToggle&&cataSense.angle(deg)<103)
     {
       catapult.stop(hold);
+      
     }
     if (reload && cataSense.angle(deg)<93)//93
     {
@@ -685,6 +727,10 @@ void usercontrol(void) {
       intakeToggle=false;
       catapult.stop(coast);
       cataBoost.set(false);
+      if (loaderToggle)
+      {
+        loaderCount+=1;
+      }
       if (!expand)
       {
         intakeToggle=false;

@@ -18,7 +18,8 @@ motor FrontRight = motor(PORT16, ratio6_1, false);
 motor MiddleLeft = motor(PORT19, ratio6_1, true);
 motor MiddleRight = motor(PORT14, ratio6_1, false);
 motor catapult = motor(PORT18, ratio36_1,false);
-inertial Inertial = inertial(PORT10);
+inertial Inertial = inertial(PORT7);
+inertial Inertial2 = inertial(PORT8);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
 motor intake = motor(PORT12, ratio6_1, true);
@@ -27,6 +28,7 @@ digital_out cataBoost = digital_out(Brain.ThreeWirePort.B);
 rotation cataSense = rotation(PORT20);
 digital_out blocker = digital_out(Brain.ThreeWirePort.C);
 distance intakeSense = distance(PORT9);
+
 
 
 // VEXcode generated functions

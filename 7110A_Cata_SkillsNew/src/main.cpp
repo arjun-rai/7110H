@@ -426,7 +426,7 @@ void autonomous(void) {
   wait(1000, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-274;
+  desiredTurnValue=-272;//-271
   wait(900, msec);
   resetDriveSensors=true;
   desiredValue=3500;
@@ -452,11 +452,11 @@ void autonomous(void) {
   desiredTurnValue=-356;
   wait(800,msec);
   resetDriveSensors=true;
-  desiredValue=-300;
+  desiredValue=-430;
   wait(500, msec);
   for (int i =0;i<2;i++)
   {
-  intake.spin(fwd, 400, rpm);
+  intake.spin(fwd, 500, rpm);
   wait(2200, msec);
   intake.spin(reverse, 400, rpm);
   wait(200,msec);
@@ -472,18 +472,18 @@ void autonomous(void) {
   wait(500, msec);
   load=true;
   resetDriveSensors=true;
-  desiredTurnValue=-356;
+  desiredTurnValue=-360;
   desiredValue=0;
   wait(700, msec);
   resetDriveSensors=true;
-  desiredValue=-350;
+  desiredValue=-500;
   wait(600, msec);
   }
   load=true;
   wait(500, msec);
   resetDriveSensors=true;
   desiredValue=0;
-  desiredTurnValue=-359.5;
+  desiredTurnValue=-360;
   wait(500, msec);
   resetDriveSensors=true;
   desiredValue=6500;
@@ -501,7 +501,7 @@ void autonomous(void) {
 
   for (int i =0;i<3;i++)
   {
-  intake.spin(fwd, 400, rpm);
+  intake.spin(fwd, 500, rpm);
   wait(2200, msec);
   intake.spin(reverse, 400, rpm);
   wait(200,msec);
@@ -604,11 +604,35 @@ void autonomous(void) {
   wait(500, msec);
   // wait(800, msec);
   fire=true;
+  wait(50,msec);
+  expansion=true;
   resetDriveSensors=true;
   desiredValue=-400;
-  
+ 
  
   
+}
+
+void leftExpo (vex::directionType type, int percentage){
+  if(percentage >= 0){
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  }else{
+    percentage = -percentage;
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = -percentage;
+  }
+  leftDrive.spin (type, percentage, vex::velocityUnits::pct);
+}
+
+void rightExpo (vex::directionType type, int percentage){
+  if(percentage >= 0){
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  }else{
+    percentage = -percentage;
+    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = -percentage;
+  }
+  rightDrive.spin (type, percentage, vex::velocityUnits::pct);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -635,19 +659,114 @@ float altDriveSpeed = 1.0;
 float driveSpeed = initDriveSpeed;
 bool driveOn = false;
 bool driveToggle = true;
-bool reload = false;
+bool reload = true;
 bool expand = false;
 bool boostOn = false;
 bool boostToggle = false;
+
+bool loaderOn = false;
+bool loaderToggle = false;
+
+int discCount =0;
+int loaderCount=0;
+
 void usercontrol(void) {
-  enableDrivePID=false;
+  
+  autonCata=true;
+  enableDrivePID=true;
+  vex::task PID1(drivePID);
+  vex::task cata(loadCata);
+  cataBoost.set(false);
+  
+  load=true;
+  loader=true;
+ 
+  for (int i =0;i<3;i++)
+  {
+  intake.spin(fwd, 500, rpm);
+  wait(2200, msec);
+  intake.spin(reverse, 400, rpm);
+  wait(200,msec);
+  intake.spin(fwd, 300, rpm);
+  resetDriveSensors=true;
+  desiredValue=200;
+  wait(500, msec);
+  resetDriveSensors=true;
+  desiredTurnValue=-277+360;
+  desiredValue=0;
+  wait(700, msec);
+  fire=true;
+  wait(500, msec);
+  load=true;
+  resetDriveSensors=true;
+  desiredTurnValue=-360+360;
+  desiredValue=0;
+  wait(700, msec);
+  resetDriveSensors=true;
+  desiredValue=-430;
+  wait(600, msec);
+  }
+  load=true;
+  wait(500, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=-360+360;
+  wait(500, msec);
+  resetDriveSensors=true;
+  desiredValue=6500;
+  wait(4000, msec);
+  resetDriveSensors=true;
+  desiredValue=0;
+  desiredTurnValue=-193+360;
+  wait(800,msec);
+  resetDriveSensors=true;
+  desiredValue=-950;
+  wait(500, msec);
+  intake.spin(reverse, 400, rpm);
+  wait(500, msec);
+
+
+  for (int i =0;i<2;i++)
+  {
+  intake.spin(fwd, 500, rpm);
+  wait(2200, msec);
+  intake.spin(reverse, 400, rpm);
+  wait(200,msec);
+  intake.spin(fwd, 300, rpm);
+  resetDriveSensors=true;
+  desiredValue=200;
+  wait(500, msec);
+  resetDriveSensors=true;
+  desiredTurnValue=-98+360;
+  desiredValue=0;
+  wait(700, msec);
+  fire=true;
+  wait(500, msec);
+  if (i==1)
+  {
+    loader=false;
+  }
+  load=true;
+  if (i!=1)
+  {
+    resetDriveSensors=true;
+    desiredTurnValue=-188+360;
+    desiredValue=0;
+    wait(700, msec);
+    resetDriveSensors=true;
+    desiredValue=-400;
+    wait(600, msec);
+  }
+  }
   autonCata=false;
+  enableDrivePID=false;
   //Controller.Screen.clearLine();
   //Controller.Screen.print(averagePosition);
   // User control code here, inside the loop
   while (1) {
     if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
     {
+      intakeToggle=false;
       expand = true;
       reload=false;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
@@ -659,9 +778,11 @@ void usercontrol(void) {
       expansion.set(false);
     }
     driveBrake(brake);
-    leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    
+    // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    leftExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
+    rightExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));
+
      if (Controller.ButtonL2.pressing())
     {
       if (!indexerOn)
@@ -680,6 +801,7 @@ void usercontrol(void) {
       {
         intakeToggle = !intakeToggle;
         intakeOn=true;
+        indexerToggle=true;
       }
     }
     else
@@ -699,35 +821,60 @@ void usercontrol(void) {
       intake.stop();
     }
 
-    if (Controller.ButtonUp.pressing()||Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing()||Controller.ButtonX.pressing())
+    // if (Controller.ButtonUp.pressing()&&Controller.ButtonX.pressing())
+    // {
+    //   blocker.set(true);
+    // }
+
+    // if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
+    // {
+    //   if (!driveOn)
+    //   {
+    //     driveToggle = !driveToggle;
+    //     driveOn = true;
+    //   }
+    // }
+    // else
+    // {
+    //   driveOn = false;
+    // }
+    // if (driveToggle)
+    // {
+    //   driveSpeed = altDriveSpeed;
+    //   turnSpeed = altTurnSpeed;
+    // }
+    // else
+    // {
+    //   driveSpeed = initDriveSpeed;
+    //   turnSpeed=initTurnSpeed;
+    // }
+    if (Controller.ButtonY.pressing())
     {
-      if (!driveOn)
+      if (!loaderOn)
       {
-        driveToggle = !driveToggle;
-        driveOn = true;
+        loaderToggle = !loaderToggle;
+        loaderOn=true;
+        loaderCount=0;
       }
     }
     else
     {
-      driveOn = false;
+      if (loaderCount==5)
+      {
+        loaderToggle=false;
+      }
+      loaderOn=false;
     }
-    if (driveToggle)
-    {
-      driveSpeed = altDriveSpeed;
-      turnSpeed = altTurnSpeed;
-    }
-    else
-    {
-      driveSpeed = initDriveSpeed;
-      turnSpeed=initTurnSpeed;
-    }
+
+  
+
 
     
      if (Controller.ButtonA.pressing())
     {
       if (!boostOn)
       {
-        boostToggle = !boostToggle;
+        boostToggle = false;//!boostToggle
         boostOn=true;
       }
     }
@@ -738,32 +885,67 @@ void usercontrol(void) {
 
     if (Controller.ButtonR1.pressing())
     {
+      intakeToggle=false;
       reload=true;
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      catapult.spin(reverse, 70, vex::velocityUnits::pct);
     }
-    if (Controller.ButtonR2.pressing())
+    if (Controller.ButtonR2.pressing()&&intakeSense.objectDistance(mm)>40)
     {
+      intakeToggle=false;
       reload=false;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
       wait(20, msec);
       if (boostToggle)
         cataBoost.set(true);
     }
-    if (reload && cataSense.angle(deg)<275)
+    if (reload&&loaderToggle&&cataSense.angle(deg)<103)
     {
       catapult.stop(hold);
       
     }
-    else if (!reload && cataSense.angle(deg)>339)
+    if (reload && cataSense.angle(deg)<93)//93
     {
+      catapult.stop(hold);
+      
+    }
+    else if (!reload && cataSense.angle(deg)>168)
+    {
+      intakeToggle=false;
       catapult.stop(coast);
       cataBoost.set(false);
+      if (loaderToggle)
+      {
+        loaderCount+=1;
+      }
       if (!expand)
       {
+        intakeToggle=false;
         reload=true;
         catapult.spin(reverse, 80, vex::velocityUnits::pct);
       }
     }
+
+    // if (intakeSense.objectDistance(mm)<=23)
+    // {
+    //   // Controller.Screen.setCursor(0,0);
+    //   // Controller.Screen.clearLine();
+    //   // Controller.Screen.print(1);
+    //   discCount+=1;
+    // }
+    // else {
+    //   //  Controller.Screen.setCursor(0,0);
+    //   // Controller.Screen.clearLine();
+    //   // Controller.Screen.print(0);
+    // }
+
+    // if (discCount>=6 && intakeSense.objectDistance(mm)>30)
+    // {
+    //   intakeToggle=false;
+    // }
+
+
+
+
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
