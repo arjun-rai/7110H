@@ -112,16 +112,18 @@ void getCurrLoc()
   lastRight = rightDrive.rotation(rev)*M_PI*3.25*(3.0/5);
 }
 
-double kP = 0.01; //steady minor oscillations, should stop close to the correct point
+double kP = 0.07; //steady minor oscillations, should stop close to the correct point
 double kI = 0; //compensate for undershoot
 double kD = 0; //until steady 0.0001
 
-double turnkP = 0.063; //0.068 0.0517
-double turnkI = 0.0044;//.0044
-double turnkD = 0; //0.0001
+double turnkP = 0.404; //0.068 0.0517 0.063 0.23 0.138     0.45  0.446  0.404
+double turnkI = 0;//.0044     0.001
+double turnkD = 0.1; //0.0001  0.5 0.1  0.000001
+double turnkF = 0.001;
 //Autonomous Settings
 double desiredValue = 0;
 double desiredTurnValue = 0;
+double startingTurnValue =0;
 
 int error; //SensorValue - DesiredValue : Position 
 int prevError = 0; //Position 2- milleseconds ago
@@ -133,12 +135,12 @@ int turnPrevError = 0; //Position 2- milleseconds ago
 int turnDerivative; // error - prevError : Speed
 int turnTotalError=0; //totalError = totalError + error;
 
-int integralBound =46;
+int integralBound =90;
 int averagePosition;
 bool resetDriveSensors = false;
-double maxLateralPower = 11.8;
-double maxTurningPower = 12;
-double maxLateralChange=1;
+double maxLateralPower = 100;
+double maxTurningPower = 24;
+double maxLateralChange=15;
 double lastLateralVoltage = 0;
 
 //Variables modified for use
@@ -158,6 +160,7 @@ int drivePID(){
       rightDrive.resetPosition();
       leftDrive.resetRotation();
       rightDrive.resetRotation();
+      startingTurnValue=(Inertial.rotation()+Inertial2.rotation())/2.0;
       
     }
     //Get the position of both motors
@@ -192,10 +195,10 @@ int drivePID(){
 
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()+Inertial2.rotation())/2.0);
-    // if (abs(turnDerivative)<0.1&&abs(turnError)<7&&abs(derivative)<0.1&&abs(error)<50)
-    // {
-    //   break;
-    // }
+    if (abs(turnError)<1&&abs(error)<50)
+    {
+      break;
+    }
 
     //getCurrLoc();
     
@@ -209,19 +212,28 @@ int drivePID(){
 
     //Integral (Highly suggested do not use it)
     //Velocity -> Postion -> Absement (Position and Time)
-    if (abs(turnError)<integralBound&&turnDerivative<0.1)
+    if (turnError == 0)
     {
+      turnTotalError = 0;
+    }
+    if ( abs(turnError) > 45)
+    {
+      turnTotalError = 0;
+    }
+
+    // if (turnDerivative<0.1)
+    // {
       turnTotalError += turnError;
-    }
-    else {
-      turnTotalError=0;
-    }
+    // }
+    // else {
+    //   turnTotalError=0;
+    // }
 
    
     
 
     //Maybe /12.0 ?
-    double turnMotorPower = turnError*turnkP + turnDerivative*turnkD+turnTotalError*turnkI;
+    double turnMotorPower = turnError*turnkP + turnDerivative*turnkD+turnTotalError*turnkI + turnkF*(desiredTurnValue-startingTurnValue);
     // x
     
     if(lateralMotorPower>maxLateralPower)
@@ -233,14 +245,14 @@ int drivePID(){
       lateralMotorPower=-maxLateralPower;
     }
      
-    if(turnMotorPower>maxTurningPower)
-    {
-      turnMotorPower=maxTurningPower;
-    }
-    if(turnMotorPower<-maxTurningPower)
-    {
-      turnMotorPower=-maxTurningPower;
-    }
+    // if(turnMotorPower>maxTurningPower)
+    // {
+    //   turnMotorPower=maxTurningPower;
+    // }
+    // if(turnMotorPower<-maxTurningPower)
+    // {
+    //   turnMotorPower=-maxTurningPower;
+    // }
     Controller.Screen.setCursor(0,0);
     Controller.Screen.clearLine();
     Controller.Screen.print((Inertial.rotation()+Inertial2.rotation())/2.0);//(Inertial.rotation()+Inertial2.rotation())/2.0
@@ -255,14 +267,15 @@ int drivePID(){
 
     lastLateralVoltage=lateralMotorPower;
     
-    leftDrive.spin(fwd, lateralMotorPower + turnMotorPower, voltageUnits::volt);
-    rightDrive.spin(fwd, lateralMotorPower - turnMotorPower, voltageUnits::volt);
+    leftDrive.spin(fwd, lateralMotorPower + turnMotorPower, pct);
+    rightDrive.spin(fwd, lateralMotorPower - turnMotorPower, pct);
     prevError = error;
     turnPrevError = turnError;
     vex::task::sleep(10);
   }
 
-
+  leftDrive.stop();
+  rightDrive.stop();
   return 1;
 }
 
@@ -271,19 +284,24 @@ int drivePID(){
 void PID(double x, double y)
 {
   resetDriveSensors=true;
-  double angle = degree(atan2(x-pos[0], y-pos[1]));
-  desiredTurnValue=angle;
+  double ang = degree(atan2(x-pos[0], y-pos[1]));
+  desiredTurnValue=ang;
   drivePID();
   resetDriveSensors=true;
   desiredValue=((distanceP(pos[0], pos[1], x, y))/(M_PI*3.25))*360.0;
   drivePID();  
 }
-void PID(double move)
+void PIDMove(double move, double ang)
 {
+  resetDriveSensors=true;
+  desiredTurnValue=ang;
+  desiredValue=0;
+  drivePID();
   resetDriveSensors=true;
   desiredValue=move;
   drivePID();
 }
+
 
 
 
@@ -399,14 +417,49 @@ int loadCata()
 
 
 void autonomous(void) {
-  // autonCata=true;
+  autonCata=true;
   // vex::task odometry(odom);
-  // PID(12,12);
+  PIDMove(1600, 90);
+  PIDMove(1600, 180);
+  PIDMove(1600, 270);
+  PIDMove(1600, 360);
+  PIDMove(1600, 450);
+  
+  // vex::task PID1(drivePID);
+  // resetDriveSensors=true;
+  // desiredTurnValue=45;
+  // desiredValue=0;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=800;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredTurnValue=180;
+  // desiredValue=0;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=800;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredTurnValue=270;
+  // desiredValue=0;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=800;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredTurnValue=360;
+  // desiredValue=0;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=800;
+  // wait(1000, msec);
+  
 
-  vex::task PID1(drivePID);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=180;
+  // vex::task PID1(drivePID);
+  // resetDriveSensors=true;
+  // desiredValue=1600;
+  // desiredTurnValue=30;
   // vex::task cata(loadCata);
   // resetDriveSensors=true;
   // // intake.spin(fwd, 100, vex::velocityUnits::pct);
