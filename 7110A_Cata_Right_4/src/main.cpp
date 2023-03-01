@@ -197,7 +197,7 @@ int drivePID(){
 
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()+Inertial2.rotation())/2.0);
-    if (abs(turnError)<1&&abs(error)<50)
+    if (abs(turnError)<3.5&&abs(error)<50)
     {
       break;
     }
@@ -415,10 +415,62 @@ int loadCata()
 
 void autonomous(void) {
   autonCata=true;
-  vex::task PID1(drivePID);
+  // vex::task PID1(drivePID);
   vex::task cata(loadCata);
   // load=true;
-  resetDriveSensors=true;
+  // resetDriveSensors=true;
+  //NEW
+  double k=0.9;
+  PIDMove(1250*k,0);
+  fire=true;
+  wait(300, msec);
+  load=true;
+  wait(500, msec);
+  PIDMove(0,-58);
+  PIDMove(-1700*k,-58);//810
+  // PIDMove(0,-10);
+  // PIDMove(-400*k,-10);
+  intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
+  PIDMove(200*k,-58);
+  PIDMove(0,106.5);
+  intake.spin(reverse, 600, vex::velocityUnits::rpm);
+  PIDMove(-1500*k,106.5);
+  PIDMove(-2000*k,106.5);
+  PIDMove(-1000*k,106.5);
+  PIDMove(0,27);
+  // intake.spin(fwd, 600, vex::velocityUnits::rpm);
+  // wait(500, msec);
+  if (intakeSense.objectDistance(mm)>40)
+  {
+    fire=true;
+    wait(300, msec);
+    load=true;
+    wait(500, msec);
+  }
+  else{
+    wait(10000, msec);
+  }
+  PIDMove(0,-17);
+  intake.spin(reverse, 600, vex::velocityUnits::rpm);
+  PIDMove(-600,-17);
+  PIDMove(-800,-17);
+  PIDMove(1600,-17);
+  PIDMove(0,27);
+  // intake.spin(fwd, 600, vex::velocityUnits::rpm);
+  // wait(500, msec);
+  if (intakeSense.objectDistance(mm)>40)
+  {
+    fire=true;
+    wait(300, msec);
+    load=true;
+    wait(500, msec);
+  }
+  else{
+    wait(10000, msec);
+  }
+  wait(10000, msec);
+
+  //OLD
   tuckyRightVar=1;
   tuckyLeftVar=0.94;//0.94
   desiredValue=1250;//1300

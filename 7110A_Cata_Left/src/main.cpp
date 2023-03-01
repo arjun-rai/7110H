@@ -198,7 +198,7 @@ int drivePID(){
 
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()+Inertial2.rotation())/2.0);
-    if (abs(turnError)<1&&abs(error)<50)
+    if (abs(turnError)<3.5&&abs(error)<50)
     {
       break;
     }
@@ -406,10 +406,13 @@ int loadCata()
     if (fire)
     {
       catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      wait(20, msec);
+      cataBoost.set(true);
     }
     if (cataSense.angle(deg)>168&&fire)
     {
       catapult.stop(coast);
+      cataBoost.set(false);
       fire=!fire;
     }
     vex::task::sleep(20);
@@ -421,8 +424,9 @@ int loadCata()
 
 void autonomous(void) {
   autonCata=true;
+  vex::task cata(loadCata);
   // vex::task odometry(odom);
-  PIDMove(0, 90);
+  // PIDMove(0, 90);
   // PIDMove(1600, 180);
   // PIDMove(1600, 270);
   // PIDMove(1600, 360);
@@ -431,6 +435,71 @@ void autonomous(void) {
   // PID(12, 12);
   // PID(12,0);
   // PID(0,0);
+  //^idk wtf this is
+
+  double k=0.9;
+  //NEW
+  PIDMove(-100,0);
+  intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
+  load=true;
+  PIDMove(300*k,0);
+  PIDMove(0,48);
+  PIDMove(1200*k,48);
+  PIDMove(0,-15);//-25
+  PIDMove(140*k,-15);//-25
+  // wait(1000, msec);
+  fire=true;
+  wait(400, msec);
+  load=true;
+  // wait(1000, msec);
+  PIDMove(0,-115);
+  PIDMove(-400*k,-115);
+  // PIDMove(0,180);//???????????????????????????????
+  // wait(1000, msec);
+  intake.spin(reverse, 600, vex::velocityUnits::rpm);
+  // wait(1000, msec);
+  PIDMove(-200*k,-115);
+  PIDMove(-200*k,-115);
+  // PIDMove(-300*k,-115);
+  PIDMove(-1200*k,-115);
+  PIDMove(0,-33);//-25
+  PIDMove(600*k,-33);//-25
+  // wait(500, msec);
+  intake.spin(fwd, 600, vex::velocityUnits::rpm);
+  wait(500, msec);
+  if (intakeSense.objectDistance(mm)>40)
+  {
+    fire=true;
+    wait(400, msec);
+    load=true;
+    wait(500, msec);
+  }else{
+    wait(10000, msec);
+  }
+  intake.spin(reverse, 600, vex::velocityUnits::rpm);
+  // PIDMove(0,-50);
+  // PIDMove(-1100*k,-50);
+  // PIDMove(0,-32);
+  // PIDMove(-300*k,-32);
+  // PIDMove(0,-40);
+  // PIDMove(1400*k,-40);
+  PIDMove(0,-45);
+  PIDMove(-1400*k,-45);
+  PIDMove(1400*k,-45);
+  PIDMove(0,-35);
+  // intake.spin(fwd, 600, vex::velocityUnits::rpm);
+  // wait(500, msec);
+  if (intakeSense.objectDistance(mm)>40)
+  {
+    fire=true;
+    wait(400, msec);
+    load=true;
+    wait(400, msec);
+  }else{
+    wait(10000, msec);
+  }
+
+  //OLD
   
   // vex::task PID1(drivePID);
   // resetDriveSensors=true;
