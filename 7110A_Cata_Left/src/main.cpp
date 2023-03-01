@@ -135,6 +135,9 @@ int turnPrevError = 0; //Position 2- milleseconds ago
 int turnDerivative; // error - prevError : Speed
 int turnTotalError=0; //totalError = totalError + error;
 
+double tuckyLeftVar= 1;
+double tuckyRightVar  =1;
+
 int integralBound =90;
 int averagePosition;
 bool resetDriveSensors = false;
@@ -267,8 +270,8 @@ int drivePID(){
 
     lastLateralVoltage=lateralMotorPower;
     
-    leftDrive.spin(fwd, lateralMotorPower + turnMotorPower, pct);
-    rightDrive.spin(fwd, lateralMotorPower - turnMotorPower, pct);
+    leftDrive.spin(fwd, tuckyLeftVar*(lateralMotorPower + turnMotorPower), pct);
+    rightDrive.spin(fwd, tuckyRightVar*(lateralMotorPower - turnMotorPower), pct);
     prevError = error;
     turnPrevError = turnError;
     vex::task::sleep(10);
@@ -419,11 +422,15 @@ int loadCata()
 void autonomous(void) {
   autonCata=true;
   // vex::task odometry(odom);
-  PIDMove(1600, 90);
-  PIDMove(1600, 180);
-  PIDMove(1600, 270);
-  PIDMove(1600, 360);
-  PIDMove(1600, 450);
+  PIDMove(0, 90);
+  // PIDMove(1600, 180);
+  // PIDMove(1600, 270);
+  // PIDMove(1600, 360);
+  // PIDMove(1600, 450);
+  // PID(0, 12);
+  // PID(12, 12);
+  // PID(12,0);
+  // PID(0,0);
   
   // vex::task PID1(drivePID);
   // resetDriveSensors=true;

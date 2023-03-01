@@ -11,6 +11,7 @@ extern motor FrontRight;
 extern motor MiddleLeft;
 extern motor MiddleRight;
 extern inertial Inertial;
+extern inertial Inertial2;
 extern motor_group leftDrive;
 extern motor_group rightDrive;
 // extern encoder leftEncoder;
