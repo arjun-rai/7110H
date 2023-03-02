@@ -434,12 +434,12 @@ void autonomous(void) {
   PIDMove(200*k,-58);
   PIDMove(0,106.5);
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
-  PIDMove(-1500*k,106.5);
-  PIDMove(-2000*k,106.5);
+  PIDMove(-1700*k,106.5);
+  PIDMove(-1800*k,106.5);
   PIDMove(-1000*k,106.5);
   PIDMove(0,27);
-  // intake.spin(fwd, 600, vex::velocityUnits::rpm);
-  // wait(500, msec);
+  intake.spin(fwd, 600, vex::velocityUnits::rpm);
+  wait(500, msec);//500
   if (intakeSense.objectDistance(mm)>40)
   {
     fire=true;
@@ -450,20 +450,22 @@ void autonomous(void) {
   else{
     wait(10000, msec);
   }
+  //wait(10000, msec);
   PIDMove(0,-17);
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
-  PIDMove(-600,-17);
-  PIDMove(-800,-17);
-  PIDMove(1600,-17);
+  PIDMove(-500,-17);
+  PIDMove(-500,-17);
+  PIDMove(-500,-17);
+  PIDMove(1700,-17);//1500
   PIDMove(0,27);
-  // intake.spin(fwd, 600, vex::velocityUnits::rpm);
-  // wait(500, msec);
+  intake.spin(fwd, 600, vex::velocityUnits::rpm);
+  wait(500, msec);//500
   if (intakeSense.objectDistance(mm)>40)
   {
     fire=true;
     wait(300, msec);
-    load=true;
-    wait(500, msec);
+    // load=true;
+    // wait(500, msec);
   }
   else{
     wait(10000, msec);
