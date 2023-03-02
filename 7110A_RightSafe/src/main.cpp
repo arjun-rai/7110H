@@ -425,7 +425,7 @@ void autonomous(void) {
   fire=true;
   wait(300, msec);
   load=true;
-  wait(500, msec);
+  // wait(500, msec);
   PIDMove(0,-58);
   PIDMove(-1700*k,-58);//810
   // PIDMove(0,-10);
@@ -435,8 +435,11 @@ void autonomous(void) {
   PIDMove(0,106.5);
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
   PIDMove(-1700*k,106.5);
+  wait(200, msec);
   PIDMove(-1800*k,106.5);
+  wait(200, msec);
   PIDMove(-1000*k,106.5);
+  wait(200, msec);
   PIDMove(0,27);
   intake.spin(fwd, 600, vex::velocityUnits::rpm);
   wait(500, msec);//500
@@ -445,7 +448,7 @@ void autonomous(void) {
     fire=true;
     wait(300, msec);
     load=true;
-    wait(500, msec);
+    wait(600, msec);
   }
   else{
     wait(10000, msec);
@@ -464,8 +467,8 @@ void autonomous(void) {
   {
     fire=true;
     wait(300, msec);
-    // load=true;
-    // wait(500, msec);
+    load=true;
+    wait(500, msec);
   }
   else{
     wait(10000, msec);
