@@ -431,7 +431,7 @@ void autonomous(void) {
   loader=true;
   for (int i =0;i<3;i++)
   {
-  intake.spin(fwd, 500, rpm);
+  intake.spin(fwd, 400, rpm);
   if (i!=0)
   {
     wait(2200, msec);
@@ -442,11 +442,11 @@ void autonomous(void) {
   
   intake.spin(reverse, 400, rpm);
   wait(200,msec);
-  intake.spin(fwd, 300, rpm);
+  intake.spin(fwd, 500, rpm);
   PIDMove(200, 0);
-  PIDMove(0, 80);//-290
+  PIDMove(0, 70);//-290
   fire=true;
-  wait(450, msec);
+  wait(500, msec);
   load=true;
   if (i!=2)
   {
@@ -532,7 +532,7 @@ void autonomous(void) {
   PIDMove(-950, -45);
   PIDMove(0, -90);
   intake.stop();
-  PIDMove(-800, -90);
+  PIDMove(-770, -90);
   intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
   PIDMove(550, -90);
   PIDMove(0, -132);
