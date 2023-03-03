@@ -432,7 +432,14 @@ void autonomous(void) {
   for (int i =0;i<3;i++)
   {
   intake.spin(fwd, 500, rpm);
-  wait(2200, msec);
+  if (i!=0)
+  {
+    wait(2200, msec);
+  }
+  else {
+    wait(500, msec);
+  }
+  
   intake.spin(reverse, 400, rpm);
   wait(200,msec);
   intake.spin(fwd, 300, rpm);
@@ -456,7 +463,7 @@ void autonomous(void) {
   PIDMove(0, 95);
   PIDMove(-2150, 95);
   PIDMove(0, 0);
-  PIDMove(-320, 0, 1000);
+  PIDMove(-300, 0, 1000);
   intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
   PIDMove(220, 0);
   PIDMove(0, -225);
@@ -507,75 +514,85 @@ void autonomous(void) {
   PIDMove(-200, -45);
   PIDMove(-400, -45);
   PIDMove(-400, -45);
+  intake.spin(fwd, 600, rpm);
   PIDMove(2200, -45);
   PIDMove(0, -90);
-  PIDMove(800, -90);
-  intake.spin(fwd, 600, rpm);
+  PIDMove(700, -90);
   fire=true;
   wait(500, msec);
-  load=true;
+  // load=true;
   intake.stop();
   PIDMove(-3000, -90);
   PIDMove(0, -180);
-  PIDMove(-800, -180);
+  PIDMove(-670, -180);
   intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
-  wait(1000000,msec);
+  PIDMove(300, -180);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(0, -45);
+  PIDMove(-950, -45);
+  PIDMove(0, -90);
+  intake.stop();
+  PIDMove(-800, -90);
+  intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
+  PIDMove(550, -90);
+  PIDMove(0, -132);
+  // wait(1000000,msec);
 
-  PIDMove(360, -260);
-  PIDMove(0, -230);
-  PIDMove(1400, -230);
-  PIDMove(0, -270);
-  PIDMove(2800, -270);
-  fire=true;
-  wait(500, msec);
-  loader=true;
-  load=true;
-  PIDMove(-870, -270);//-850
-  PIDMove(0,-360);
-  PIDMove(-650, -360);
+  // PIDMove(360, -260);
+  // PIDMove(0, -230);
+  // PIDMove(1400, -230);
+  // PIDMove(0, -270);
+  // PIDMove(2800, -270);
+  // fire=true;
+  // wait(500, msec);
+  // loader=true;
+  // load=true;
+  // PIDMove(-870, -270);//-850
+  // PIDMove(0,-360);
+  // PIDMove(-650, -360);
 
  
   
   
-  PIDMove(100, -360);
-  PIDMove(0, -356);//-356
-  PIDMove(6000, -356); //-356.5
-  PIDMove(0, -180);//-185
-  PIDMove(-1230, -180);//-950
-  // intake.spin(reverse, 400, rpm);
-  intake.spin(fwd, 500, rpm);
-  wait(500, msec);
+  // PIDMove(100, -360);
+  // PIDMove(0, -356);//-356
+  // PIDMove(6000, -356); //-356.5
+  // PIDMove(0, -180);//-185
+  // PIDMove(-1230, -180);//-950
+  // // intake.spin(reverse, 400, rpm);
+  // intake.spin(fwd, 500, rpm);
+  // wait(500, msec);
 
-  for (int i =0;i<3;i++)
-  {
-  intake.spin(fwd, 500, rpm);
-  wait(2200, msec);
-  intake.spin(reverse, 400, rpm);
-  wait(200,msec);
-  intake.spin(fwd, 300, rpm);
-  PIDMove(200, -180);
-  PIDMove(0, -103);
-  fire=true;
-  wait(400, msec);
-  if (i==2)
-  {
-    loader=false;
-  }
-  load=true;
-  if (i!=2)
-  {
-    PIDMove(0, -180);
-    PIDMove(-270, -180);
-  }
-  }
-  intake.stop();
-  PIDMove(0, -86);
-  PIDMove(-2100, -86);
-  PIDMove(0, -180);
-  PIDMove(-440, -180);
-  intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
-  PIDMove(900, -180);
-  PIDMove(0, -140);
+  // for (int i =0;i<3;i++)
+  // {
+  // intake.spin(fwd, 500, rpm);
+  // wait(2200, msec);
+  // intake.spin(reverse, 400, rpm);
+  // wait(200,msec);
+  // intake.spin(fwd, 300, rpm);
+  // PIDMove(200, -180);
+  // PIDMove(0, -103);
+  // fire=true;
+  // wait(400, msec);
+  // if (i==2)
+  // {
+  //   loader=false;
+  // }
+  // load=true;
+  // if (i!=2)
+  // {
+  //   PIDMove(0, -180);
+  //   PIDMove(-270, -180);
+  // }
+  // }
+  // intake.stop();
+  // PIDMove(0, -86);
+  // PIDMove(-2100, -86);
+  // PIDMove(0, -180);
+  // PIDMove(-440, -180);
+  // intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
+  // PIDMove(900, -180);
+  // PIDMove(0, -140);
   //  wait(100000,msec);
   // wait(10000, msec);
 
