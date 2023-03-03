@@ -146,13 +146,19 @@ double maxTurningPower = 24;
 double maxLateralChange=15;
 double lastLateralVoltage = 0;
 
+double timeMax = 1000000;
+
 //Variables modified for use
 bool enableDrivePID = true;
 
 int drivePID(){
-
+  vex::timer check = vex::timer();
   while(enableDrivePID)
   {
+    if (check.time()>timeMax)
+    {
+      return 0;
+    }
     if (resetDriveSensors)
     {
       resetDriveSensors = false;
@@ -294,8 +300,9 @@ void PID(double x, double y)
   desiredValue=((distanceP(pos[0], pos[1], x, y))/(M_PI*3.25))*360.0;
   drivePID();  
 }
-void PIDMove(double move, double ang)
+void PIDMove(double move, double ang, double time = 1000000)
 {
+  timeMax=time;
   resetDriveSensors=true;
   desiredTurnValue=ang;
   desiredValue=0;
@@ -421,11 +428,36 @@ void autonomous(void) {
   autonCata=true;
   // vex::task PID1(drivePID);
   vex::task cata(loadCata);
+  loader=true;
+  for (int i =0;i<3;i++)
+  {
+  intake.spin(fwd, 500, rpm);
+  wait(2200, msec);
+  intake.spin(reverse, 400, rpm);
+  wait(200,msec);
+  intake.spin(fwd, 300, rpm);
+  PIDMove(200, 0);
+  PIDMove(0, 80);//-290
+  fire=true;
+  wait(450, msec);
   load=true;
-  PIDMove(-170, 0);
+  if (i!=2)
+  {
+    PIDMove(0, 0);
+    PIDMove(-210, 0);
+  }
+  if (i==2)
+  {
+    loader=false;
+  }
+  }
+  load=true;
+  intake.stop();
+  PIDMove(0, 95);
+  PIDMove(-2150, 95);
+  PIDMove(0, 0);
+  PIDMove(-320, 0, 1000);
   intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
-  // load=true;
-  // wait(1000, msec);
   PIDMove(220, 0);
   PIDMove(0, -225);
   intake.spin(reverse, 500, rpm);
@@ -435,13 +467,60 @@ void autonomous(void) {
   PIDMove(0, -260);
     // intake.spin(reverse, 500, vex::velocityUnits::rpm);
   intake.stop();
-  PIDMove(-350, -260);
+  PIDMove(-470, -260,1000);
 
   
   // wait(500, msec);
   // resetDriveSensors=true;
   // desiredValue=0;
   intake.spinFor(reverse, 600, deg, 100, vex::velocityUnits::pct);
+  fire=true;
+  wait(500, msec);
+  load=true;
+  PIDMove(100, -260);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(0, -135);
+  PIDMove(-2000, -135);
+  PIDMove(-1000, -135);
+  PIDMove(-1000, -135);
+  PIDMove(0, -45);
+  PIDMove(350, -45);
+  fire=true;
+  wait(500, msec);
+  load=true;
+  // PIDMove(-100, -45);
+  PIDMove(0, -188);
+  PIDMove(-500, -180);
+  PIDMove(-500, -180);
+  PIDMove(-500, -180);
+  PIDMove(-500, -180);
+  PIDMove(0, -90);
+  intake.spin(fwd, 600, rpm);
+  fire=true;
+  wait(500,msec);
+  load=true;
+  PIDMove(-900, -90);
+  PIDMove(0, -45);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(-800, -45);
+  PIDMove(-200, -45);
+  PIDMove(-200, -45);
+  PIDMove(-400, -45);
+  PIDMove(-400, -45);
+  PIDMove(2200, -45);
+  PIDMove(0, -90);
+  PIDMove(800, -90);
+  intake.spin(fwd, 600, rpm);
+  fire=true;
+  wait(500, msec);
+  load=true;
+  intake.stop();
+  PIDMove(-3000, -90);
+  PIDMove(0, -180);
+  PIDMove(-800, -180);
+  intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
+  wait(1000000,msec);
+
   PIDMove(360, -260);
   PIDMove(0, -230);
   PIDMove(1400, -230);
@@ -456,24 +535,7 @@ void autonomous(void) {
   PIDMove(-650, -360);
 
  
-  for (int i =0;i<2;i++)
-  {
-  intake.spin(fwd, 500, rpm);
-  wait(2200, msec);
-  intake.spin(reverse, 400, rpm);
-  wait(200,msec);
-  intake.spin(fwd, 300, rpm);
-  PIDMove(200, -360);
-  PIDMove(0, -281.5);//-290
-  fire=true;
-  wait(400, msec);
-  load=true;
-  PIDMove(0, -360); 
-  PIDMove(-270, -360);
-  }
-  Inertial.setRotation(-360, degrees);
-  Inertial2.setRotation(-360, degrees);
-  load=true;
+  
   
   PIDMove(100, -360);
   PIDMove(0, -356);//-356
