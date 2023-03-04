@@ -444,7 +444,7 @@ void autonomous(void) {
   wait(200,msec);
   intake.spin(fwd, 500, rpm);
   PIDMove(200, 0);
-  PIDMove(0, 80);//-290
+  PIDMove(0, 75);//-290
   fire=true;
   wait(500, msec);
   load=true;
@@ -463,8 +463,10 @@ void autonomous(void) {
   PIDMove(0, 95);
   PIDMove(-2150, 95);
   PIDMove(0, 0);
-  PIDMove(-340, 0, 1000);
-  intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
+  PIDMove(-440, 0, 1000);
+  intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct, false);
+  wait(1000, msec);
+  intake.stop();
   PIDMove(220, 0);
   PIDMove(0, -225);
   intake.spin(reverse, 500, rpm);
@@ -474,13 +476,15 @@ void autonomous(void) {
   PIDMove(0, -260);
     // intake.spin(reverse, 500, vex::velocityUnits::rpm);
   intake.stop();
-  PIDMove(-470, -260,1000);
+  PIDMove(-590, -260,1000);
 
   
   // wait(500, msec);
   // resetDriveSensors=true;
   // desiredValue=0;
-  intake.spinFor(reverse, 600, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(reverse, 600, deg, 100, vex::velocityUnits::pct,false);
+  wait(1000, msec);
+  intake.stop();
   wait(100,msec);
   fire=true;
   wait(500, msec);
@@ -497,11 +501,11 @@ void autonomous(void) {
   wait(500, msec);
   load=true;
   // PIDMove(-100, -45);
-  PIDMove(0, -194);
-  PIDMove(-500, -194);
-  PIDMove(-500, -194);
-  PIDMove(-500, -194);
-  PIDMove(-500, -194);
+  PIDMove(0, -196);
+  PIDMove(-500, -196);
+  PIDMove(-500, -196);
+  PIDMove(-500, -196);
+  PIDMove(-500, -196);
   PIDMove(0, -90);
   intake.spin(fwd, 600, rpm);
   fire=true;
@@ -525,18 +529,23 @@ void autonomous(void) {
   intake.stop();
   PIDMove(-3000, -90);
   PIDMove(0, -180);
-  PIDMove(-750, -180);
-  intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
+  PIDMove(-860, -180);
+  intake.spinFor(reverse, 600, deg, 100, vex::velocityUnits::pct,false);
+  wait(1000, msec);
+  intake.stop();
   PIDMove(300, -180);
   intake.spin(reverse, 600, rpm);
   PIDMove(0, -45);
   PIDMove(-950, -45);
   PIDMove(0, -90);
   intake.stop();
-  PIDMove(-800, -90);
-  intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
+  PIDMove(-900, -90);
+  intake.spinFor(reverse, 600, deg, 100, vex::velocityUnits::pct,false);
+  wait(1000, msec);
+  intake.stop();
   PIDMove(550, -90);
   PIDMove(0, -132);
+  expansion.set(true);
   // wait(1000000,msec);
 
   // PIDMove(360, -260);
@@ -736,89 +745,36 @@ int loaderCount=0;
 void usercontrol(void) {
   
   autonCata=true;
-  enableDrivePID=true;
-  vex::task PID1(drivePID);
+  // vex::task PID1(drivePID);
   vex::task cata(loadCata);
-  cataBoost.set(false);
-  
-  load=true;
   loader=true;
- 
   for (int i =0;i<3;i++)
   {
-  intake.spin(fwd, 500, rpm);
-  wait(2200, msec);
-  intake.spin(reverse, 400, rpm);
-  wait(200,msec);
-  intake.spin(fwd, 300, rpm);
-  resetDriveSensors=true;
-  desiredValue=200;
-  wait(500, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=-277+360;
-  desiredValue=0;
-  wait(700, msec);
-  fire=true;
-  wait(500, msec);
-  load=true;
-  resetDriveSensors=true;
-  desiredTurnValue=-360+360;
-  desiredValue=0;
-  wait(700, msec);
-  resetDriveSensors=true;
-  desiredValue=-430;
-  wait(600, msec);
-  }
-  load=true;
-  wait(500, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-360+360;
-  wait(500, msec);
-  resetDriveSensors=true;
-  desiredValue=6500;
-  wait(4000, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-193+360;
-  wait(800,msec);
-  resetDriveSensors=true;
-  desiredValue=-950;
-  wait(500, msec);
-  intake.spin(reverse, 400, rpm);
-  wait(500, msec);
-
-
-  for (int i =0;i<2;i++)
+  intake.spin(fwd, 400, rpm);
+  if (i!=0)
   {
-  intake.spin(fwd, 500, rpm);
-  wait(2200, msec);
+    wait(2200, msec);
+  }
+  else {
+    wait(900, msec);
+  }
+  
   intake.spin(reverse, 400, rpm);
   wait(200,msec);
-  intake.spin(fwd, 300, rpm);
-  resetDriveSensors=true;
-  desiredValue=200;
-  wait(500, msec);
-  resetDriveSensors=true;
-  desiredTurnValue=-98+360;
-  desiredValue=0;
-  wait(700, msec);
+  intake.spin(fwd, 500, rpm);
+  PIDMove(200, 0);
+  PIDMove(0, 75);//-290
   fire=true;
   wait(500, msec);
-  if (i==1)
+  load=true;
+  if (i!=2)
+  {
+    PIDMove(0, 0);
+    PIDMove(-210, 0);
+  }
+  if (i==2)
   {
     loader=false;
-  }
-  load=true;
-  if (i!=1)
-  {
-    resetDriveSensors=true;
-    desiredTurnValue=-188+360;
-    desiredValue=0;
-    wait(700, msec);
-    resetDriveSensors=true;
-    desiredValue=-400;
-    wait(600, msec);
   }
   }
   autonCata=false;
