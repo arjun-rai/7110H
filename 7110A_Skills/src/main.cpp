@@ -444,13 +444,13 @@ void autonomous(void) {
   wait(200,msec);
   intake.spin(fwd, 500, rpm);
   PIDMove(200, 0);
-  PIDMove(0, 75);//-290
+  PIDMove(0, 70);//-290
   fire=true;
   wait(500, msec);
   load=true;
   if (i!=2)
   {
-    PIDMove(0, 0);
+    PIDMove(0, 2);
     PIDMove(-210, 0);
   }
   if (i==2)
@@ -463,7 +463,7 @@ void autonomous(void) {
   PIDMove(0, 95);
   PIDMove(-2150, 95);
   PIDMove(0, 0);
-  PIDMove(-340, 0, 1000);
+  PIDMove(-350, 0, 1000);
   intake.spinFor(fwd, 540, deg, 100, vex::velocityUnits::pct, false);
   wait(1000, msec);
   intake.stop();
@@ -476,7 +476,7 @@ void autonomous(void) {
   PIDMove(0, -260);
     // intake.spin(reverse, 500, vex::velocityUnits::rpm);
   intake.stop();
-  PIDMove(-580, -260,1000);
+  PIDMove(-570, -260,1000);
 
   
   // wait(500, msec);
@@ -492,7 +492,8 @@ void autonomous(void) {
 
   PIDMove(900, -260);
   PIDMove(0, -315);
-  //expansion.set(true);
+  PIDMove(-200, -315);
+  // expansion.set(true);
   // PIDMove(100, -260);
   // intake.spin(reverse, 600, rpm);
   // PIDMove(0, -135);
