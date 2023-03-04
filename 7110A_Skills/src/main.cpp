@@ -437,14 +437,14 @@ void autonomous(void) {
     wait(2200, msec);
   }
   else {
-    wait(500, msec);
+    wait(900, msec);
   }
   
   intake.spin(reverse, 400, rpm);
   wait(200,msec);
   intake.spin(fwd, 500, rpm);
   PIDMove(200, 0);
-  PIDMove(0, 70);//-290
+  PIDMove(0, 80);//-290
   fire=true;
   wait(500, msec);
   load=true;
@@ -463,7 +463,7 @@ void autonomous(void) {
   PIDMove(0, 95);
   PIDMove(-2150, 95);
   PIDMove(0, 0);
-  PIDMove(-300, 0, 1000);
+  PIDMove(-340, 0, 1000);
   intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
   PIDMove(220, 0);
   PIDMove(0, -225);
@@ -481,6 +481,7 @@ void autonomous(void) {
   // resetDriveSensors=true;
   // desiredValue=0;
   intake.spinFor(reverse, 600, deg, 100, vex::velocityUnits::pct);
+  wait(100,msec);
   fire=true;
   wait(500, msec);
   load=true;
@@ -491,16 +492,16 @@ void autonomous(void) {
   PIDMove(-1000, -135);
   PIDMove(-1000, -135);
   PIDMove(0, -45);
-  PIDMove(350, -45);
+  PIDMove(200, -45);
   fire=true;
   wait(500, msec);
   load=true;
   // PIDMove(-100, -45);
-  PIDMove(0, -188);
-  PIDMove(-500, -180);
-  PIDMove(-500, -180);
-  PIDMove(-500, -180);
-  PIDMove(-500, -180);
+  PIDMove(0, -194);
+  PIDMove(-500, -194);
+  PIDMove(-500, -194);
+  PIDMove(-500, -194);
+  PIDMove(-500, -194);
   PIDMove(0, -90);
   intake.spin(fwd, 600, rpm);
   fire=true;
@@ -524,7 +525,7 @@ void autonomous(void) {
   intake.stop();
   PIDMove(-3000, -90);
   PIDMove(0, -180);
-  PIDMove(-670, -180);
+  PIDMove(-750, -180);
   intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
   PIDMove(300, -180);
   intake.spin(reverse, 600, rpm);
@@ -532,7 +533,7 @@ void autonomous(void) {
   PIDMove(-950, -45);
   PIDMove(0, -90);
   intake.stop();
-  PIDMove(-770, -90);
+  PIDMove(-800, -90);
   intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
   PIDMove(550, -90);
   PIDMove(0, -132);
