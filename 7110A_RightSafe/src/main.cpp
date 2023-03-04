@@ -430,7 +430,7 @@ void autonomous(void) {
   PIDMove(-1700*k,-58);//810
   // PIDMove(0,-10);
   // PIDMove(-400*k,-10);
-  intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(fwd, 220, deg, 100, vex::velocityUnits::pct);
   PIDMove(200*k,-58);
   PIDMove(0,106.5);
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
