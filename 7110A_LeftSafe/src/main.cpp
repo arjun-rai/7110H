@@ -440,7 +440,7 @@ void autonomous(void) {
   double k=0.9;
   //NEW
   PIDMove(-100,0);
-  intake.spinFor(fwd, 180, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(fwd, 220, deg, 100, vex::velocityUnits::pct);
   load=true;
   PIDMove(300*k,0);
   PIDMove(0,48);
@@ -483,7 +483,7 @@ void autonomous(void) {
   PIDMove(-5000*k,-136);//-1000
   intake.stop();
   PIDMove(-800*k,-136);
-  intake.spinFor(fwd, 200, deg, 100, vex::velocityUnits::pct);
+  intake.spinFor(fwd, 240, deg, 100, vex::velocityUnits::pct);
   wait(10000, msec);
 
   //AHHH
