@@ -86,7 +86,7 @@ void pre_auton(void) {
   rightDrive.resetRotation();
   // leftEncoder.resetRotation();
   // rightEncoder.resetRotation();
-  driveBrake(brake);
+  driveBrake(coast);
   catapult.setBrake(hold);
   intake.setBrake(coast);
   // All activities that occur before the competition starts
@@ -652,6 +652,9 @@ void autonomous(void) {
  
 }
 
+
+double lastLeftPercent = 0;
+double lastRightPercent =0;
 void leftExpo (vex::directionType type, int percentage){
   if(percentage >= 0){
     percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
@@ -660,7 +663,16 @@ void leftExpo (vex::directionType type, int percentage){
     percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
     percentage = -percentage;
   }
+  // if (percentage-lastLeftPercent>0 && percentage!=0 && lastLeftPercent<0)
+  // {
+  //   percentage=lastLeftPercent+5;
+  // }
+  if (lastLeftPercent<-70&&lastRightPercent<-70)
+  {
+    percentage=-70;
+  }
   leftDrive.spin (type, percentage, vex::velocityUnits::pct);
+  lastLeftPercent=percentage;
 }
 
 void rightExpo (vex::directionType type, int percentage){
@@ -671,7 +683,16 @@ void rightExpo (vex::directionType type, int percentage){
     percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
     percentage = -percentage;
   }
+  // if (percentage-lastRightPercent>0 &&percentage!=0 && lastRightPercent<0)
+  // {
+  //   percentage=lastRightPercent+5;
+  // }
+  if (lastLeftPercent<-70&&lastRightPercent<-70)
+  {
+    percentage=-70;
+  }
   rightDrive.spin (type, percentage, vex::velocityUnits::pct);
+  lastRightPercent=percentage;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -709,6 +730,9 @@ bool loaderToggle = false;
 int discCount =0;
 int loaderCount=0;
 
+bool intakeLift = false;
+bool liftToggle = false;
+
 void usercontrol(void) {
   // intake.stop();
   
@@ -722,17 +746,17 @@ void usercontrol(void) {
     if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
     {
       intakeToggle=false;
-      expand = true;
-      reload=false;
-      catapult.spin(reverse, 70, vex::velocityUnits::pct);
-      wait(450, msec);
+      // expand = true;
+      // reload=false;
+      // catapult.spin(reverse, 70, vex::velocityUnits::pct);
+      // wait(450, msec);
       expansion.set(true);
     }
     else
     {
       expansion.set(false);
     }
-    driveBrake(brake);
+    driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     leftExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
@@ -770,15 +794,31 @@ void usercontrol(void) {
     }
     else if (intakeToggle)
     {
-      intake.spin(fwd, 400, vex::velocityUnits::rpm);
+      intake.spin(fwd, 600, vex::velocityUnits::rpm);
     }
     else {
       intake.stop();
     }
 
-    if (Controller.ButtonUp.pressing()&&Controller.ButtonX.pressing())
+    if (Controller.ButtonX.pressing())
     {
-      blocker.set(true);
+      if (!intakeLift)
+      {
+        liftToggle = !liftToggle;
+        intakeLift=true;
+      }
+    }
+    else
+    {
+      intakeLift=false;
+    }
+    if (liftToggle)
+    {
+      intakeLifter.set(true);
+    }
+    else
+    {
+      intakeLifter.set(false);
     }
 
     // if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
@@ -803,29 +843,29 @@ void usercontrol(void) {
     //   driveSpeed = initDriveSpeed;
     //   turnSpeed=initTurnSpeed;
     // }
-    if (Controller.ButtonY.pressing())
-    {
-      if (!loaderOn)
-      {
-        loaderToggle = !loaderToggle;
-        loaderOn=true;
-        loaderCount=0;
-      }
-    }
-    else
-    {
-      if (loaderCount==5)
-      {
-        loaderToggle=false;
-      }
-      loaderOn=false;
-    }
+    // if (Controller.ButtonY.pressing())
+    // {
+    //   if (!loaderOn)
+    //   {
+    //     loaderToggle = !loaderToggle;
+    //     loaderOn=true;
+    //     loaderCount=0;
+    //   }
+    // }
+    // else
+    // {
+    //   if (loaderCount==5)
+    //   {
+    //     loaderToggle=false;
+    //   }
+    //   loaderOn=false;
+    // }
 
   
 
 
     
-     if (Controller.ButtonA.pressing())
+    if (Controller.ButtonA.pressing())
     {
       if (!boostOn)
       {
@@ -842,33 +882,39 @@ void usercontrol(void) {
     {
       intakeToggle=false;
       reload=true;
-      catapult.spin(reverse, 60, vex::velocityUnits::pct);
+      catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
     if (Controller.ButtonR2.pressing())
     {
       intakeToggle=false;
       reload=false;
-      catapult.spin(reverse, 90, vex::velocityUnits::pct);
+      catapult.spin(reverse, 100, vex::velocityUnits::pct);
       wait(20, msec);
       if (boostToggle)
         cataBoost.set(true);
     }
-    if (reload&&loaderToggle&&cataSense.angle(deg)>116.5)
+    // if (reload&&loaderToggle&&cataSense.angle(deg)>116.5)
+    // {
+    //   catapult.stop(hold);
+      
+    // }
+    if (reload && cataSense.angle(deg)>100)
+    {
+       catapult.spin(reverse, 60, vex::velocityUnits::pct);
+    }
+    if (reload && cataSense.angle(deg)>119)//93
     {
       catapult.stop(hold);
       
     }
-    if (reload && cataSense.angle(deg)>118)//93
-    {
-      catapult.stop(hold);
-      
-    }
-    else if (!reload && cataSense.angle(deg)<46)
+    else if (!reload && cataSense.angle(deg)<50)
     {
       intakeToggle=false;
       catapult.stop(coast);
       cataBoost.set(false);
-         
+
+      reload=true;
+      catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
 
     // if (intakeSense.objectDistance(mm)<=23)

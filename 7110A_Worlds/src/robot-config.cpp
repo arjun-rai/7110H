@@ -12,21 +12,21 @@ controller Controller = controller();
 // encoder leftEncoder = encoder(Brain.ThreeWirePort.C);
 // encoder rightEncoder = encoder(Brain.ThreeWirePort.A);
 motor BackLeft = motor(PORT1, ratio6_1, true);
-motor BackRight = motor(PORT4, ratio6_1, false);
+motor BackRight = motor(PORT12, ratio6_1, false);
 motor FrontLeft = motor(PORT3, ratio6_1, true);
-motor FrontRight = motor(PORT5, ratio6_1, false);
+motor FrontRight = motor(PORT19, ratio6_1, false);
 motor MiddleLeft = motor(PORT2, ratio6_1, false);
 motor MiddleRight = motor(PORT6, ratio6_1, true);
 motor catapult = motor(PORT7, ratio36_1,false);
 inertial Inertial = inertial(PORT20);  
-inertial Inertial2 = inertial(PORT19);
+inertial Inertial2 = inertial(PORT21);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
 motor intake = motor(PORT11, ratio6_1, true);
-digital_out expansion = digital_out(Brain.ThreeWirePort.A);
-digital_out cataBoost = digital_out(Brain.ThreeWirePort.B);
+digital_out expansion = digital_out(Brain.ThreeWirePort.B);
+digital_out cataBoost = digital_out(Brain.ThreeWirePort.A);
 rotation cataSense = rotation(PORT9);
-digital_out blocker = digital_out(Brain.ThreeWirePort.C);
+digital_out intakeLifter = digital_out(Brain.ThreeWirePort.H);
 distance intakeSense = distance(PORT18);
 
 

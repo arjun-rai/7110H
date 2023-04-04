@@ -20,7 +20,7 @@ extern motor intake;
 extern digital_out expansion;
 extern digital_out cataBoost;
 extern rotation cataSense;
-extern digital_out blocker;
+extern digital_out intakeLifter;
 extern distance intakeSense; 
 extern inertial Inertial2;
 /**
