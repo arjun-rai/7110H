@@ -23,6 +23,7 @@ extern rotation cataSense;
 extern digital_out intakeLifter;
 extern distance intakeSense; 
 extern inertial Inertial2;
+extern digital_out cataMode;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

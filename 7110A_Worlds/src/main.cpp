@@ -653,9 +653,11 @@ void autonomous(void) {
 }
 
 
+double LeftPercent = 0;
+double RightPercent =0;
 double lastLeftPercent = 0;
-double lastRightPercent =0;
-void leftExpo (vex::directionType type, int percentage){
+double lastRightPercent = 0;
+void leftExpo (vex::directionType type, double percentage){
   if(percentage >= 0){
     percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
   }else{
@@ -667,15 +669,20 @@ void leftExpo (vex::directionType type, int percentage){
   // {
   //   percentage=lastLeftPercent+5;
   // }
-  if (lastLeftPercent<-70&&lastRightPercent<-70)
+  LeftPercent=percentage;
+  if (LeftPercent>=70&&RightPercent>=70)
   {
-    percentage=-70;
+    percentage=70;
+  }
+  if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
+  {
+    percentage=lastLeftPercent-0.8;
   }
   leftDrive.spin (type, percentage, vex::velocityUnits::pct);
   lastLeftPercent=percentage;
 }
 
-void rightExpo (vex::directionType type, int percentage){
+void rightExpo (vex::directionType type, double percentage){
   if(percentage >= 0){
     percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
   }else{
@@ -683,13 +690,14 @@ void rightExpo (vex::directionType type, int percentage){
     percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
     percentage = -percentage;
   }
-  // if (percentage-lastRightPercent>0 &&percentage!=0 && lastRightPercent<0)
-  // {
-  //   percentage=lastRightPercent+5;
-  // }
-  if (lastLeftPercent<-70&&lastRightPercent<-70)
+  RightPercent=percentage;
+  if (LeftPercent>=70&&RightPercent>=70)
   {
-    percentage=-70;
+    percentage=70;
+  }
+  if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
+  {
+    percentage=lastRightPercent-0.8;
   }
   rightDrive.spin (type, percentage, vex::velocityUnits::pct);
   lastRightPercent=percentage;
@@ -721,8 +729,12 @@ bool driveOn = false;
 bool driveToggle = true;
 bool reload = true;
 bool expand = false;
+
 bool boostOn = false;
 bool boostToggle = false;
+
+bool modeOn = false;
+bool modeToggle = false;
 
 bool loaderOn = false;
 bool loaderToggle = false;
@@ -759,8 +771,8 @@ void usercontrol(void) {
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    leftExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
-    rightExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));
+    leftExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));
+    rightExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
 
      if (Controller.ButtonL2.pressing())
     {
@@ -819,6 +831,27 @@ void usercontrol(void) {
     else
     {
       intakeLifter.set(false);
+    }
+
+     if (Controller.ButtonUp.pressing())
+    {
+      if (!modeOn)
+      {
+        modeToggle = !modeToggle;
+        modeOn=true;
+      }
+    }
+    else
+    {
+      modeOn=false;
+    }
+    if (modeToggle)
+    {
+      cataMode.set(true);
+    }
+    else 
+    {
+      cataMode.set(false);
     }
 
     // if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
