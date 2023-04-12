@@ -463,7 +463,7 @@ void autonomous(void) {
   // PIDMove(-300*k,-115);
   PIDMove(-1200*k,-115);
   PIDMove(0,-33);//-25
-  PIDMove(600*k,-33);//-25
+  PIDMove(550*k,-33);//-25//600
   // wait(500, msec);
   // intake.spin(fwd, 600, vex::velocityUnits::rpm);
   // wait(500, msec);
@@ -478,11 +478,11 @@ void autonomous(void) {
   }
   // wait(10000, msec);
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
-  PIDMove(0,-136);
+  PIDMove(0,-136.5);
   // PIDMove(-7000*k,-120);
-  PIDMove(-5000*k,-136);//-1000
+  PIDMove(-5000*k,-136.5);//-1000
   intake.stop();
-  PIDMove(-800*k,-136);
+  PIDMove(-750*k,-136.5);
   intake.spinFor(fwd, 240, deg, 100, vex::velocityUnits::pct);
   wait(10000, msec);
 
@@ -825,18 +825,18 @@ void usercontrol(void) {
 
 
     
-     if (Controller.ButtonA.pressing())
-    {
-      if (!boostOn)
-      {
-        boostToggle = !boostToggle;//!boostToggle
-        boostOn=true;
-      }
-    }
-    else
-    {
-      boostOn=false;
-    }
+    //  if (Controller.ButtonA.pressing())
+    // {
+    //   if (!boostOn)
+    //   {
+    //     boostToggle = !boostToggle;//!boostToggle
+    //     boostOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   boostOn=false;
+    // }
 
     if (Controller.ButtonR1.pressing())
     {
