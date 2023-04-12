@@ -841,7 +841,7 @@ void usercontrol(void) {
         modeOn=true;
       }
     }
-    else
+    else  
     {
       modeOn=false;
     }
@@ -849,8 +849,7 @@ void usercontrol(void) {
     {
       cataMode.set(true);
     }
-    else 
-    {
+    else {
       cataMode.set(false);
     }
 
@@ -922,9 +921,14 @@ void usercontrol(void) {
       intakeToggle=false;
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
-      wait(20, msec);
-      if (boostToggle)
+      wait(50, msec);
+      if (false)
         cataBoost.set(true);
+      // if (true)
+      // {
+      //   wait(140, msec);
+      //   cataBoost.set(false);
+      // }
     }
     // if (reload&&loaderToggle&&cataSense.angle(deg)>116.5)
     // {
@@ -935,7 +939,7 @@ void usercontrol(void) {
     {
        catapult.spin(reverse, 60, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>119)//93
+    if (reload && cataSense.angle(deg)>120)//93
     {
       catapult.stop(hold);
       
