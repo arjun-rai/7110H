@@ -432,7 +432,7 @@ void autonomous(void) {
   // PIDMove(-400*k,-10);
   intake.spinFor(fwd, 220, deg, 100, vex::velocityUnits::pct);
   PIDMove(200*k,-58);
-  PIDMove(0,106.5);
+  PIDMove(0,106.5);//106.5
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
   PIDMove(-1700*k,106.5);
   PIDMove(-1800*k,106.5);
@@ -452,94 +452,96 @@ void autonomous(void) {
     wait(10000, msec);
   }
   //wait(10000, msec);
-  PIDMove(0,-18);
+  PIDMove(0,-17);//-17//-16//-14
   intake.spin(reverse, 600, vex::velocityUnits::rpm);
   PIDMove(-600,-17);
   wait(50, msec);
   PIDMove(-600,-17);
-  PIDMove(-600,-17);
-  PIDMove(2200,-17);//1500
-  PIDMove(0,27);
-  // intake.spin(fwd, 600, vex::velocityUnits::rpm);
-  // wait(350, msec);//500
-  if (intakeSense.objectDistance(mm)>40)
-  {
-    fire=true;
-    // wait(450, msec);
-    // load=true;
-    // wait(500, msec);
-  }
-  else{
-    wait(10000, msec);
-  }
+  wait(50, msec);
+  PIDMove(-900,-17);//1500//2200
   wait(10000, msec);
 
+  // PIDMove(0,13);//29
+  // // intake.spin(fwd, 600, vex::velocityUnits::rpm);
+  // // wait(350, msec);//500
+  // if (intakeSense.objectDistance(mm)>40)
+  // {
+  //   fire=true;
+  //   // wait(450, msec);
+  //   // load=true;
+  //   // wait(500, msec);
+  // }
+  // else{
+  //   wait(10000, msec);
+  // }
+  // wait(10000, msec);
+
   //OLD
-  tuckyRightVar=1;
-  tuckyLeftVar=0.94;//0.94
-  desiredValue=1250;//1300
-  wait(1500, msec);
-  fire=true;
-  wait(500, msec);
-  load=true;
-  // wait(10000000, msec);
-  //.
-  wait(500, msec);
-  desiredTurnValue=-1.15;//1.19
-  tuckyRightVar=1;
-  tuckyLeftVar=1;
-  resetDriveSensors=true;
-  // desiredValue=0;//-200
+  // tuckyRightVar=1;
+  // tuckyLeftVar=0.94;//0.94
+  // desiredValue=1250;//1300
+  // wait(1500, msec);
+  // fire=true;
+  // wait(500, msec);
+  // load=true;
+  // // wait(10000000, msec);
+  // //.
+  // wait(500, msec);
+  // desiredTurnValue=-1.15;//1.19
+  // tuckyRightVar=1;
+  // tuckyLeftVar=1;
+  // resetDriveSensors=true;
+  // // desiredValue=0;//-200
+  // // wait(700, msec);
+  // // resetDriveSensors=true;
+  // tuckyRightVar=0;
+  // tuckyLeftVar=1;
+  // desiredValue=-1100;//0
+  // //desiredTurnValue=-70;
+  // wait(1500,msec);
+  // desiredTurnValue=-74;
+  // tuckyRightVar=1;
+  // tuckyLeftVar=1;
+  // resetDriveSensors=true;
+  // desiredValue=-810;
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=-10;
   // wait(700, msec);
   // resetDriveSensors=true;
-  tuckyRightVar=0;
-  tuckyLeftVar=1;
-  desiredValue=-1100;//0
-  //desiredTurnValue=-70;
-  wait(1500,msec);
-  desiredTurnValue=-74;
-  tuckyRightVar=1;
-  tuckyLeftVar=1;
-  resetDriveSensors=true;
-  desiredValue=-810;
-  wait(1000, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=-10;
-  wait(700, msec);
-  resetDriveSensors=true;
-  desiredValue=-400;
-  wait(800, msec);
-  intake.spinFor(fwd, 220, deg, 100, vex::velocityUnits::pct);
-  resetDriveSensors=true;
-  desiredValue=200;//700
-  wait(1000, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=110;
-  wait(1000, msec);//.
-  intake.spin(reverse, 600, vex::velocityUnits::rpm);
-  resetDriveSensors=true;
-  desiredValue=-1600;
-  wait(1700, msec);
-  resetDriveSensors=true;
-  desiredValue=-1600;
-  wait(1700, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  desiredTurnValue=16.5;//20
-  wait(700, msec);
-  resetDriveSensors=true;
-  desiredValue=0;
-  wait(300, msec);//700
-  intake.spin(fwd, 600, vex::velocityUnits::rpm);
-  wait(500, msec);
-  if (intakeSense.objectDistance(mm)>40)
-  {
-    fire=true;
-    wait(400, msec);
-    load=true;
-  }
+  // desiredValue=-400;
+  // wait(800, msec);
+  // intake.spinFor(fwd, 220, deg, 100, vex::velocityUnits::pct);
+  // resetDriveSensors=true;
+  // desiredValue=200;//700
+  // wait(1000, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=110;
+  // wait(1000, msec);//.
+  // intake.spin(reverse, 600, vex::velocityUnits::rpm);
+  // resetDriveSensors=true;
+  // desiredValue=-1600;
+  // wait(1700, msec);
+  // resetDriveSensors=true;
+  // desiredValue=-1600;
+  // wait(1700, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // desiredTurnValue=16.5;//20
+  // wait(700, msec);
+  // resetDriveSensors=true;
+  // desiredValue=0;
+  // wait(300, msec);//700
+  // intake.spin(fwd, 600, vex::velocityUnits::rpm);
+  // wait(500, msec);
+  // if (intakeSense.objectDistance(mm)>40)
+  // {
+  //   fire=true;
+  //   wait(400, msec);
+  //   load=true;
+  // }
   
 
 
@@ -821,18 +823,18 @@ void usercontrol(void) {
 
 
     
-     if (Controller.ButtonA.pressing())
-    {
-      if (!boostOn)
-      {
-        boostToggle = false;//!boostToggle
-        boostOn=true;
-      }
-    }
-    else
-    {
-      boostOn=false;
-    }
+    //  if (Controller.ButtonA.pressing())
+    // {
+    //   if (!boostOn)
+    //   {
+    //     boostToggle = false;//!boostToggle
+    //     boostOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   boostOn=false;
+    // }
 
     if (Controller.ButtonR1.pressing())
     {

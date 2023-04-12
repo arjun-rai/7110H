@@ -819,18 +819,18 @@ void usercontrol(void) {
 
 
     
-     if (Controller.ButtonA.pressing())
-    {
-      if (!boostOn)
-      {
-        boostToggle = false;//!boostToggle
-        boostOn=true;
-      }
-    }
-    else
-    {
-      boostOn=false;
-    }
+    //  if (Controller.ButtonA.pressing())
+    // {
+    //   if (!boostOn)
+    //   {
+    //     boostToggle = false;//!boostToggle
+    //     boostOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   boostOn=false;
+    // }
 
     if (Controller.ButtonR1.pressing())
     {

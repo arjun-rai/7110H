@@ -463,7 +463,7 @@ void autonomous(void) {
   // PIDMove(-300*k,-115);
   PIDMove(-1200*k,-115);
   PIDMove(0,-33);//-25
-  PIDMove(600*k,-33);//-25
+  PIDMove(550*k,-33);//-25//600
   // wait(500, msec);
   // intake.spin(fwd, 600, vex::velocityUnits::rpm);
   // wait(500, msec);
@@ -825,18 +825,18 @@ void usercontrol(void) {
 
 
     
-     if (Controller.ButtonA.pressing())
-    {
-      if (!boostOn)
-      {
-        boostToggle = !boostToggle;//!boostToggle
-        boostOn=true;
-      }
-    }
-    else
-    {
-      boostOn=false;
-    }
+    //  if (Controller.ButtonA.pressing())
+    // {
+    //   if (!boostOn)
+    //   {
+    //     boostToggle = !boostToggle;//!boostToggle
+    //     boostOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   boostOn=false;
+    // }
 
     if (Controller.ButtonR1.pressing())
     {
@@ -850,8 +850,8 @@ void usercontrol(void) {
       reload=false;
       catapult.spin(reverse, 70, vex::velocityUnits::pct);
       wait(20, msec);
-      if (boostToggle)
-        cataBoost.set(true);
+      // if (boostToggle)
+      //   cataBoost.set(true);
     }
     if (reload&&loaderToggle&&cataSense.angle(deg)<103)
     {
