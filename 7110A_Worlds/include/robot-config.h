@@ -13,8 +13,8 @@ extern motor MiddleRight;
 extern inertial Inertial;
 extern motor_group leftDrive;
 extern motor_group rightDrive;
-// extern encoder leftEncoder;
-// extern encoder rightEncoder;
+extern rotation fEncoder;
+extern rotation hEncoder;
 extern motor catapult;
 extern motor intake;
 extern digital_out expansion;
@@ -23,7 +23,8 @@ extern rotation cataSense;
 extern digital_out intakeLifter;
 extern distance intakeSense; 
 extern inertial Inertial2;
-extern digital_out cataMode;
+extern digital_out cataReduce;
+extern digital_out cataBoost2;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

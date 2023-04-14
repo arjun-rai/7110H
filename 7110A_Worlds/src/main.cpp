@@ -78,6 +78,8 @@ void pre_auton(void) {
   Inertial2.calibrate();
   cataSense.setPosition(0, deg);
   cataSense.resetPosition();
+  hEncoder.resetPosition();
+  fEncoder.resetPosition();
   while (Inertial.isCalibrating()||Inertial2.isCalibrating()) {
   wait(100, msec);
   }
@@ -96,20 +98,64 @@ void pre_auton(void) {
 double pos[] = {0,0};
 double lastLeft = 0;
 double lastRight =0;
+double last_orientation_rad = 0;
+double last_hEncoder =0;
+double last_fEncoder =0;
 void getCurrLoc()
 {
-  double dist = ((leftDrive.rotation(rev)*(3.0/5)*M_PI*3.25)-lastLeft + (rightDrive.rotation(rev)*(3.0/5)*M_PI*3.25)-lastRight)/2.0;
-  // if (dist*cos(radians(Inertial.rotation()))>100 || dist*sin(radians(Inertial.rotation()))>100)
-  //   return;
-  // Controller.Screen.setCursor(0,0);
-  // Controller.Screen.clearLine();
-  // Controller.Screen.print(pos[0]);
-  // printf("%f\t%f\t%f\n", pos[0], pos[1], (Inertial.rotation()+Inertial2.rotation())/2.0);
-  //printf("%f\t%f\n", wheels[0], wheels[1]);
-  pos[0] += dist*sin(radians((Inertial.rotation()+Inertial2.rotation())/2.0));
-  pos[1] += dist*cos(radians((Inertial.rotation()+Inertial2.rotation())/2.0));
-  lastLeft = leftDrive.rotation(rev)*M_PI*3.25*(3.0/5);
-  lastRight = rightDrive.rotation(rev)*M_PI*3.25*(3.0/5);
+
+  double hEncoder_angle = hEncoder.position(deg);
+  double fEncoder_angle = fEncoder.position(deg);
+  double hEncoder_delta = hEncoder_angle-last_hEncoder;
+  double fEncoder_delta = fEncoder_angle-last_fEncoder;
+
+
+
+
+
+  double orientation_rad = radians(Inertial.rotation());
+  double orientation_delta = orientation_rad-last_orientation_rad;
+  
+
+  double local_X;
+  double local_Y;
+
+  if (orientation_delta==0)
+  {
+    local_X=hEncoder_delta;
+    local_Y=fEncoder_delta;
+  }
+  else{
+    local_X=(2*sin(orientation_delta/2.0))*((hEncoder_delta/orientation_delta)+0.5);
+    local_Y=(2*sin(orientation_delta/2.0))*((fEncoder_delta/orientation_delta)+3.3);
+  }
+
+  double local_polar_angle;
+  double local_polar_length;
+  if (local_X==0&local_Y==0)
+  {
+    local_polar_angle=0;
+    local_polar_length=0;
+  }
+  else 
+  {
+    local_polar_angle=atan2(local_Y, local_X);
+    local_polar_length=distanceP(local_X, 0, local_Y, 0);
+  }
+
+  double global_polar_angle = local_polar_angle-last_orientation_rad-(orientation_delta/2.0);
+
+  double X_position_delta = local_polar_length*cos(global_polar_angle);
+  double Y_position_delta = local_polar_length*sin(global_polar_angle);
+
+  X_position_delta = (X_position_delta/360.0)*M_PI*2.75;
+  Y_position_delta = (Y_position_delta/360.0)*M_PI*2.75;
+
+  pos[0]+=X_position_delta;
+  pos[1]+=Y_position_delta;
+  last_orientation_rad=orientation_rad;
+  last_fEncoder=fEncoder_angle;
+  last_hEncoder=hEncoder_angle;
 }
 
 double kP = 0.07; //steady minor oscillations, should stop close to the correct point
@@ -279,6 +325,51 @@ int drivePID(){
 
   leftDrive.stop();
   rightDrive.stop();
+  return 1;
+}
+
+
+double distError;
+double distPrevError;
+double distDerivative;
+
+double curveError;
+double curvePrevError;
+double curveDerivative;
+
+double pointKpMove=0;
+double pointKdMove=0;
+
+double pointKpCurve=0;
+double pointKdCurve=0;
+
+double lastPos[] = {0,0};
+
+bool enablePointToPoint = true;
+int pointToPoint()
+{
+  while (enablePointToPoint)
+  {
+    distError = distanceP(pos[0], pos[1], lastPos[0], lastPos[1]);
+    curveError = atan2((lastPos[1]-pos[1]), (lastPos[0]-pos[0]));
+    distDerivative = distError-distPrevError;
+    curveDerivative=curveError-curvePrevError;
+
+    if (curveError<0)
+    {
+      leftDrive.spin(fwd, (distError*pointKpCurve+distDerivative*pointKdMove)*(curveError*pointKpCurve), pct);
+      rightDrive.spin(fwd, (distError*pointKpCurve+distDerivative*pointKdMove), pct);
+    }
+    else {
+      leftDrive.spin(fwd, (distError*pointKpCurve+distDerivative*pointKdMove), pct);
+      rightDrive.spin(fwd, (distError*pointKpCurve+distDerivative*pointKdMove)*(curveError*pointKpCurve), pct);
+    }
+
+    lastPos[0]=pos[0];
+    lastPos[1]=pos[1];
+    distPrevError=distError;
+    curvePrevError=curveError;
+  }
   return 1;
 }
 
@@ -747,7 +838,8 @@ bool liftToggle = false;
 
 void usercontrol(void) {
   // intake.stop();
-  
+  vex::task odometry(odom);
+
   cataBoost.set(false);
   autonCata=false;
   enableDrivePID=false;
@@ -755,6 +847,9 @@ void usercontrol(void) {
   //Controller.Screen.print(averagePosition);
   // User control code here, inside the loop
   while (1) {
+    Controller.Screen.setCursor(0, 0);
+    Controller.Screen.clearLine();
+    Controller.Screen.print("%f %f", pos[0], pos[1]);
     if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
     {
       intakeToggle=false;
@@ -847,10 +942,10 @@ void usercontrol(void) {
     }
     if (modeToggle)
     {
-      cataMode.set(true);
+      cataReduce.set(true);
     }
     else {
-      cataMode.set(false);
+      cataReduce.set(false);
     }
 
     // if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
@@ -897,7 +992,7 @@ void usercontrol(void) {
 
 
     
-    if (Controller.ButtonA.pressing())
+    if (Controller.ButtonRight.pressing())
     {
       if (!boostOn)
       {
@@ -916,13 +1011,13 @@ void usercontrol(void) {
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (Controller.ButtonR2.pressing())
+    if (Controller.ButtonR2.pressing() && intakeSense.objectDistance(mm)>170)
     {
       intakeToggle=false;
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
       wait(50, msec);
-      if (false)
+      if (boostToggle)
         cataBoost.set(true);
       // if (true)
       // {
