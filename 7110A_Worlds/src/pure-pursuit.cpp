@@ -126,7 +126,7 @@ void curv_func(std::vector<pathPoint>& p)
   }
 }
 
-double max_vel = 600*(3.25*M_PI*(3.0/5))/60.0; //rpm to in/s
+double max_vel = 600*(3.25*M_PI*(4.0/5))/60.0; //rpm to in/s
 double turning_const = 0.3; //changes how fast it goes around turns
 double max_accel = 30; //in/s^3  used to be 6
 double starting_vel = 20*(3.25*M_PI*(3.0/5))/60.0; //rpm to in/s
@@ -232,6 +232,10 @@ void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
 
 double sign(double x) 
 {
+  if ((int)x==0)
+  {
+    return 1;
+  }
   return copysign(1, x);
 }
 
