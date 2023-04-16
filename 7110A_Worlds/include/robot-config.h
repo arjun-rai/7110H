@@ -22,7 +22,6 @@ extern digital_out cataBoost;
 extern rotation cataSense;
 extern digital_out intakeLifter;
 extern distance intakeSense; 
-extern inertial Inertial2;
 extern digital_out cataReduce;
 extern digital_out cataBoost2;
 /**

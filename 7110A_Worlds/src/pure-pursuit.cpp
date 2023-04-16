@@ -136,7 +136,7 @@ void curv_func(std::vector<pathPoint>& p)
 double max_vel = (600*4*3.25*M_PI)/(5*60); //rpm to in/s
 double turning_const = 1; //changes how fast it goes around turns
 double max_accel = 150; //in/s^3  used to be 6
-double starting_vel = (200*4*3.25*M_PI)/(5*60); //rpm to in/s
+double starting_vel = (300*4*3.25*M_PI)/(5*60); //rpm to in/s
 void speed_func(std::vector<pathPoint>& p)
 {
   for (int i =0;i<p.size(); i++)
@@ -187,7 +187,7 @@ int closest(double pos[], std::vector<pathPoint> p)
   return minDist[0];
 }
 
-double l = 20;
+double l = 22;
 //double angle = 0; //radians
 int t_i=0;
 void lookahead(double pos[], std::vector<pathPoint> path, double ret[])

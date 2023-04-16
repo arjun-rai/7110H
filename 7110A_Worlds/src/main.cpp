@@ -73,14 +73,10 @@ void pre_auton(void) {
   Inertial.resetRotation();
   Inertial.setHeading(0, degrees);
   Inertial.calibrate();
-  Inertial2.resetRotation();
-  Inertial2.setHeading(0, degrees);
-  Inertial2.calibrate();
-  cataSense.setPosition(0, deg);
   cataSense.resetPosition();
   hEncoder.resetPosition();
   fEncoder.resetPosition();
-  while (Inertial.isCalibrating()||Inertial2.isCalibrating()) {
+  while (Inertial.isCalibrating()) {
   wait(100, msec);
   }
   
@@ -302,9 +298,9 @@ int drivePID(){
     // {
     //   turnMotorPower=-maxTurningPower;
     // }
-    Controller.Screen.setCursor(0,0);
-    Controller.Screen.clearLine();
-    Controller.Screen.print((Inertial.rotation()));//(Inertial.rotation()+Inertial2.rotation())/2.0
+    // Controller.Screen.setCursor(0,0);
+    // Controller.Screen.clearLine();
+    // Controller.Screen.print((Inertial.rotation()));//(Inertial.rotation()+Inertial2.rotation())/2.0
     if (lateralMotorPower>0 && lateralMotorPower-lastLateralVoltage>maxLateralChange)
     {
       lateralMotorPower = lastLateralVoltage+maxLateralChange;
@@ -473,9 +469,9 @@ int dist()
   return 1;
 }
 
-double track_width = 10;
+double track_width = 11;
 //double dt = 0.005;
-double maxVelChange=3;
+double maxVelChange=3; //3
 bool pathing(std::vector<pathPoint> path, bool backwards)
 {
   double lastVel = 0;
@@ -523,7 +519,7 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
 
 
 
-void PID(double x, double y)
+void PIDTurn(double x, double y)
 {
   resetDriveSensors=true;
   double ang = degree(atan2(x-pos[0], y-pos[1]));
@@ -533,7 +529,12 @@ void PID(double x, double y)
   // desiredValue=((distanceP(pos[0], pos[1], x, y)*4*360)/(M_PI*3.25*5));
   // drivePID();  
 }
-void PIDMove(double move, double ang)
+void PIDMove (double length)
+{
+  desiredLength=length;
+  dist();
+}
+void PIDTurnMove(double move, double ang)
 {
   resetDriveSensors=true;
   desiredTurnValue=ang;
@@ -553,9 +554,6 @@ int odom()
 {
   while (enableOdom)
   {
-    // Controller.Screen.setCursor(0,0);
-    // Controller.Screen.clearLine();
-    // Controller.Screen.print(pos[1]);
     getCurrLoc();
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.clearLine();
@@ -624,7 +622,7 @@ void autonomous(void) {
   // desiredLength=48;
   // dist();
   pathing(pathMain[0], false);
-  PID(0, 0);
+  PIDTurn(0, 0);
   pathing(pathMain[1], false);
   // pointToPoint();
   // PIDMove(0, 180);
