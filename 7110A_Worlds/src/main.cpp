@@ -519,11 +519,15 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
 
 
 
-void PIDTurn(double x, double y)
+void PIDTurn(double x, double y, bool reverse)
 {
   resetDriveSensors=true;
   double ang = degree(atan2(x-pos[0], y-pos[1]));
   desiredTurnValue=ang;
+  if (reverse)
+  {
+    desiredTurnValue+=180;
+  }
   drivePID();
   // resetDriveSensors=true;
   // desiredValue=((distanceP(pos[0], pos[1], x, y)*4*360)/(M_PI*3.25*5));
@@ -622,8 +626,8 @@ void autonomous(void) {
   // desiredLength=48;
   // dist();
   pathing(pathMain[0], false);
-  PIDTurn(0, 0);
-  pathing(pathMain[1], false);
+  PIDTurn(0, 0, true);
+  pathing(pathMain[1], true);
   // pointToPoint();
   // PIDMove(0, 180);
   
