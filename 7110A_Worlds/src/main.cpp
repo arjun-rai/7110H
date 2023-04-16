@@ -43,10 +43,27 @@ void driveBrake(vex::brakeType b)
   MiddleRight.setBrake(b);
 }
 int autonNum =-1;
+std::vector<std::vector<pathPoint>> pathMain = {
+  {point(0, 0), point(48, 24)},
+  {point(48, 24), point(0, 0)},
+  // {point(0, 24), point(-18,24)}
+  };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  //double test[] = {0,0};
+  for (int i =0;i<pathMain.size(); i++)
+  {
+    pathMain[i] = inject(pathMain[i]);
+    pathMain[i] = smooth(pathMain[i]);
+    curv_func(pathMain[i]);
+    speed_func(pathMain[i]);
+  }
+
+  // for (int i=0;i<pathMain[0].size(); i++)
+  // {
+  //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
+  //   wait(20, msec);
+  // }
   
 
   //shows button, allows user to select button and then stops once submit is pressed
@@ -456,6 +473,54 @@ int dist()
   return 1;
 }
 
+double track_width = 10;
+//double dt = 0.005;
+double maxVelChange=3;
+bool pathing(std::vector<pathPoint> path, bool backwards)
+{
+  double lastVel = 0;
+  while (closest(pos, path)!=path.size()-1)
+  {
+    getCurrLoc();
+    double look[] = {};
+    lookahead(pos, path, look);
+    int close = closest(pos, path);
+    double curv;
+    if (look[2]>close)
+    {
+      curv = curvature(path, pos, look, radians((Inertial.rotation())));
+      //curv = curvature(path, pos, look, radians(0));
+    }
+    else
+      curv = 0.00001;
+    double vel = path[close].finVel;
+    vel = lastVel+constrain(vel, lastVel, -maxVelChange, maxVelChange);
+    lastVel = vel;
+    double wheels[] = {};
+    turn(curv, vel, track_width, wheels);
+    //can add coefficients and tune for better velocity accuracy if 
+    if (backwards)
+    {
+      // printf("%f\t%f\n", wheels[0], wheels[1]);
+      //printf("%f\t%f\n", pos[0], pos[1]);
+      rightDrive.spin(fwd, (-wheels[0]*4*60)/(3.25*M_PI*5), vex::velocityUnits::rpm);
+      leftDrive.spin(fwd, (-wheels[1]*4*60)/(3.25*M_PI*5), vex::velocityUnits::rpm);
+    }
+    else
+    {
+      rightDrive.spin(fwd, (wheels[0]*4*60)/(3.25*M_PI*5), vex::velocityUnits::rpm);
+      leftDrive.spin(fwd, (wheels[1]*4*60)/(3.25*M_PI*5), vex::velocityUnits::rpm);
+    }
+    //double avg = (rightDrive.velocity(vex::velocityUnits::rpm)+leftDrive.velocity(vex::velocityUnits::rpm))/2.0;
+    //printf("%d\t%f\n", close, vel);
+    //printf("%f\n", look[2]);
+    wait(10, msec);
+  }
+  rightDrive.stop(hold);
+  leftDrive.stop(hold);
+  return true;
+}
+
 
 
 void PID(double x, double y)
@@ -495,7 +560,7 @@ int odom()
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.clearLine();
     // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
-    printf("%d %d %d %d\n", (int)pos[0], (int)pos[1], (int)curveError, (int)moveError);
+    printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
     vex::task::sleep(10);
   }
   return 1;
@@ -556,8 +621,11 @@ void autonomous(void) {
   // desiredPos[0]=48;desiredPos[1]=48;
   vex::task odometry(odom);
   // PID(48, 48);
-  desiredLength=48;
-  dist();
+  // desiredLength=48;
+  // dist();
+  pathing(pathMain[0], false);
+  PID(0, 0);
+  pathing(pathMain[1], false);
   // pointToPoint();
   // PIDMove(0, 180);
   
