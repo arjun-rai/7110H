@@ -407,6 +407,55 @@ int pointToPoint()
   return 1;
 }
 
+double moveError;
+double movePrevError;
+double moveDerivative;
+
+double KpMove=1;
+double KdMove=10;
+
+
+double lastMovePct =0;
+
+double maxMoveVoltage =8;
+
+double desiredLength = 0;
+
+bool enableDist = true;
+int dist()
+{
+  double startingDist = (fEncoder.position(deg)/360.0)*M_PI*2.75;
+  while (enableDist)
+  {
+    moveError = desiredLength-((fEncoder.position(deg)/360.0)*M_PI*2.75-startingDist);
+    moveDerivative = moveError-movePrevError;
+
+    double moveVolt = (moveError*KpMove+moveDerivative*KdMove);
+
+    moveVolt = clamp(moveVolt, -maxMoveVoltage, maxMoveVoltage);
+    // if(straightPct-lastStraightPct>5)
+    // {
+    //   straightPct=lastStraightPct+5;
+    // }
+    
+    leftDrive.spin(fwd, moveVolt, voltageUnits::volt);
+    rightDrive.spin(fwd, moveVolt, voltageUnits::volt);
+
+
+    if (fabs(moveError)<2)
+    {
+      break;
+    }
+
+    movePrevError=moveError;
+    lastMovePct=moveVolt;
+    wait(20, msec);
+  }
+  leftDrive.stop(vex::brakeType::hold);
+  rightDrive.stop(vex::brakeType::hold);
+  return 1;
+}
+
 
 
 void PID(double x, double y)
@@ -446,7 +495,7 @@ int odom()
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.clearLine();
     // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
-    printf("%d %d %d\n", (int)pos[0], (int)pos[1], (int)curveError);
+    printf("%d %d %d %d\n", (int)pos[0], (int)pos[1], (int)curveError, (int)moveError);
     vex::task::sleep(10);
   }
   return 1;
@@ -504,10 +553,11 @@ int loadCata()
 
 
 void autonomous(void) {
-  desiredPos[0]=48;desiredPos[1]=48;
+  // desiredPos[0]=48;desiredPos[1]=48;
   vex::task odometry(odom);
-  PID(48, 48);
-  pointToPoint();
+  // PID(48, 48);
+  desiredLength=48;
+  dist();
   // pointToPoint();
   // PIDMove(0, 180);
   
