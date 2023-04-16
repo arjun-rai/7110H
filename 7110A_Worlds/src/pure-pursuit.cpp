@@ -12,6 +12,13 @@ pathPoint point(double x1, double y1)
   return p;
 }
 
+float clamp(float input, float min, float max){
+  if( input > max ){ return(max); }
+  if(input < min){ return(min); }
+  return(input);
+}
+
+
 //distance between two points using coordinates
 double distanceP(double x1, double y1, double x2, double y2)
 {

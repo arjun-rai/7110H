@@ -320,13 +320,16 @@ double curveError;
 double curvePrevError;
 double curveDerivative;
 
-double pointKpMove=1.5;
-double pointKdMove=0;
+double pointKpMove=1;
+double pointKdMove=10;
 
-double pointKpCurve=0.002;
-double pointKdCurve=0;
+double pointKpCurve=0.4;
+double pointKdCurve=0.1;
 
 double lastStraightPct =0;
+
+double maxDistVoltage =10;
+double maxTurnVoltage =8;
 
 double desiredPos[] = {0,0};
 
@@ -335,8 +338,12 @@ int pointToPoint()
 {
   while (enablePointToPoint)
   {
-    curveError = degree(atan2((desiredPos[1]-pos[1]), (desiredPos[0]-pos[0])))-90;
+    curveError = degree(atan2((desiredPos[1]-pos[1]), (desiredPos[0]-pos[0])))-Inertial.rotation();
     distError = distanceP(pos[0], pos[1], desiredPos[0], desiredPos[1]);
+    if (fabs(distError)<5)
+    {
+      curveError=0;
+    }
     if (fmod(curveError,360)>90||fmod(curveError,-360)<-90)
     {
       distError=-distError;
@@ -344,35 +351,43 @@ int pointToPoint()
     distDerivative = distError-distPrevError;
     curveDerivative=curveError-curvePrevError;
 
+    float heading_scale_factor = cos(radians(curveError));
     double straightPct = (distError*pointKpMove+distDerivative*pointKdMove);
+    straightPct*=heading_scale_factor;
     double curvePct = (curveError*pointKpCurve);
 
-    if(curvePct<1 && curvePct>0)
-    {
-      curvePct=1;
-    }
 
-    if(curvePct>-1 && curvePct<0)
-    {
-      curvePct=-1;
-    }
+    straightPct = clamp(straightPct, -fabs(heading_scale_factor)*maxDistVoltage, fabs(heading_scale_factor)*maxDistVoltage);
+    curvePct = clamp(curvePct, -maxTurnVoltage, maxTurnVoltage);
+    // if(curvePct<1 && curvePct>0)
+    // {
+    //   curvePct=1;
+    // }
+
+    // if(curvePct>-1 && curvePct<0)
+    // {
+    //   curvePct=-1;
+    // }
 
     // if(straightPct-lastStraightPct>5)
     // {
     //   straightPct=lastStraightPct+5;
     // }
+    
+    leftDrive.spin(fwd, straightPct-(curvePct), voltageUnits::volt);
+    rightDrive.spin(fwd, straightPct+(curvePct), voltageUnits::volt);
 
-    if (curvePct>0)
-    {
-      leftDrive.spin(fwd, straightPct/curvePct, pct);
-      rightDrive.spin(fwd, straightPct, pct);
-    }
-    else {
-      leftDrive.spin(fwd, straightPct, pct);
-      rightDrive.spin(fwd, straightPct/curvePct, pct);
-    }
+    // if (curvePct>0)
+    // {
+    //   leftDrive.spin(fwd, straightPct/curvePct, pct);
+    //   rightDrive.spin(fwd, straightPct, pct);
+    // }
+    // else {
+    //   leftDrive.spin(fwd, straightPct, pct);
+    //   rightDrive.spin(fwd, straightPct/-curvePct, pct);
+    // }
 
-    if (fabs(pos[0]-desiredPos[0])<0.5&&fabs(pos[1]-desiredPos[1])<0.5)
+    if (fabs(distError)<3)
     {
       break;
     }
@@ -387,8 +402,8 @@ int pointToPoint()
     lastStraightPct=straightPct;
     wait(20, msec);
   }
-  leftDrive.stop(coast);
-  rightDrive.stop(coast);
+  leftDrive.stop(vex::brakeType::brake);
+  rightDrive.stop(vex::brakeType::brake);
   return 1;
 }
 
@@ -400,9 +415,9 @@ void PID(double x, double y)
   double ang = degree(atan2(x-pos[0], y-pos[1]));
   desiredTurnValue=ang;
   drivePID();
-  resetDriveSensors=true;
-  desiredValue=((distanceP(pos[0], pos[1], x, y)*4*360)/(M_PI*3.25*5));
-  drivePID();  
+  // resetDriveSensors=true;
+  // desiredValue=((distanceP(pos[0], pos[1], x, y)*4*360)/(M_PI*3.25*5));
+  // drivePID();  
 }
 void PIDMove(double move, double ang)
 {
@@ -428,9 +443,10 @@ int odom()
     // Controller.Screen.clearLine();
     // Controller.Screen.print(pos[1]);
     getCurrLoc();
-    Controller.Screen.setCursor(0, 0);
-    Controller.Screen.clearLine();
-    Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
+    // Controller.Screen.setCursor(0, 0);
+    // Controller.Screen.clearLine();
+    // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
+    printf("%d %d %d\n", (int)pos[0], (int)pos[1], (int)curveError);
     vex::task::sleep(10);
   }
   return 1;
@@ -488,9 +504,11 @@ int loadCata()
 
 
 void autonomous(void) {
-  desiredPos[1]=48;desiredPos[0]=48;
+  desiredPos[0]=48;desiredPos[1]=48;
   vex::task odometry(odom);
+  PID(48, 48);
   pointToPoint();
+  // pointToPoint();
   // PIDMove(0, 180);
   
 }
