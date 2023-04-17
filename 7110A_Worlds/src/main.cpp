@@ -44,8 +44,11 @@ void driveBrake(vex::brakeType b)
 }
 int autonNum =-1;
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(48, 24)},
-  {point(48, 24), point(0, 0)},
+  {point(0, 0), point(8,24)},
+  {point(8, 24), point(17, 3)},
+  {point(17,3), point(-12, 36), point(-14,41), point(-24,50)},//30 52
+  {point(-24,50), point(-42, 44), point(-38,24)},
+  {point(-38,24), point(-7,36)}
   // {point(0, 24), point(-18,24)}
   };
 void pre_auton(void) {
@@ -240,7 +243,7 @@ int drivePID(){
 
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
-    if (fabs(turnError)<1)
+    if (fabs(turnError)<2)
     {
       break;
     }
@@ -400,7 +403,7 @@ int pointToPoint()
     //   rightDrive.spin(fwd, straightPct/-curvePct, pct);
     // }
 
-    if (fabs(distError)<3)
+    if (fabs(distError)<2)
     {
       break;
     }
@@ -455,7 +458,7 @@ int dist()
     rightDrive.spin(fwd, moveVolt, voltageUnits::volt);
 
 
-    if (fabs(moveError)<2)
+    if (fabs(moveError)<3)
     {
       break;
     }
@@ -519,12 +522,16 @@ bool pathing(std::vector<pathPoint> path, bool backwards)
 
 
 
-void PIDTurn(double x, double y, bool reverse)
+void PIDTurn(double x, double y, bool reverse, bool left)
 {
   resetDriveSensors=true;
   double ang = degree(atan2(x-pos[0], y-pos[1]));
   desiredTurnValue=ang;
-  if (reverse)
+  if (reverse&&left)
+  {
+    desiredTurnValue-=180;
+  }
+  else if (reverse)
   {
     desiredTurnValue+=180;
   }
@@ -562,7 +569,7 @@ int odom()
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.clearLine();
     // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
-    printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
+    //printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
     vex::task::sleep(10);
   }
   return 1;
@@ -625,11 +632,63 @@ void autonomous(void) {
   // PID(48, 48);
   // desiredLength=48;
   // dist();
+
+  // PIDTurn(4,24,false);
   pathing(pathMain[0], false);
-  PIDTurn(0, 0, true);
+  wait(500, msec);//RID
+  //pathing(pathMain[1], false);
+  PIDMove(-12);
+  PIDTurn(17, 3, true, true);
+  intake.spin(forward, 600, rpm);
   pathing(pathMain[1], true);
-  // pointToPoint();
-  // PIDMove(0, 180);
+  // PIDMove(-2.0);//-5.5
+  wait(100, msec);
+  PIDMove(5);
+  PIDTurn(-16,36, false, true);
+  PIDMove(22);
+  PIDTurn(12,24, true, true);
+  intakeLifter.set(true);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(-9);
+  wait(200, msec);
+  intakeLifter.set(false);
+  wait(200, msec);
+  PIDMove(-6);
+  wait(500, msec);
+  PIDMove(1);
+  PIDTurn(29,110, false, true);
+  wait(15000, msec);
+  intake.spin(reverse, 600, rpm);
+  pathing(pathMain[2], true);
+  PIDMove(-8);
+  PIDMove(-8);
+  wait(100, msec);
+  PIDTurn(24,110, false, true);
+  wait(500, msec); //RID
+  wait(15000, msec);
+
+  // PIDTurn(4,24,false);
+  pathing(pathMain[0], false);
+  wait(500, msec);//RID
+  //pathing(pathMain[1], false);
+  PIDTurn(25, 7, true, true);
+  intake.spin(forward, 600, rpm);
+  pathing(pathMain[1], true);
+  PIDMove(-5.5);
+  PIDMove(5);
+  PIDTurn(-12,36, true, true);
+  intake.spin(reverse, 600, rpm);
+  pathing(pathMain[2], true);
+  PIDMove(-8);
+  PIDMove(-8);
+  wait(100, msec);
+  PIDTurn(24,110, false, true);
+  wait(500, msec); //RID
+  PIDTurn(-41,0, true, false);
+  pathing(pathMain[3], true);
+  wait(100, msec);
+  pathing(pathMain[4], false);
+  // pathing(pathMain[1], true);
   
 }
 
