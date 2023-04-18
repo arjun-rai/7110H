@@ -55,9 +55,9 @@ int autonNum =-1;
 //RIGHTTT
 std::vector<std::vector<pathPoint>> pathMain = {
   {point(0, 0), point(8,24)},
-  {point(8, 24), point(25, 7)},
+  {point(8, 24), point(20, 9)},
   {point(25,7), point(-12, 36), point(-18,48)},
-  {point(-26,51),point(-24,36), point(-24,24)},
+  {point(-26,51),point(-38,36), point(-38,24)},
   {point(-24,50), point(-42, 44), point(-38,24)},
   {point(-38,24), point(-7,36)}
   };
@@ -448,12 +448,14 @@ double maxMoveVoltage =8;
 double desiredLength = 0;
 
 bool enableDist = true;
-int dist()
+int dist(double timeout, brakeType chooseBrakeType)
 {
+  double timeout_loop = (timeout*1000.0);
+  double timeout_time =0;
   double startingDist = (fEncoder.position(deg)/360.0)*M_PI*2.75;
-  while (enableDist)
+  while (enableDist&&timeout_time<timeout_loop)
   {
-    moveError = desiredLength-((fEncoder.position(deg)/360.0)*M_PI*2.75-startingDist);
+    moveError = desiredLength-(((fEncoder.position(deg)/360.0)*M_PI*2.75)-startingDist);
     moveDerivative = moveError-movePrevError;
 
     double moveVolt = (moveError*KpMove+moveDerivative*KdMove);
@@ -463,6 +465,7 @@ int dist()
     // {
     //   straightPct=lastStraightPct+5;
     // }
+    printf("%f\n", timeout_time);
     
     leftDrive.spin(fwd, moveVolt, voltageUnits::volt);
     rightDrive.spin(fwd, moveVolt, voltageUnits::volt);
@@ -475,10 +478,11 @@ int dist()
 
     movePrevError=moveError;
     lastMovePct=moveVolt;
+    timeout_time+=20;
     wait(20, msec);
   }
-  leftDrive.stop(vex::brakeType::hold);
-  rightDrive.stop(vex::brakeType::hold);
+  leftDrive.stop(chooseBrakeType);
+  rightDrive.stop(chooseBrakeType);
   return 1;
 }
 
@@ -550,10 +554,17 @@ void PIDTurn(double x, double y, bool reverse, bool left)
   // desiredValue=((distanceP(pos[0], pos[1], x, y)*4*360)/(M_PI*3.25*5));
   // drivePID();  
 }
-void PIDMove (double length)
+
+void PIDTurn(double angle)
+{
+  resetDriveSensors=true;
+  desiredTurnValue=angle;
+  drivePID();
+}
+void PIDMove (double length, double timeout=5, brakeType chooseBrakeType=hold)
 {
   desiredLength=length;
-  dist();
+  dist(timeout, chooseBrakeType);
 }
 void PIDTurnMove(double move, double ang)
 {
@@ -579,7 +590,7 @@ int odom()
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.clearLine();
     // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
-    printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
+    //printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
     vex::task::sleep(10);
   }
   return 1;
@@ -706,23 +717,26 @@ void autonomous(void) {
   pathing(pathMain[0], false);
   wait(500, msec);//RID
   //pathing(pathMain[1], false);
-  PIDTurn(25, 7, true, true);
+  PIDTurn(20, 9, true, true);
+  //PIDMove(-60);
   pathing(pathMain[1], true);
-  PIDMove(-5);
-  intake.spinFor(forward, 250, degrees, 600, rpm);
-  PIDMove(5);
-  PIDTurn(-12,36, true, true);
+  PIDMove(-12.5,5, brake);
+  wait(500, msec);
+  intake.spinFor(forward, 500, degrees, 600, rpm);
+  PIDMove(8);
+  PIDTurn(-12,36, true, false);
   intake.spin(reverse, 600, rpm);
   pathing(pathMain[2], true);
   PIDMove(-16);
   //PIDMove(-8);
   wait(100, msec);
   PIDTurn(24,110, false, true);
-  // PIDMove(-16);
+  PIDMove(-8, 5,brake);
+  PIDTurn(-36, 36, true,false);
   pathing(pathMain[3], true);
   wait(500, msec); //RID
-  // PIDTurn(-41,0, true, false);
-  // pathing(pathMain[3], true);
+  PIDTurn(-41,0, true, false);
+  pathing(pathMain[3], true);
   // wait(100, msec);
   // pathing(pathMain[4], false);
   // pathing(pathMain[1], true);
