@@ -45,21 +45,22 @@ void driveBrake(vex::brakeType b)
 int autonNum =-1;
 
 //LEFTTT
-std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(0,15)},
-  {point(8, 24), point(17, 3)},
-  {point(17,3), point(-12, 36), point(-14,41), point(-24,50)},
-  {point(-24,50), point(-42, 44), point(-38,24)},
-  {point(-38,24), point(-7,36)}
-  };
-//RIGHTTT
 // std::vector<std::vector<pathPoint>> pathMain = {
-//   {point(0, 0), point(8,24)},
+//   {point(0, 0), point(0,15)},
 //   {point(8, 24), point(17, 3)},
 //   {point(17,3), point(-12, 36), point(-14,41), point(-24,50)},
 //   {point(-24,50), point(-42, 44), point(-38,24)},
 //   {point(-38,24), point(-7,36)}
 //   };
+//RIGHTTT
+std::vector<std::vector<pathPoint>> pathMain = {
+  {point(0, 0), point(8,24)},
+  {point(8, 24), point(25, 7)},
+  {point(25,7), point(-12, 36), point(-18,48)},
+  {point(-26,51),point(-24,36), point(-24,24)},
+  {point(-24,50), point(-42, 44), point(-38,24)},
+  {point(-38,24), point(-7,36)}
+  };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
@@ -648,109 +649,82 @@ void autonomous(void) {
 
   // intake.spin(forward, 600, rpm);
   // intake.spinFor(forward, 1200, degrees, 600, rpm);
-  PIDMove(-4);
-  intake.spinFor(forward, 250, degrees, 600, rpm);
-  PIDMove(10);
-  PIDTurn(16, 19, false, false);
-  PIDMove(15);
-  PIDTurn(-15, 100, false, true);
-  wait(350, msec);
-  PIDTurn(3.25, 15, true, false);
-  intakeLifter.set(true);
-  intake.spin(reverse, 600, rpm);
-  wait(200, msec);
-  PIDMove(-9);
-  //wait(100, msec);
-  intakeLifter.set(false);
-  wait(400, msec);
-  PIDMove(6);
-  PIDTurn(-15, 100, false, true);
-  wait(350, msec);
-  PIDTurn(16, 16, true, true);
-  intakeLifter.set(true);
-  PIDMove(-14);
-  //wait(500, msec);
-  intakeLifter.set(false);
-  wait(500, msec);
-  PIDMove(-12);
-  wait(400, msec);
-  PIDTurn(-2, 120, false, true);
-  wait(15000, msec);
-  // PIDTurn();
 
-  PIDTurn(-2, 15, true, false);
-  intakeLifter.set(true);
-  intake.spin(reverse, 600, rpm);
-  PIDMove(-10);
-  wait(100, msec);
-  intakeLifter.set(false);
-  // wait(100, msec);
+
   // PIDMove(-4);
-  wait(200, msec);
-  // pathing(pathMain[0], false);
+  // intake.spinFor(forward, 250, degrees, 600, rpm);
+  // PIDMove(10);
+  // PIDTurn(16, 19, false, false);
+  // PIDMove(15);
+  // PIDTurn(-15, 100, false, true);
+  // wait(350, msec);
+  // PIDTurn(3.25, 15, true, false);
+  // intakeLifter.set(true);
+  // intake.spin(reverse, 600, rpm);
+  // wait(200, msec);
+  // PIDMove(-9);
+  // //wait(100, msec);
+  // intakeLifter.set(false);
+  // wait(400, msec);
+  // PIDMove(6);
+  // PIDTurn(-15, 100, false, true);
+  // wait(350, msec);
+  // PIDTurn(16, 16, true, true);
+  // intakeLifter.set(true);
+  // PIDMove(-14);
+  // //wait(500, msec);
+  // intakeLifter.set(false);
+  // wait(500, msec);
+  // PIDMove(-12);
+  // wait(400, msec);
+  // PIDTurn(-2, 120, false, true);
+  // wait(15000, msec);
+  // // PIDTurn();
+
+  // PIDTurn(-2, 15, true, false);
+  // intakeLifter.set(true);
+  // intake.spin(reverse, 600, rpm);
+  // PIDMove(-10);
+  // wait(100, msec);
+  // intakeLifter.set(false);
+  // // wait(100, msec);
+  // // PIDMove(-4);
+  // wait(200, msec);
+  // // pathing(pathMain[0], false);
 
 
-  wait(15000, msec);
+  // wait(15000, msec);
 
 
   /////////////////////////RIGHT////////////////////////////
 
 
   // PIDTurn(4,24,false);
-  pathing(pathMain[0], false);
-  wait(500, msec);//RID
-  //pathing(pathMain[1], false);
-  PIDMove(-12);
-  PIDTurn(17, 3, true, true);
-  intake.spin(forward, 600, rpm);
-  pathing(pathMain[1], true);
-  // PIDMove(-2.0);//-5.5
-  wait(100, msec);
-  PIDMove(5);
-  PIDTurn(-16,36, false, true);
-  PIDMove(22);
-  PIDTurn(12,24, true, true);
-  intakeLifter.set(true);
-  intake.spin(reverse, 600, rpm);
-  PIDMove(-9);
-  wait(200, msec);
-  intakeLifter.set(false);
-  wait(200, msec);
-  PIDMove(-6);
-  wait(500, msec);
-  PIDMove(1);
-  PIDTurn(29,110, false, true);
-  wait(15000, msec);
-  intake.spin(reverse, 600, rpm);
-  pathing(pathMain[2], true);
-  PIDMove(-8);
-  PIDMove(-8);
-  wait(100, msec);
-  PIDTurn(24,110, false, true);
-  wait(500, msec); //RID
-  wait(15000, msec);
+  //
 
   // PIDTurn(4,24,false);
   pathing(pathMain[0], false);
   wait(500, msec);//RID
   //pathing(pathMain[1], false);
   PIDTurn(25, 7, true, true);
-  intake.spin(forward, 600, rpm);
   pathing(pathMain[1], true);
-  PIDMove(-5.5);
+  PIDMove(-5);
+  intake.spinFor(forward, 250, degrees, 600, rpm);
   PIDMove(5);
   PIDTurn(-12,36, true, true);
   intake.spin(reverse, 600, rpm);
   pathing(pathMain[2], true);
-  PIDMove(-8);
-  PIDMove(-8);
+  PIDMove(-16);
+  //PIDMove(-8);
   wait(100, msec);
   PIDTurn(24,110, false, true);
-  wait(500, msec); //RID
-  PIDTurn(-41,0, true, false);
+  // PIDMove(-16);
   pathing(pathMain[3], true);
-  wait(100, msec);
-  pathing(pathMain[4], false);
+  wait(500, msec); //RID
+  // PIDTurn(-41,0, true, false);
+  // pathing(pathMain[3], true);
+  // wait(100, msec);
+  // pathing(pathMain[4], false);
   // pathing(pathMain[1], true);
   
 }
@@ -861,6 +835,9 @@ bool boostToggle = false;
 bool modeOn = false;
 bool modeToggle = false;
 
+bool autonOn = false;
+bool autonToggle = false;
+
 bool loaderOn = false;
 bool loaderToggle = false;
 
@@ -967,6 +944,9 @@ void usercontrol(void) {
       {
         modeToggle = !modeToggle;
         modeOn=true;
+        Controller.Screen.setCursor(0, 0);
+        Controller.Screen.clearLine();
+        Controller.Screen.print("B:%d, R:%d, A:%d", boostToggle, modeToggle, autonToggle);
       }
     }
     else  
@@ -979,6 +959,22 @@ void usercontrol(void) {
     }
     else {
       cataReduce.set(false);
+    }
+
+    if (Controller.ButtonLeft.pressing())
+    {
+      if (!autonOn)
+      {
+        autonToggle = !autonToggle;
+        autonOn=true;
+        Controller.Screen.setCursor(0, 0);
+        Controller.Screen.clearLine();
+        Controller.Screen.print("B:%d, R:%d, A:%d", boostToggle, modeToggle, autonToggle);
+      }
+    }
+    else  
+    {
+      autonOn=false;
     }
 
     // if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
@@ -1031,6 +1027,9 @@ void usercontrol(void) {
       {
         boostToggle = !boostToggle;//!boostToggle
         boostOn=true;
+        Controller.Screen.setCursor(0, 0);
+        Controller.Screen.clearLine();
+        Controller.Screen.print("B:%d, R:%d, A:%d", boostToggle, modeToggle, autonToggle);
       }
     }
     else
@@ -1052,6 +1051,11 @@ void usercontrol(void) {
       wait(50, msec);
       if (boostToggle)
         cataBoost.set(true);
+      if (autonToggle)
+      {
+        cataBoost.set(true);
+        cataBoost2.set(true);
+      }
       // if (true)
       // {
       //   wait(140, msec);
@@ -1067,7 +1071,7 @@ void usercontrol(void) {
     {
        catapult.spin(reverse, 60, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>120)//93
+    if (reload && cataSense.angle(deg)>119)//93
     {
       catapult.stop(hold);
       
@@ -1077,10 +1081,13 @@ void usercontrol(void) {
       intakeToggle=false;
       catapult.stop(coast);
       cataBoost.set(false);
+      cataBoost2.set(false);
 
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
+
+    
 
     // if (intakeSense.objectDistance(mm)<=23)
     // {
