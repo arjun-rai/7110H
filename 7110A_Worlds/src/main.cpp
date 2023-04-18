@@ -43,14 +43,23 @@ void driveBrake(vex::brakeType b)
   MiddleRight.setBrake(b);
 }
 int autonNum =-1;
+
+//LEFTTT
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(8,24)},
+  {point(0, 0), point(0,15)},
   {point(8, 24), point(17, 3)},
-  {point(17,3), point(-12, 36), point(-14,41), point(-24,50)},//30 52
+  {point(17,3), point(-12, 36), point(-14,41), point(-24,50)},
   {point(-24,50), point(-42, 44), point(-38,24)},
   {point(-38,24), point(-7,36)}
-  // {point(0, 24), point(-18,24)}
   };
+//RIGHTTT
+// std::vector<std::vector<pathPoint>> pathMain = {
+//   {point(0, 0), point(8,24)},
+//   {point(8, 24), point(17, 3)},
+//   {point(17,3), point(-12, 36), point(-14,41), point(-24,50)},
+//   {point(-24,50), point(-42, 44), point(-38,24)},
+//   {point(-38,24), point(-7,36)}
+//   };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
@@ -125,8 +134,8 @@ void getCurrLoc()
     local_Y=fEncoder_delta;
   }
   else{
-    local_X=(2*sin(orientation_delta/2.0))*((hEncoder_delta/orientation_delta)+2);
-    local_Y=(2*sin(orientation_delta/2.0))*((fEncoder_delta/orientation_delta)+3.3);
+    local_X=(2*sin(orientation_delta/2.0))*((hEncoder_delta/orientation_delta)+2.5);
+    local_Y=(2*sin(orientation_delta/2.0))*((fEncoder_delta/orientation_delta)+0.75);
   }
 
   double local_polar_angle;
@@ -403,7 +412,7 @@ int pointToPoint()
     //   rightDrive.spin(fwd, straightPct/-curvePct, pct);
     // }
 
-    if (fabs(distError)<2)
+    if (fabs(distError)<4)
     {
       break;
     }
@@ -569,7 +578,7 @@ int odom()
     // Controller.Screen.setCursor(0, 0);
     // Controller.Screen.clearLine();
     // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
-    //printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
+    printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
     vex::task::sleep(10);
   }
   return 1;
@@ -629,9 +638,63 @@ int loadCata()
 void autonomous(void) {
   // desiredPos[0]=48;desiredPos[1]=48;
   vex::task odometry(odom);
-  // PID(48, 48);
+  // PID(48, 48);Z
   // desiredLength=48;
   // dist();
+
+
+  //////////////////////////LEFT/////////////////////////
+
+
+  // intake.spin(forward, 600, rpm);
+  // intake.spinFor(forward, 1200, degrees, 600, rpm);
+  PIDMove(-4);
+  intake.spinFor(forward, 250, degrees, 600, rpm);
+  PIDMove(10);
+  PIDTurn(16, 19, false, false);
+  PIDMove(15);
+  PIDTurn(-15, 100, false, true);
+  wait(350, msec);
+  PIDTurn(3.25, 15, true, false);
+  intakeLifter.set(true);
+  intake.spin(reverse, 600, rpm);
+  wait(200, msec);
+  PIDMove(-9);
+  //wait(100, msec);
+  intakeLifter.set(false);
+  wait(400, msec);
+  PIDMove(6);
+  PIDTurn(-15, 100, false, true);
+  wait(350, msec);
+  PIDTurn(16, 16, true, true);
+  intakeLifter.set(true);
+  PIDMove(-14);
+  //wait(500, msec);
+  intakeLifter.set(false);
+  wait(500, msec);
+  PIDMove(-12);
+  wait(400, msec);
+  PIDTurn(-2, 120, false, true);
+  wait(15000, msec);
+  // PIDTurn();
+
+  PIDTurn(-2, 15, true, false);
+  intakeLifter.set(true);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(-10);
+  wait(100, msec);
+  intakeLifter.set(false);
+  // wait(100, msec);
+  // PIDMove(-4);
+  wait(200, msec);
+  // pathing(pathMain[0], false);
+
+
+  wait(15000, msec);
+
+
+  /////////////////////////RIGHT////////////////////////////
+
 
   // PIDTurn(4,24,false);
   pathing(pathMain[0], false);
@@ -694,26 +757,36 @@ void autonomous(void) {
 
 
 double LeftPercent = 0;
-double RightPercent =0;
+double RightPercent = 0;
 double lastLeftPercent = 0;
 double lastRightPercent = 0;
 void leftExpo (vex::directionType type, double percentage){
-  if(percentage >= 0){
-    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  }else{
+  if(fabs(percentage) < 1)
+    percentage = 0;
+  else if(percentage >= 1)
+    percentage = 2*pow(1.0359999, percentage) + 1;
+  else{
     percentage = -percentage;
-    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = 2*pow(1.0359999, percentage) + 1;
     percentage = -percentage;
   }
+
+  // if(percentage >= 0){
+  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  // }else{
+  //   percentage = -percentage;
+  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  //   percentage = -percentage;
+  // }
   // if (percentage-lastLeftPercent>0 && percentage!=0 && lastLeftPercent<0)
   // {
   //   percentage=lastLeftPercent+5;
   // }
   LeftPercent=percentage;
-  if (LeftPercent>=70&&RightPercent>=70)
-  {
-    percentage=70;
-  }
+  // if (LeftPercent>=70&&RightPercent>=70)
+  // {
+  //   percentage=70;
+  // }
   if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
   {
     percentage=lastLeftPercent-0.8;
@@ -723,18 +796,30 @@ void leftExpo (vex::directionType type, double percentage){
 }
 
 void rightExpo (vex::directionType type, double percentage){
-  if(percentage >= 0){
-    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  }else{
+
+  if(fabs(percentage) < 1)
+    percentage = 0;
+  else if(percentage >= 1)
+    percentage = 2*pow(1.0359999, percentage) + 1;
+  else{
     percentage = -percentage;
-    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = 2*pow(1.0359999, percentage) + 1;
     percentage = -percentage;
   }
+
+
+  // if(percentage >= 0){
+  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  // }else{
+  //   percentage = -percentage;
+  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  //   percentage = -percentage;
+  // }
   RightPercent=percentage;
-  if (LeftPercent>=70&&RightPercent>=70)
-  {
-    percentage=70;
-  }
+  // if (LeftPercent>=70&&RightPercent>=70)
+  // {
+  //   percentage=70;
+  // }
   if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
   {
     percentage=lastRightPercent-0.8;
@@ -791,6 +876,7 @@ void usercontrol(void) {
   cataBoost.set(false);
   autonCata=false;
   enableDrivePID=false;
+  enableOdom=false;
   //Controller.Screen.clearLine();
   //Controller.Screen.print(averagePosition);
   // User control code here, inside the loop
