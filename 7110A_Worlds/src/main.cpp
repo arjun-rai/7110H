@@ -54,12 +54,12 @@ int autonNum =-1;
 //   };
 //RIGHTTT
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(8,24)},
-  {point(8, 24), point(17, 7)},
-  {point(25,7), point(-12, 36), point(-18,48)},
-  {point(-26,51),point(-46,36), point(-46,24)},
+  {point(0, 0), point(6,24)},
+  {point(6, 24), point(17, 7)},
+  {point(25,7), point(-12, 32), point(-18,44)},
+  {point(-26,51),point(-45,36), point(-45,5)},
   // {point(-8,50), point(-42, 44), point(-38,24)},
-  {point(-46,24),point(-24,28)}
+  {point(-45,5),point(-18,28)}
   };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -515,35 +515,47 @@ bool load=false;
 bool fire = false;
 bool autonCata=true;
 bool loader=false;
+double shootPoint[] = {0,0};
+double shootDist = 10;
 int loadCata()
 {
   while (autonCata)
   {
     if (load)
     {
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<103&&load&&loader)
+    // if (cataSense.angle(deg)<103&&load&&loader)
+    // {
+    //   catapult.stop(hold);
+    //   load=!load;
+    // }
+    if (cataSense.angle(deg)>100&&load)
     {
-      catapult.stop(hold);
-      load=!load;
+      catapult.spin(reverse, 60, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<93&&load)
+    if (cataSense.angle(deg)>119&&load)
     {
       catapult.stop(hold);
       load=!load;
     }
     if (fire)
     {
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
-      wait(20, msec);
-      cataBoost.set(true);
+      if ((shootPoint[0]==0 && shootPoint[1]==0) || (shootPoint[0]!=0 && shootPoint[1]!=0&&distanceP(pos[0], pos[1], shootPoint[0], shootPoint[1])<shootDist))
+      {
+        catapult.spin(reverse, 100, vex::velocityUnits::pct);
+        wait(50, msec);
+        cataBoost.set(true);
+        cataBoost2.set(true);
+      }
     }
-    if (cataSense.angle(deg)>168&&fire)
+    if (cataSense.angle(deg)<50&&fire)
     {
       catapult.stop(coast);
       cataBoost.set(false);
+      cataBoost2.set(false);
       fire=!fire;
+      load=true;
     }
     vex::task::sleep(20);
   }
@@ -555,6 +567,7 @@ int loadCata()
 void autonomous(void) {
   // desiredPos[0]=48;desiredPos[1]=48;
   vex::task odometry(odom);
+  vex::task autonCatapult(loadCata);
   // PID(48, 48);Z
   // desiredLength=48;
   // dist();
@@ -619,8 +632,14 @@ void autonomous(void) {
   //
 
   // PIDTurn(4,24,false);
+
+  load=true;
   pathing(pathMain[0], false);
-  wait(350, msec);//RID
+  fire=true;
+  wait(100, msec);
+  //wait(200, msec);
+  // load=true;
+  //wait(350, msec);//RID
   //pathing(pathMain[1], false);
   PIDTurn(20, 9, true, true);
   //PIDMove(-60);
@@ -636,14 +655,22 @@ void autonomous(void) {
   //PIDMove(-8);
   wait(100, msec);
   PIDTurn(24,110, false, true);
-  PIDMove(-7);
-  PIDTurn(-47, 0, true,false);
+  shootPoint[0]=-24;shootPoint[1]=24*3;
+  fire=true;
+  PIDMove(15);
+  wait(100, msec);
+  // wait(200, msec);
+  // load=true;
+  PIDMove(-13);
+  PIDTurn(-45, 0, true,false);
+  maxVelChange=2;
   pathing(pathMain[3], true);
   // wait(500, msec); //RID
   // PIDTurn(-41,0, true, false);
   //pathing(pathMain[3], true);
   // wait(100, msec);
   pathing(pathMain[4], false);
+  fire=true;
   // pathing(pathMain[1], true);
   
 }
