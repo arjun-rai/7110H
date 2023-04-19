@@ -55,11 +55,11 @@ int autonNum =-1;
 //RIGHTTT
 std::vector<std::vector<pathPoint>> pathMain = {
   {point(0, 0), point(8,24)},
-  {point(8, 24), point(17, 7)},
+  {point(8, 24), point(18, 7)},
   {point(25,7), point(-12, 36), point(-18,48)},
-  {point(-26,51),point(-46,36), point(-46,24)},
-  // {point(-8,50), point(-42, 44), point(-38,24)},
-  {point(-46,24),point(-24,28)}
+  {point(-26,51),point(-38,36), point(-38,24)},
+  {point(-8,50), point(-42, 44), point(-38,24)},
+  {point(-38,24), point(-7,36)}
   };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -253,7 +253,7 @@ int drivePID(){
 
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
-    if (fabs(turnError)<4)
+    if (fabs(turnError)<2)
     {
       break;
     }
@@ -338,6 +338,101 @@ int drivePID(){
 }
 
 
+double distError;
+double distPrevError;
+double distDerivative;
+
+double curveError;
+double curvePrevError;
+double curveDerivative;
+
+double pointKpMove=1;
+double pointKdMove=10;
+
+double pointKpCurve=0.4;
+double pointKdCurve=0.1;
+
+double lastStraightPct =0;
+
+double maxDistVoltage =10;
+double maxTurnVoltage =8;
+
+double desiredPos[] = {0,0};
+
+bool enablePointToPoint = true;
+int pointToPoint()
+{
+  while (enablePointToPoint)
+  {
+    curveError = degree(atan2((desiredPos[1]-pos[1]), (desiredPos[0]-pos[0])))-Inertial.rotation();
+    distError = distanceP(pos[0], pos[1], desiredPos[0], desiredPos[1]);
+    if (fabs(distError)<5)
+    {
+      curveError=0;
+    }
+    if (fmod(curveError,360)>90||fmod(curveError,-360)<-90)
+    {
+      distError=-distError;
+    }
+    distDerivative = distError-distPrevError;
+    curveDerivative=curveError-curvePrevError;
+
+    float heading_scale_factor = cos(radians(curveError));
+    double straightPct = (distError*pointKpMove+distDerivative*pointKdMove);
+    straightPct*=heading_scale_factor;
+    double curvePct = (curveError*pointKpCurve);
+
+
+    straightPct = clamp(straightPct, -fabs(heading_scale_factor)*maxDistVoltage, fabs(heading_scale_factor)*maxDistVoltage);
+    curvePct = clamp(curvePct, -maxTurnVoltage, maxTurnVoltage);
+    // if(curvePct<1 && curvePct>0)
+    // {
+    //   curvePct=1;
+    // }
+
+    // if(curvePct>-1 && curvePct<0)
+    // {
+    //   curvePct=-1;
+    // }
+
+    // if(straightPct-lastStraightPct>5)
+    // {
+    //   straightPct=lastStraightPct+5;
+    // }
+    
+    leftDrive.spin(fwd, straightPct-(curvePct), voltageUnits::volt);
+    rightDrive.spin(fwd, straightPct+(curvePct), voltageUnits::volt);
+
+    // if (curvePct>0)
+    // {
+    //   leftDrive.spin(fwd, straightPct/curvePct, pct);
+    //   rightDrive.spin(fwd, straightPct, pct);
+    // }
+    // else {
+    //   leftDrive.spin(fwd, straightPct, pct);
+    //   rightDrive.spin(fwd, straightPct/-curvePct, pct);
+    // }
+
+    if (fabs(distError)<4)
+    {
+      break;
+    }
+    // if (fabs(curveError)<1)
+    // {
+    //   pointKpCurve=0;
+    //   // pointKpMove=0;
+    // }
+
+    distPrevError=distError;
+    curvePrevError=curveError;
+    lastStraightPct=straightPct;
+    wait(20, msec);
+  }
+  leftDrive.stop(vex::brakeType::brake);
+  rightDrive.stop(vex::brakeType::brake);
+  return 1;
+}
+
 double moveError;
 double movePrevError;
 double moveDerivative;
@@ -348,7 +443,7 @@ double KdMove=10;
 
 double lastMovePct =0;
 
-double maxMoveVoltage =10; //8
+double maxMoveVoltage =8;
 
 double desiredLength = 0;
 
@@ -393,7 +488,7 @@ int dist(double timeout, brakeType chooseBrakeType)
 
 double track_width = 11;
 //double dt = 0.005;
-double maxVelChange=6; //3
+double maxVelChange=3; //3
 bool pathing(std::vector<pathPoint> path, bool backwards)
 {
   double lastVel = 0;
@@ -628,7 +723,7 @@ void autonomous(void) {
   PIDMove(-12.5,0.5, brake);
   wait(350, msec);
   intake.spinFor(forward, 500, degrees, 600, rpm);
-  PIDMove(9);
+  PIDMove(8);
   PIDTurn(-12,36, true, false);
   intake.spin(reverse, 600, rpm);
   pathing(pathMain[2], true);
@@ -636,8 +731,8 @@ void autonomous(void) {
   //PIDMove(-8);
   wait(100, msec);
   PIDTurn(24,110, false, true);
-  PIDMove(-7);
-  PIDTurn(-47, 0, true,false);
+  PIDMove(-8, 5,brake);
+  PIDTurn(-41, 0, true,false);
   pathing(pathMain[3], true);
   // wait(500, msec); //RID
   // PIDTurn(-41,0, true, false);
