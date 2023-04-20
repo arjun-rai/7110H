@@ -54,9 +54,9 @@ int autonNum =-1;
 //   };
 //RIGHTTT
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(7,24)},
-  {point(7, 24), point(17, 7)},
-  {point(25,9), point(-12, 34), point(-18,46)},
+  {point(0, 0), point(9,24)}, //8 24
+  {point(9, 24), point(17, 8)}, //8
+  {point(25,9), point(-12, 36), point(-18,48)},
   {point(-26,51),point(-43,36), point(-43,10)},
   // {point(-8,50), point(-42, 44), point(-38,24)},
   {point(-45,10),point(-13,28)}
@@ -517,6 +517,8 @@ bool autonCata=true;
 bool loader=false;
 double shootPoint[] = {0,0};
 double shootDist = 10;
+double shootTime = 0;
+bool singlePiston = false;
 int loadCata()
 {
   while (autonCata)
@@ -541,14 +543,25 @@ int loadCata()
     }
     if (fire&&intakeSense.objectDistance(mm)>170)
     {
+      if (shootTime!=0)
+      {
+        wait(shootTime,msec);
+      }
       if ((shootPoint[0]==0 && shootPoint[1]==0) || (shootPoint[0]!=0 && shootPoint[1]!=0&&distanceP(pos[0], pos[1], shootPoint[0], shootPoint[1])<shootDist))
       {
         catapult.spin(reverse, 100, vex::velocityUnits::pct);
         wait(70, msec);
-        cataBoost.set(true);
-        cataBoost2.set(true);
+        if (singlePiston)
+        {
+          cataBoost.set(true);
+        }
+        else 
+        {
+          cataBoost.set(true);
+          cataBoost2.set(true);
+        }
+        }
       }
-    }
     if (cataSense.angle(deg)<50&&fire)
     {
       catapult.stop(coast);
@@ -634,12 +647,10 @@ void autonomous(void) {
   // PIDTurn(4,24,false);
 
   load=true;
-  shootPoint[0]=7;shootPoint[1]=24;
-  shootDist=10;
+  // singlePiston=true;
+  pathing(pathMain[0], false);
   if (intakeSense.objectDistance(mm)>170)
     fire=true;
-  pathing(pathMain[0], false);
-  
   wait(100, msec);
   //wait(200, msec);
   // load=true;
@@ -654,15 +665,18 @@ void autonomous(void) {
   PIDMove(9);
   PIDTurn(-12,36, true, false);
   intake.spin(reverse, 600, rpm);
+  maxVelChange=5;
   pathing(pathMain[2], true);
-  PIDMove(-16);
+  PIDMove(-18);
   //PIDMove(-8);
   wait(100, msec);
   PIDTurn(26,122, false, true);
-  shootPoint[0]=-33;shootPoint[1]=42;
-  shootDist=5;
+  // shootPoint[0]=-33;shootPoint[1]=42;
+  // shootDist=5;
+  singlePiston=false;
+  shootTime=50;
   fire=true;
-  PIDMove(12);
+  PIDMove(10);
   // wait(100, msec);
   // // wait(200, msec);
   // // load=true;
