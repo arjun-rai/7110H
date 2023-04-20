@@ -45,21 +45,12 @@ void driveBrake(vex::brakeType b)
 int autonNum =-1;
 
 //LEFTTT
-// std::vector<std::vector<pathPoint>> pathMain = {
-//   {point(0, 0), point(0,15)},
-//   {point(8, 24), point(17, 3)},
-//   {point(17,3), point(-12, 36), point(-14,41), point(-24,50)},
-//   {point(-24,50), point(-42, 44), point(-38,24)},
-//   {point(-38,24), point(-7,36)}
-//   };
-//RIGHTTT
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(7,24)},
-  {point(7, 24), point(17, 7)},
-  {point(25,9), point(-12, 34), point(-18,46)},
-  {point(-26,51),point(-43,36), point(-43,10)},
-  // {point(-8,50), point(-42, 44), point(-38,24)},
-  {point(-45,10),point(-13,28)}
+  {point(0, 0), point(0,15)},
+  {point(8, 24), point(17, 3)},
+  {point(17,3), point(-12, 36), point(-14,41), point(-24,50)},
+  {point(-24,50), point(-42, 44), point(-38,24)},
+  {point(-38,24), point(-7,36)}
   };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -579,34 +570,40 @@ void autonomous(void) {
   // intake.spin(forward, 600, rpm);
   // intake.spinFor(forward, 1200, degrees, 600, rpm);
 
+  load=true;
+  PIDMove(-4);
+  intake.spinFor(forward, 250, degrees, 600, rpm);
+  PIDMove(10);
+  PIDTurn(16, 19, false, false);
+  PIDMove(15);
+  PIDTurn(-15, 100, false, true);
+  fire=true;
+  wait(200, msec);
+  PIDTurn(3.25, 15, true, false);
+  intakeLifter.set(true);
+  intake.spin(reverse, 600, rpm);
+  wait(200, msec);
+  PIDMove(-9);
+  //wait(100, msec);
+  intakeLifter.set(false);
+  wait(600, msec);
+  PIDMove(6);
+  PIDTurn(-20, 100, false, true);
+  if (intakeSense.objectDistance(mm)>170)
+    fire=true;
+  wait(200, msec);
+  PIDTurn(16, 16, true, true);
+  intakeLifter.set(true);
+  PIDMove(-14);
+  //wait(500, msec);
+  intakeLifter.set(false);
+  wait(500, msec);
+  PIDMove(-12);
+  wait(400, msec);
+  PIDTurn(-9, 120, false, true);
+  if (intakeSense.objectDistance(mm)>170)
+    fire=true;
 
-  // PIDMove(-4);
-  // intake.spinFor(forward, 250, degrees, 600, rpm);
-  // PIDMove(10);
-  // PIDTurn(16, 19, false, false);
-  // PIDMove(15);
-  // PIDTurn(-15, 100, false, true);
-  // wait(350, msec);
-  // PIDTurn(3.25, 15, true, false);
-  // intakeLifter.set(true);
-  // intake.spin(reverse, 600, rpm);
-  // wait(200, msec);
-  // PIDMove(-9);
-  // //wait(100, msec);
-  // intakeLifter.set(false);
-  // wait(400, msec);
-  // PIDMove(6);
-  // PIDTurn(-15, 100, false, true);
-  // wait(350, msec);
-  // PIDTurn(16, 16, true, true);
-  // intakeLifter.set(true);
-  // PIDMove(-14);
-  // //wait(500, msec);
-  // intakeLifter.set(false);
-  // wait(500, msec);
-  // PIDMove(-12);
-  // wait(400, msec);
-  // PIDTurn(-2, 120, false, true);
   // wait(15000, msec);
   // // PIDTurn();
 
@@ -633,36 +630,36 @@ void autonomous(void) {
 
   // PIDTurn(4,24,false);
 
-  load=true;
-  shootPoint[0]=7;shootPoint[1]=24;
-  shootDist=10;
-  if (intakeSense.objectDistance(mm)>170)
-    fire=true;
-  pathing(pathMain[0], false);
-  
-  wait(100, msec);
-  //wait(200, msec);
   // load=true;
-  //wait(350, msec);//RID
-  //pathing(pathMain[1], false);
-  PIDTurn(20, 9, true, true);
-  //PIDMove(-60);
-  pathing(pathMain[1], true);
-  PIDMove(-12.5,0.5, brake);
-  wait(350, msec);
-  intake.spinFor(forward, 500, degrees, 600, rpm);
-  PIDMove(9);
-  PIDTurn(-12,36, true, false);
-  intake.spin(reverse, 600, rpm);
-  pathing(pathMain[2], true);
-  PIDMove(-16);
-  //PIDMove(-8);
-  wait(100, msec);
-  PIDTurn(26,122, false, true);
-  shootPoint[0]=-33;shootPoint[1]=42;
-  shootDist=5;
-  fire=true;
-  PIDMove(12);
+  // shootPoint[0]=7;shootPoint[1]=24;
+  // shootDist=10;
+  // if (intakeSense.objectDistance(mm)>170)
+  //   fire=true;
+  // pathing(pathMain[0], false);
+  
+  // wait(100, msec);
+  // //wait(200, msec);
+  // // load=true;
+  // //wait(350, msec);//RID
+  // //pathing(pathMain[1], false);
+  // PIDTurn(20, 9, true, true);
+  // //PIDMove(-60);
+  // pathing(pathMain[1], true);
+  // PIDMove(-12.5,0.5, brake);
+  // wait(350, msec);
+  // intake.spinFor(forward, 500, degrees, 600, rpm);
+  // PIDMove(9);
+  // PIDTurn(-12,36, true, false);
+  // intake.spin(reverse, 600, rpm);
+  // pathing(pathMain[2], true);
+  // PIDMove(-16);
+  // //PIDMove(-8);
+  // wait(100, msec);
+  // PIDTurn(26,122, false, true);
+  // shootPoint[0]=-33;shootPoint[1]=42;
+  // shootDist=5;
+  // fire=true;
+  // PIDMove(12);
   // wait(100, msec);
   // // wait(200, msec);
   // // load=true;
