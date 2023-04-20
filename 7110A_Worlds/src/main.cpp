@@ -54,12 +54,12 @@ int autonNum =-1;
 //   };
 //RIGHTTT
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(6,24)},
-  {point(6, 24), point(17, 7)},
-  {point(25,7), point(-12, 32), point(-18,44)},
-  {point(-26,51),point(-45,36), point(-45,5)},
+  {point(0, 0), point(7,24)},
+  {point(7, 24), point(17, 7)},
+  {point(25,9), point(-12, 34), point(-18,46)},
+  {point(-26,51),point(-43,36), point(-43,10)},
   // {point(-8,50), point(-42, 44), point(-38,24)},
-  {point(-45,5),point(-18,28)}
+  {point(-45,10),point(-13,28)}
   };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -539,12 +539,12 @@ int loadCata()
       catapult.stop(hold);
       load=!load;
     }
-    if (fire)
+    if (fire&&intakeSense.objectDistance(mm)>170)
     {
       if ((shootPoint[0]==0 && shootPoint[1]==0) || (shootPoint[0]!=0 && shootPoint[1]!=0&&distanceP(pos[0], pos[1], shootPoint[0], shootPoint[1])<shootDist))
       {
         catapult.spin(reverse, 100, vex::velocityUnits::pct);
-        wait(50, msec);
+        wait(70, msec);
         cataBoost.set(true);
         cataBoost2.set(true);
       }
@@ -634,8 +634,12 @@ void autonomous(void) {
   // PIDTurn(4,24,false);
 
   load=true;
+  shootPoint[0]=7;shootPoint[1]=24;
+  shootDist=10;
+  if (intakeSense.objectDistance(mm)>170)
+    fire=true;
   pathing(pathMain[0], false);
-  fire=true;
+  
   wait(100, msec);
   //wait(200, msec);
   // load=true;
@@ -654,23 +658,26 @@ void autonomous(void) {
   PIDMove(-16);
   //PIDMove(-8);
   wait(100, msec);
-  PIDTurn(24,110, false, true);
-  shootPoint[0]=-24;shootPoint[1]=24*3;
+  PIDTurn(26,122, false, true);
+  shootPoint[0]=-33;shootPoint[1]=42;
+  shootDist=5;
   fire=true;
-  PIDMove(15);
-  wait(100, msec);
-  // wait(200, msec);
-  // load=true;
-  PIDMove(-13);
-  PIDTurn(-45, 0, true,false);
-  maxVelChange=2;
-  pathing(pathMain[3], true);
-  // wait(500, msec); //RID
-  // PIDTurn(-41,0, true, false);
-  //pathing(pathMain[3], true);
+  PIDMove(12);
   // wait(100, msec);
-  pathing(pathMain[4], false);
-  fire=true;
+  // // wait(200, msec);
+  // // load=true;
+  // PIDMove(-17);
+  // PIDTurn(-43,0, true,false);
+  // maxVelChange=2;
+  // pathing(pathMain[3], true);
+  // // wait(500, msec); //RID
+  // // PIDTurn(-41,0, true, false);
+  // //pathing(pathMain[3], true);
+  // // wait(100, msec);
+  // maxVelChange=6;
+  // pathing(pathMain[4], false);
+  // shootPoint[0]=-19;shootPoint[1]=30;
+  // fire=true;
   // pathing(pathMain[1], true);
   
 }

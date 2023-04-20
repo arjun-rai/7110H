@@ -54,12 +54,12 @@ int autonNum =-1;
 //   };
 //RIGHTTT
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(8,24)},
-  {point(8, 24), point(18, 7)},
-  {point(25,7), point(-12, 36), point(-18,48)},
-  {point(-26,51),point(-38,36), point(-38,24)},
-  {point(-8,50), point(-42, 44), point(-38,24)},
-  {point(-38,24), point(-7,36)}
+  {point(0, 0), point(7,24)},
+  {point(7, 24), point(17, 7)},
+  {point(25,9), point(-12, 34), point(-18,46)},
+  {point(-26,51),point(-43,36), point(-43,10)},
+  // {point(-8,50), point(-42, 44), point(-38,24)},
+  {point(-45,10),point(-13,28)}
   };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -253,7 +253,7 @@ int drivePID(){
 
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
-    if (fabs(turnError)<2)
+    if (fabs(turnError)<4)
     {
       break;
     }
@@ -338,101 +338,6 @@ int drivePID(){
 }
 
 
-double distError;
-double distPrevError;
-double distDerivative;
-
-double curveError;
-double curvePrevError;
-double curveDerivative;
-
-double pointKpMove=1;
-double pointKdMove=10;
-
-double pointKpCurve=0.4;
-double pointKdCurve=0.1;
-
-double lastStraightPct =0;
-
-double maxDistVoltage =10;
-double maxTurnVoltage =8;
-
-double desiredPos[] = {0,0};
-
-bool enablePointToPoint = true;
-int pointToPoint()
-{
-  while (enablePointToPoint)
-  {
-    curveError = degree(atan2((desiredPos[1]-pos[1]), (desiredPos[0]-pos[0])))-Inertial.rotation();
-    distError = distanceP(pos[0], pos[1], desiredPos[0], desiredPos[1]);
-    if (fabs(distError)<5)
-    {
-      curveError=0;
-    }
-    if (fmod(curveError,360)>90||fmod(curveError,-360)<-90)
-    {
-      distError=-distError;
-    }
-    distDerivative = distError-distPrevError;
-    curveDerivative=curveError-curvePrevError;
-
-    float heading_scale_factor = cos(radians(curveError));
-    double straightPct = (distError*pointKpMove+distDerivative*pointKdMove);
-    straightPct*=heading_scale_factor;
-    double curvePct = (curveError*pointKpCurve);
-
-
-    straightPct = clamp(straightPct, -fabs(heading_scale_factor)*maxDistVoltage, fabs(heading_scale_factor)*maxDistVoltage);
-    curvePct = clamp(curvePct, -maxTurnVoltage, maxTurnVoltage);
-    // if(curvePct<1 && curvePct>0)
-    // {
-    //   curvePct=1;
-    // }
-
-    // if(curvePct>-1 && curvePct<0)
-    // {
-    //   curvePct=-1;
-    // }
-
-    // if(straightPct-lastStraightPct>5)
-    // {
-    //   straightPct=lastStraightPct+5;
-    // }
-    
-    leftDrive.spin(fwd, straightPct-(curvePct), voltageUnits::volt);
-    rightDrive.spin(fwd, straightPct+(curvePct), voltageUnits::volt);
-
-    // if (curvePct>0)
-    // {
-    //   leftDrive.spin(fwd, straightPct/curvePct, pct);
-    //   rightDrive.spin(fwd, straightPct, pct);
-    // }
-    // else {
-    //   leftDrive.spin(fwd, straightPct, pct);
-    //   rightDrive.spin(fwd, straightPct/-curvePct, pct);
-    // }
-
-    if (fabs(distError)<4)
-    {
-      break;
-    }
-    // if (fabs(curveError)<1)
-    // {
-    //   pointKpCurve=0;
-    //   // pointKpMove=0;
-    // }
-
-    distPrevError=distError;
-    curvePrevError=curveError;
-    lastStraightPct=straightPct;
-    wait(20, msec);
-  }
-  leftDrive.stop(vex::brakeType::brake);
-  rightDrive.stop(vex::brakeType::brake);
-  return 1;
-}
-
 double moveError;
 double movePrevError;
 double moveDerivative;
@@ -443,7 +348,7 @@ double KdMove=10;
 
 double lastMovePct =0;
 
-double maxMoveVoltage =8;
+double maxMoveVoltage =10; //8
 
 double desiredLength = 0;
 
@@ -488,7 +393,7 @@ int dist(double timeout, brakeType chooseBrakeType)
 
 double track_width = 11;
 //double dt = 0.005;
-double maxVelChange=3; //3
+double maxVelChange=6; //3
 bool pathing(std::vector<pathPoint> path, bool backwards)
 {
   double lastVel = 0;
@@ -610,35 +515,47 @@ bool load=false;
 bool fire = false;
 bool autonCata=true;
 bool loader=false;
+double shootPoint[] = {0,0};
+double shootDist = 10;
 int loadCata()
 {
   while (autonCata)
   {
     if (load)
     {
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<103&&load&&loader)
+    // if (cataSense.angle(deg)<103&&load&&loader)
+    // {
+    //   catapult.stop(hold);
+    //   load=!load;
+    // }
+    if (cataSense.angle(deg)>100&&load)
+    {
+      catapult.spin(reverse, 60, vex::velocityUnits::pct);
+    }
+    if (cataSense.angle(deg)>119&&load)
     {
       catapult.stop(hold);
       load=!load;
     }
-    if (cataSense.angle(deg)<93&&load)
+    if (fire&&intakeSense.objectDistance(mm)>170)
     {
-      catapult.stop(hold);
-      load=!load;
+      if ((shootPoint[0]==0 && shootPoint[1]==0) || (shootPoint[0]!=0 && shootPoint[1]!=0&&distanceP(pos[0], pos[1], shootPoint[0], shootPoint[1])<shootDist))
+      {
+        catapult.spin(reverse, 100, vex::velocityUnits::pct);
+        wait(70, msec);
+        cataBoost.set(true);
+        cataBoost2.set(true);
+      }
     }
-    if (fire)
-    {
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
-      wait(20, msec);
-      cataBoost.set(true);
-    }
-    if (cataSense.angle(deg)>168&&fire)
+    if (cataSense.angle(deg)<50&&fire)
     {
       catapult.stop(coast);
       cataBoost.set(false);
+      cataBoost2.set(false);
       fire=!fire;
+      load=true;
     }
     vex::task::sleep(20);
   }
@@ -650,6 +567,7 @@ int loadCata()
 void autonomous(void) {
   // desiredPos[0]=48;desiredPos[1]=48;
   vex::task odometry(odom);
+  vex::task autonCatapult(loadCata);
   // PID(48, 48);Z
   // desiredLength=48;
   // dist();
@@ -714,8 +632,18 @@ void autonomous(void) {
   //
 
   // PIDTurn(4,24,false);
+
+  load=true;
+  shootPoint[0]=7;shootPoint[1]=24;
+  shootDist=10;
+  if (intakeSense.objectDistance(mm)>170)
+    fire=true;
   pathing(pathMain[0], false);
-  wait(350, msec);//RID
+  
+  wait(100, msec);
+  //wait(200, msec);
+  // load=true;
+  //wait(350, msec);//RID
   //pathing(pathMain[1], false);
   PIDTurn(20, 9, true, true);
   //PIDMove(-60);
@@ -723,22 +651,33 @@ void autonomous(void) {
   PIDMove(-12.5,0.5, brake);
   wait(350, msec);
   intake.spinFor(forward, 500, degrees, 600, rpm);
-  PIDMove(8);
+  PIDMove(9);
   PIDTurn(-12,36, true, false);
   intake.spin(reverse, 600, rpm);
   pathing(pathMain[2], true);
   PIDMove(-16);
   //PIDMove(-8);
   wait(100, msec);
-  PIDTurn(24,110, false, true);
-  PIDMove(-8, 5,brake);
-  PIDTurn(-41, 0, true,false);
-  pathing(pathMain[3], true);
-  // wait(500, msec); //RID
-  // PIDTurn(-41,0, true, false);
-  //pathing(pathMain[3], true);
+  PIDTurn(26,122, false, true);
+  shootPoint[0]=-33;shootPoint[1]=42;
+  shootDist=5;
+  fire=true;
+  PIDMove(12);
   // wait(100, msec);
-  pathing(pathMain[4], false);
+  // // wait(200, msec);
+  // // load=true;
+  // PIDMove(-17);
+  // PIDTurn(-43,0, true,false);
+  // maxVelChange=2;
+  // pathing(pathMain[3], true);
+  // // wait(500, msec); //RID
+  // // PIDTurn(-41,0, true, false);
+  // //pathing(pathMain[3], true);
+  // // wait(100, msec);
+  // maxVelChange=6;
+  // pathing(pathMain[4], false);
+  // shootPoint[0]=-19;shootPoint[1]=30;
+  // fire=true;
   // pathing(pathMain[1], true);
   
 }
