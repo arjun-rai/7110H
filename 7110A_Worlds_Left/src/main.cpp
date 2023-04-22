@@ -535,7 +535,7 @@ int loadCata()
       if ((shootPoint[0]==0 && shootPoint[1]==0) || (shootPoint[0]!=0 && shootPoint[1]!=0&&distanceP(pos[0], pos[1], shootPoint[0], shootPoint[1])<shootDist))
       {
         catapult.spin(reverse, 100, vex::velocityUnits::pct);
-        wait(70, msec);
+        wait(50, msec);
         cataBoost.set(true);
         cataBoost2.set(true);
       }
@@ -576,17 +576,17 @@ void autonomous(void) {
   PIDMove(10);
   PIDTurn(16, 19, false, false);
   PIDMove(15);
-  PIDTurn(-15, 100, false, true);
+  PIDTurn(-17, 100, false, true);
   fire=true;
   wait(200, msec);
-  PIDTurn(3.25, 15, true, false);
+  PIDTurn(5, 15, true, false);
   intakeLifter.set(true);
   intake.spin(reverse, 600, rpm);
   wait(200, msec);
-  PIDMove(-9);
+  PIDMove(-10);
   //wait(100, msec);
   intakeLifter.set(false);
-  wait(600, msec);
+  wait(800, msec);
   PIDMove(6);
   PIDTurn(-20, 100, false, true);
   if (intakeSense.objectDistance(mm)>170)
@@ -594,13 +594,15 @@ void autonomous(void) {
   wait(200, msec);
   PIDTurn(16, 16, true, true);
   intakeLifter.set(true);
+  wait(200, msec);
   PIDMove(-14);
   //wait(500, msec);
   intakeLifter.set(false);
   wait(500, msec);
-  PIDMove(-12);
+  PIDMove(-19);
   wait(400, msec);
   PIDTurn(-9, 120, false, true);
+  PIDMove(7);
   if (intakeSense.objectDistance(mm)>170)
     fire=true;
 

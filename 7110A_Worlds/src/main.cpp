@@ -54,10 +54,10 @@ int autonNum =-1;
 //   };
 //RIGHTTT
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(9,24)}, //8 24
-  {point(9, 24), point(17, 8)}, //8
-  {point(25,9), point(-12, 36), point(-18,48)},
-  {point(-26,51),point(-43,36), point(-43,10)},
+  {point(0, 0), point(8,24)}, //8 24
+  {point(8, 24), point(18, 6)}, //8 //17
+  {point(25,9), point(-12, 42), point(-18,50)}, //38 50
+  {point(-26,51),point(-42,36), point(-42,10)},
   // {point(-8,50), point(-42, 44), point(-38,24)},
   {point(-45,10),point(-13,28)}
   };
@@ -649,9 +649,12 @@ void autonomous(void) {
   load=true;
   // singlePiston=true;
   pathing(pathMain[0], false);
+  PIDMove(-8);
+  PIDTurn(28,120, false, false);
   if (intakeSense.objectDistance(mm)>170)
     fire=true;
-  wait(100, msec);
+  wait(200, msec);
+  PIDMove(8);
   //wait(200, msec);
   // load=true;
   //wait(350, msec);//RID
@@ -662,35 +665,36 @@ void autonomous(void) {
   wait(350, msec);
   intake.spinFor(forward, 500, degrees, 600, rpm);
   PIDMove(9);
-  // PIDTurn(-12,36, true, false);
-  // intake.spin(reverse, 600, rpm);
-  // maxVelChange=5;
-  // pathing(pathMain[2], true);
-  // PIDMove(-18);
+  PIDTurn(-12,38, true, false);
+  intake.spin(reverse, 600, rpm);
+  maxVelChange=5;
+  pathing(pathMain[2], true);
+  PIDMove(-18);
   // //PIDMove(-8);
-  // wait(100, msec);
-  // PIDTurn(26,122, false, true);
+  wait(100, msec);
+  PIDTurn(26,118, false, true);
   // // shootPoint[0]=-33;shootPoint[1]=42;
   // // shootDist=5;
   // singlePiston=false;
   // shootTime=50;
-  // fire=true;
+  fire=true;
   // PIDMove(10);
-  // wait(100, msec);
+  wait(100, msec);
   // // wait(200, msec);
   // // load=true;
-  // PIDMove(-17);
-  // PIDTurn(-43,0, true,false);
-  // maxVelChange=2;
-  // pathing(pathMain[3], true);
+  // PIDMove(-13);
+  PIDTurn(-40,0, true,false);
+  maxVelChange=2;
+  wait(100, msec);
+  pathing(pathMain[3], true);
   // // wait(500, msec); //RID
   // // PIDTurn(-41,0, true, false);
   // //pathing(pathMain[3], true);
   // // wait(100, msec);
-  // maxVelChange=6;
-  // pathing(pathMain[4], false);
+  maxVelChange=12;
+  pathing(pathMain[4], false);
   // shootPoint[0]=-19;shootPoint[1]=30;
-  // fire=true;
+  fire=true;
   // pathing(pathMain[1], true);
   
 }
