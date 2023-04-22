@@ -496,7 +496,7 @@ int odom()
     // Controller.Screen.clearLine();
     // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
     //printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
-    vex::task::sleep(10);
+    vex::task::sleep(20);
   }
   return 1;
 }
@@ -536,7 +536,7 @@ int loadCata()
     {
       catapult.spin(reverse, 60, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>119&&load)
+    if (cataSense.angle(deg)>117&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -655,7 +655,6 @@ void autonomous(void) {
   //wait(200, msec);
   // load=true;
   //wait(350, msec);//RID
-  //pathing(pathMain[1], false);
   PIDTurn(20, 9, true, true);
   //PIDMove(-60);
   pathing(pathMain[1], true);
@@ -663,20 +662,20 @@ void autonomous(void) {
   wait(350, msec);
   intake.spinFor(forward, 500, degrees, 600, rpm);
   PIDMove(9);
-  PIDTurn(-12,36, true, false);
-  intake.spin(reverse, 600, rpm);
-  maxVelChange=5;
-  pathing(pathMain[2], true);
-  PIDMove(-18);
-  //PIDMove(-8);
-  wait(100, msec);
-  PIDTurn(26,122, false, true);
-  // shootPoint[0]=-33;shootPoint[1]=42;
-  // shootDist=5;
-  singlePiston=false;
-  shootTime=50;
-  fire=true;
-  PIDMove(10);
+  // PIDTurn(-12,36, true, false);
+  // intake.spin(reverse, 600, rpm);
+  // maxVelChange=5;
+  // pathing(pathMain[2], true);
+  // PIDMove(-18);
+  // //PIDMove(-8);
+  // wait(100, msec);
+  // PIDTurn(26,122, false, true);
+  // // shootPoint[0]=-33;shootPoint[1]=42;
+  // // shootDist=5;
+  // singlePiston=false;
+  // shootTime=50;
+  // fire=true;
+  // PIDMove(10);
   // wait(100, msec);
   // // wait(200, msec);
   // // load=true;
@@ -816,11 +815,12 @@ bool liftToggle = false;
 
 void usercontrol(void) {
   // intake.stop();
-
   cataBoost.set(false);
+  cataBoost2.set(false);
   autonCata=false;
   enableDrivePID=false;
   enableOdom=false;
+  pathMain = {};
   //Controller.Screen.clearLine();
   //Controller.Screen.print(averagePosition);
   // User control code here, inside the loop
@@ -1038,7 +1038,7 @@ void usercontrol(void) {
     {
        catapult.spin(reverse, 60, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>119)//93
+    if (reload && cataSense.angle(deg)>117)//93
     {
       catapult.stop(hold);
       
