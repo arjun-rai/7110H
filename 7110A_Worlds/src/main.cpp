@@ -819,12 +819,11 @@ bool liftToggle = false;
 
 void usercontrol(void) {
   // intake.stop();
+
   cataBoost.set(false);
-  cataBoost2.set(false);
   autonCata=false;
   enableDrivePID=false;
   enableOdom=false;
-  pathMain = {};
   //Controller.Screen.clearLine();
   //Controller.Screen.print(averagePosition);
   // User control code here, inside the loop
@@ -1014,12 +1013,13 @@ void usercontrol(void) {
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (Controller.ButtonR2.pressing() && intakeSense.objectDistance(mm)>170)
+    //printf("%f\n", cataSense.angle());
+    if (Controller.ButtonR2.pressing()&& intakeSense.objectDistance(mm)>170)//&& intakeSense.objectDistance(mm)>170
     {
       intakeToggle=false;
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
-      wait(50, msec);
+      wait (50, msec);
       if (boostToggle)
         cataBoost.set(true);
       if (autonToggle)
@@ -1033,6 +1033,10 @@ void usercontrol(void) {
       //   cataBoost.set(false);
       // }
     }
+    // if (cataSense.angle()>118)
+    // {
+     
+    // }
     // if (reload&&loaderToggle&&cataSense.angle(deg)>116.5)
     // {
     //   catapult.stop(hold);
@@ -1040,12 +1044,11 @@ void usercontrol(void) {
     // }
     if (reload && cataSense.angle(deg)>100)
     {
-       catapult.spin(reverse, 60, vex::velocityUnits::pct);
+       catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
     if (reload && cataSense.angle(deg)>117)//93
     {
       catapult.stop(hold);
-      
     }
     else if (!reload && cataSense.angle(deg)<50)
     {

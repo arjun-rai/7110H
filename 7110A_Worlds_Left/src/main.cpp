@@ -995,12 +995,20 @@ void usercontrol(void) {
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
+    //printf("%f\n", cataSense.angle());
     if (Controller.ButtonR2.pressing() && intakeSense.objectDistance(mm)>170)
     {
       intakeToggle=false;
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
-      wait(50, msec);
+      // if (true)
+      // {
+      //   wait(140, msec);
+      //   cataBoost.set(false);
+      // }
+    }
+    if (cataSense.angle()>121)
+    {
       if (boostToggle)
         cataBoost.set(true);
       if (autonToggle)
@@ -1008,11 +1016,6 @@ void usercontrol(void) {
         cataBoost.set(true);
         cataBoost2.set(true);
       }
-      // if (true)
-      // {
-      //   wait(140, msec);
-      //   cataBoost.set(false);
-      // }
     }
     // if (reload&&loaderToggle&&cataSense.angle(deg)>116.5)
     // {
