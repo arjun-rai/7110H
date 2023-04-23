@@ -508,6 +508,8 @@ bool autonCata=true;
 bool loader=false;
 double shootPoint[] = {0,0};
 double shootDist = 10;
+double shootTime = 0;
+bool singlePiston = false;
 int loadCata()
 {
   while (autonCata)
@@ -523,7 +525,7 @@ int loadCata()
     // }
     if (cataSense.angle(deg)>100&&load)
     {
-      catapult.spin(reverse, 60, vex::velocityUnits::pct);
+      catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
     if (cataSense.angle(deg)>117&&load)
     {
@@ -532,13 +534,36 @@ int loadCata()
     }
     if (fire&&intakeSense.objectDistance(mm)>170)
     {
+      if (shootTime!=0)
+      {
+        wait(shootTime,msec);
+      }
       if ((shootPoint[0]==0 && shootPoint[1]==0) || (shootPoint[0]!=0 && shootPoint[1]!=0&&distanceP(pos[0], pos[1], shootPoint[0], shootPoint[1])<shootDist))
       {
         catapult.spin(reverse, 100, vex::velocityUnits::pct);
-        wait(50, msec);
-        cataBoost.set(true);
-        cataBoost2.set(true);
+        // wait(70, msec);
+        // if (singlePiston)
+        // {
+        //   cataBoost.set(true);
+        // }
+        // else 
+        // {
+        //   cataBoost.set(true);
+        //   cataBoost2.set(true);
+        // }
+        }
       }
+    if (cataSense.angle()>119)
+    {
+       if (singlePiston)
+        {
+          cataBoost.set(true);
+        }
+        else 
+        {
+          cataBoost.set(true);
+          cataBoost2.set(true);
+        }
     }
     if (cataSense.angle(deg)<50&&fire)
     {
@@ -996,18 +1021,20 @@ void usercontrol(void) {
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
     //printf("%f\n", cataSense.angle());
-    if (Controller.ButtonR2.pressing() && intakeSense.objectDistance(mm)>170)
+    if (Controller.ButtonR2.pressing()&& intakeSense.objectDistance(mm)>170)//&& intakeSense.objectDistance(mm)>170
     {
       intakeToggle=false;
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
+      // wait (50, msec);
+      
       // if (true)
       // {
       //   wait(140, msec);
       //   cataBoost.set(false);
       // }
     }
-    if (cataSense.angle()>121)
+    if (cataSense.angle()>119)
     {
       if (boostToggle)
         cataBoost.set(true);
@@ -1024,12 +1051,11 @@ void usercontrol(void) {
     // }
     if (reload && cataSense.angle(deg)>100)
     {
-       catapult.spin(reverse, 60, vex::velocityUnits::pct);
+       catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
     if (reload && cataSense.angle(deg)>117)//93
     {
       catapult.stop(hold);
-      
     }
     else if (!reload && cataSense.angle(deg)<50)
     {

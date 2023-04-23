@@ -534,7 +534,7 @@ int loadCata()
     // }
     if (cataSense.angle(deg)>100&&load)
     {
-      catapult.spin(reverse, 60, vex::velocityUnits::pct);
+      catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
     if (cataSense.angle(deg)>117&&load)
     {
@@ -550,8 +550,21 @@ int loadCata()
       if ((shootPoint[0]==0 && shootPoint[1]==0) || (shootPoint[0]!=0 && shootPoint[1]!=0&&distanceP(pos[0], pos[1], shootPoint[0], shootPoint[1])<shootDist))
       {
         catapult.spin(reverse, 100, vex::velocityUnits::pct);
-        wait(70, msec);
-        if (singlePiston)
+        // wait(70, msec);
+        // if (singlePiston)
+        // {
+        //   cataBoost.set(true);
+        // }
+        // else 
+        // {
+        //   cataBoost.set(true);
+        //   cataBoost2.set(true);
+        // }
+        }
+      }
+    if (cataSense.angle()>119)
+    {
+       if (singlePiston)
         {
           cataBoost.set(true);
         }
@@ -560,8 +573,7 @@ int loadCata()
           cataBoost.set(true);
           cataBoost2.set(true);
         }
-        }
-      }
+    }
     if (cataSense.angle(deg)<50&&fire)
     {
       catapult.stop(coast);
@@ -1019,7 +1031,16 @@ void usercontrol(void) {
       intakeToggle=false;
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
-      wait (50, msec);
+      // wait (50, msec);
+      
+      // if (true)
+      // {
+      //   wait(140, msec);
+      //   cataBoost.set(false);
+      // }
+    }
+    if (cataSense.angle()>119)
+    {
       if (boostToggle)
         cataBoost.set(true);
       if (autonToggle)
@@ -1027,16 +1048,7 @@ void usercontrol(void) {
         cataBoost.set(true);
         cataBoost2.set(true);
       }
-      // if (true)
-      // {
-      //   wait(140, msec);
-      //   cataBoost.set(false);
-      // }
     }
-    // if (cataSense.angle()>118)
-    // {
-     
-    // }
     // if (reload&&loaderToggle&&cataSense.angle(deg)>116.5)
     // {
     //   catapult.stop(hold);
