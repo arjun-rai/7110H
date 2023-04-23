@@ -64,13 +64,13 @@ std::vector<std::vector<pathPoint>> pathMain = {
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  for (int i =0;i<pathMain.size(); i++)
-  {
-    pathMain[i] = inject(pathMain[i]);
-    pathMain[i] = smooth(pathMain[i]);
-    curv_func(pathMain[i]);
-    speed_func(pathMain[i]);
-  }
+  // for (int i =0;i<pathMain.size(); i++)
+  // {
+  //   pathMain[i] = inject(pathMain[i]);
+  //   pathMain[i] = smooth(pathMain[i]);
+  //   curv_func(pathMain[i]);
+  //   speed_func(pathMain[i]);
+  // }
 
   // for (int i=0;i<pathMain[0].size(); i++)
   // {
@@ -83,8 +83,6 @@ void pre_auton(void) {
   //autonNum = autonSelector();
   Brain.Screen.clearScreen(vex::black);
   //Inertial.calibrate(2000);
-  Inertial.resetRotation();
-  Inertial.setHeading(0, degrees);
   Inertial.calibrate();
   cataSense.resetPosition();
   hEncoder.resetPosition();
@@ -92,6 +90,8 @@ void pre_auton(void) {
   while (Inertial.isCalibrating()) {
   wait(100, msec);
   }
+  Inertial.resetRotation();
+  Inertial.setHeading(18, degrees);
   
   leftDrive.resetRotation();
   rightDrive.resetRotation();
@@ -541,7 +541,7 @@ int loadCata()
       catapult.stop(hold);
       load=!load;
     }
-    if (fire&&intakeSense.objectDistance(mm)>170)
+    if (fire)
     {
       if (shootTime!=0)
       {
@@ -658,56 +658,104 @@ void autonomous(void) {
 
   // PIDTurn(4,24,false);
 
-  load=true;
-  // singlePiston=true;
-  pathing(pathMain[0], false);
-  PIDMove(-8);
-  PIDTurn(28,120, false, false);
-  if (intakeSense.objectDistance(mm)>170)
-    fire=true;
-  wait(200, msec);
-  PIDMove(8);
-  //wait(200, msec);
   // load=true;
-  //wait(350, msec);//RID
-  PIDTurn(20, 9, true, true);
-  //PIDMove(-60);
-  pathing(pathMain[1], true);
-  PIDMove(-12.5,0.5, brake);
-  wait(350, msec);
-  intake.spinFor(forward, 500, degrees, 600, rpm);
-  PIDMove(9);
-  PIDTurn(-12,38, true, false);
-  intake.spin(reverse, 600, rpm);
-  maxVelChange=5;
-  pathing(pathMain[2], true);
-  PIDMove(-18);
-  // //PIDMove(-8);
-  wait(100, msec);
-  PIDTurn(26,118, false, true);
-  // // shootPoint[0]=-33;shootPoint[1]=42;
-  // // shootDist=5;
-  // singlePiston=false;
-  // shootTime=50;
-  fire=true;
-  // PIDMove(10);
-  wait(100, msec);
-  // // wait(200, msec);
+  // // singlePiston=true;
+  // pathing(pathMain[0], false);
+  // PIDMove(-8);
+  // PIDTurn(28,120, false, false);
+  // if (intakeSense.objectDistance(mm)>170)
+  //   fire=true;
+  // wait(200, msec);
+  // PIDMove(8);
+  // //wait(200, msec);
   // // load=true;
-  // PIDMove(-13);
-  PIDTurn(-40,0, true,false);
-  maxVelChange=2;
-  wait(100, msec);
-  pathing(pathMain[3], true);
-  // // wait(500, msec); //RID
-  // // PIDTurn(-41,0, true, false);
-  // //pathing(pathMain[3], true);
-  // // wait(100, msec);
-  maxVelChange=12;
-  pathing(pathMain[4], false);
-  // shootPoint[0]=-19;shootPoint[1]=30;
-  fire=true;
+  // //wait(350, msec);//RID
+  // PIDTurn(20, 9, true, true);
+  // //PIDMove(-60);
   // pathing(pathMain[1], true);
+  // PIDMove(-12.5,0.5, brake);
+  // wait(350, msec);
+  // intake.spinFor(forward, 500, degrees, 600, rpm);
+  // PIDMove(9);
+  // PIDTurn(-12,38, true, false);
+  // intake.spin(reverse, 600, rpm);
+  // maxVelChange=5;
+  // pathing(pathMain[2], true);
+  // PIDMove(-18);
+  // // //PIDMove(-8);
+  // wait(100, msec);
+  // PIDTurn(26,118, false, true);
+  // // // shootPoint[0]=-33;shootPoint[1]=42;
+  // // // shootDist=5;
+  // // singlePiston=false;
+  // // shootTime=50;
+  // fire=true;
+  // // PIDMove(10);
+  // wait(100, msec);
+  // // // wait(200, msec);
+  // // // load=true;
+  // // PIDMove(-13);
+  // PIDTurn(-40,0, true,false);
+  // maxVelChange=2;
+  // wait(100, msec);
+  // pathing(pathMain[3], true);
+  // // // wait(500, msec); //RID
+  // // // PIDTurn(-41,0, true, false);
+  // // //pathing(pathMain[3], true);
+  // // // wait(100, msec);
+  // maxVelChange=12;
+  // pathing(pathMain[4], false);
+  // // shootPoint[0]=-19;shootPoint[1]=30;
+  // fire=true;
+  // // pathing(pathMain[1], true);
+
+  // while (true)
+  // {
+  //   printf("%f\n", Inertial.rotation());
+  //   wait(20, msec);
+  // }
+
+  //PSI 73
+  load=true;
+  PIDMove(4); //18 8
+  // if (intakeSense.objectDistance(mm)>170)
+  fire=true;
+  wait(200, msec);
+  PIDMove(24); //15 12 14
+  // PIDMove(-12);
+  PIDTurn(24, 5.5, true, true); //24 7 23 5
+  PIDMove(-29.5, 1.5); //24 26.5
+  intake.spinFor(forward, 500, degrees, 600, rpm);
+  PIDMove(10); //12
+  PIDTurn(24, 6.5, false, true); //24 6
+  intake.spin(reverse, 600, rpm);
+  PIDMove(-20);
+  //PIDTurn(24, 6, false, true);
+  PIDMove(-23);
+  PIDMove(-25);
+  wait(500, msec);
+  PIDTurn(25); //33 114
+  intake.spin(fwd, 600, rpm);
+  wait(300, msec);
+  intake.spin(reverse, 600, rpm);
+  // printf("%f %f %f\n", pos[0], pos[1], Inertial.rotation());
+  PIDMove(12);
+  // if (intakeSense.objectDistance(mm)>170)
+    fire=true;
+  // else
+  // {
+  //   wait(50, msec);
+  //   if (intakeSense.objectDistance(mm)>170)
+  //    fire=true;
+  // }
+  // wait(200, msec);
+  // PIDMove(-8);
+  // PIDTurn(-45, 12, true, false);
+  // PIDMove(-40);
+  // PIDTurn(33,114, false, true);
+  // PIDMove(44);
+  // if (intakeSense.objectDistance(mm)>170)
+  //   fire=true;
   
 }
 
@@ -1058,7 +1106,7 @@ void usercontrol(void) {
     {
        catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>117)//93
+    if (reload && cataSense.angle(deg)>117.3)//93
     {
       catapult.stop(hold);
     }
