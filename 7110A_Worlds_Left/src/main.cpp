@@ -594,7 +594,7 @@ void autonomous(void) {
 
   // intake.spin(forward, 600, rpm);
   // intake.spinFor(forward, 1200, degrees, 600, rpm);
-
+  //75 psi
   singlePiston=false;
   cataReduce=false;
   load=true;
@@ -637,7 +637,7 @@ void autonomous(void) {
   wait(300, msec);
   PIDMove(-15);
   PIDMove(-15);
-  wait(400, msec);
+  wait(300, msec);
   // PIDMove(5);
   PIDTurn(-13, 120, false, true);
   // shootTime=200;
@@ -652,7 +652,7 @@ void autonomous(void) {
   
   
   
-  wait(15000,msec);
+  //wait(15000,msec);
 
 
 
