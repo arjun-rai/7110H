@@ -715,33 +715,35 @@ void autonomous(void) {
   //   wait(20, msec);
   // }
 
-  //PSI 73
+  //PSI 73 78
   load=true;
   PIDMove(4); //18 8
   // if (intakeSense.objectDistance(mm)>170)
-  fire=true;
+    fire=true;
   wait(200, msec);
-  PIDMove(24); //15 12 14
+  PIDMove(24); //15 12 14  24
   // PIDMove(-12);
   PIDTurn(24, 5.5, true, true); //24 7 23 5
-  PIDMove(-29.5, 1.5); //24 26.5
+  PIDMove(-29.5, 1); //24 26.5
   intake.spinFor(forward, 500, degrees, 600, rpm);
-  PIDMove(10); //12
-  PIDTurn(24, 6.5, false, true); //24 6
+  PIDMove(4); //12 10
+  PIDTurn(116); //24 6
+  //printf("%f\n", Inertial.rotation());
   intake.spin(reverse, 600, rpm);
   PIDMove(-20);
   //PIDTurn(24, 6, false, true);
   PIDMove(-23);
   PIDMove(-25);
-  wait(500, msec);
-  PIDTurn(25); //33 114
-  intake.spin(fwd, 600, rpm);
-  wait(300, msec);
-  intake.spin(reverse, 600, rpm);
+  wait(250, msec); //200
+  PIDTurn(23); //33 114
+  // intake.spin(fwd, 600, rpm);
+  // wait(500, msec);
+  // intake.spin(reverse, 600, rpm);
   // printf("%f %f %f\n", pos[0], pos[1], Inertial.rotation());
-  PIDMove(12);
-  // if (intakeSense.objectDistance(mm)>170)
+  PIDMove(10);
+  if (intakeSense.objectDistance(mm)>170)
     fire=true;
+  wait(400, msec);
   // else
   // {
   //   wait(50, msec);
@@ -749,13 +751,20 @@ void autonomous(void) {
   //    fire=true;
   // }
   // wait(200, msec);
-  // PIDMove(-8);
-  // PIDTurn(-45, 12, true, false);
-  // PIDMove(-40);
-  // PIDTurn(33,114, false, true);
-  // PIDMove(44);
-  // if (intakeSense.objectDistance(mm)>170)
-  //   fire=true;
+  PIDMove(-2);
+  // PIDTurn(-42, 12, true, false);
+  PIDTurn(12);
+  // printf("%f\n", Inertial.rotation());
+  // PIDMove(-20);
+  // PIDMove(-24);
+  wait(50, msec);
+  PIDMove(-44);
+  //PIDTurn(33,128, false, true);
+  PIDTurn(18);
+  // printf("%f\n", Inertial.rotation());
+  PIDMove(32);
+  if (intakeSense.objectDistance(mm)>170)
+    fire=true;
   
 }
 
