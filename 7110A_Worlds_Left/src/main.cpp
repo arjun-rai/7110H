@@ -595,6 +595,8 @@ void autonomous(void) {
   // intake.spin(forward, 600, rpm);
   // intake.spinFor(forward, 1200, degrees, 600, rpm);
 
+  singlePiston=false;
+  cataReduce=false;
   load=true;
   PIDMove(-4);
   intake.spinFor(forward, 250, degrees, 600, rpm);
@@ -602,32 +604,40 @@ void autonomous(void) {
   PIDTurn(16, 19, false, false);
   PIDMove(15);
   PIDTurn(-17, 100, false, true);
+  PIDMove(-4);
+  wait(20, msec);
   fire=true;
-  wait(200, msec);
-  PIDTurn(5, 15, true, false);
+  wait(175, msec);
+  // PIDMove(-5);
+  // PIDTurn(5, 15, true, false);
+  PIDTurn(148);
   intakeLifter.set(true);
   intake.spin(reverse, 600, rpm);
-  wait(200, msec);
-  PIDMove(-10);
+  wait(150, msec);
+  PIDMove(-12.5);
   //wait(100, msec);
   intakeLifter.set(false);
-  wait(800, msec);
-  PIDMove(6);
+  wait(650, msec);
+  PIDMove(5);
   PIDTurn(-20, 100, false, true);
   if (intakeSense.objectDistance(mm)>170)
     fire=true;
-  wait(200, msec);
-  PIDTurn(16, 16, true, true);
+  wait(175, msec);
+  // PIDTurn(16, 16, true, true);
+  printf("%f\n", Inertial.rotation());
+  PIDTurn(-145);
   intakeLifter.set(true);
-  wait(200, msec);
-  PIDMove(-14);
+  wait(150, msec);
+  PIDMove(-19);
   //wait(500, msec);
   intakeLifter.set(false);
-  wait(500, msec);
+  wait(150, msec);
   PIDMove(-19);
-  wait(400, msec);
-  PIDTurn(-9, 120, false, true);
-  PIDMove(7);
+  wait(150, msec);
+  PIDMove(5);
+  PIDTurn(-8, 120, false, true);
+  PIDMove(13);
+  PIDMove(-1);
   if (intakeSense.objectDistance(mm)>170)
     fire=true;
 
