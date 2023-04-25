@@ -536,7 +536,7 @@ int loadCata()
     {
       catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>117&&load)
+    if (cataSense.angle(deg)>118&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -758,7 +758,7 @@ void autonomous(void) {
   PIDMove(-30);
   PIDTurn(119);
   wait(1000, msec);
-  //expansion.set(true);
+  expansion.set(true);
   wait(60000, msec);
 
   // else
@@ -1152,7 +1152,7 @@ void usercontrol(void) {
     {
        catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>117)//93
+    if (reload && cataSense.angle(deg)>118)//93
     {
       catapult.stop(hold);
     }
