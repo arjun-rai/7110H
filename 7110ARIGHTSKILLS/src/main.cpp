@@ -727,7 +727,7 @@ void autonomous(void) {
   PIDMove(-29.5, 1); //24 26.5
   intake.spinFor(forward, 500, degrees, 600, rpm);
   PIDMove(4); //12 10
-  PIDTurn(116); //24 6
+  PIDTurn(119); //24 6
   //printf("%f\n", Inertial.rotation());
   intake.spin(reverse, 600, rpm);
   PIDMove(-20);
@@ -741,21 +741,22 @@ void autonomous(void) {
   // intake.spin(reverse, 600, rpm);
   // printf("%f %f %f\n", pos[0], pos[1], Inertial.rotation());
   PIDMove(10);
+  wait(50, msec);
   if (intakeSense.objectDistance(mm)>170)
     fire=true;
-  wait(200, msec);//400
+  wait(250, msec);//400
   PIDMove(-10);
-  PIDTurn(116);
+  PIDTurn(119);
   intake.spin(reverse, 600, rpm);
   PIDMove(-60);
   intake.stop();
-  PIDTurn(126.5);
+  PIDTurn(123.5);
   PIDMove(-19, 0.8);
   intake.spinFor(forward, 500, degrees, 600, rpm);
   PIDMove(25);
   PIDTurn(160);
   PIDMove(-30);
-  PIDTurn(116);
+  PIDTurn(119);
   wait(1000, msec);
   //expansion.set(true);
   wait(60000, msec);
