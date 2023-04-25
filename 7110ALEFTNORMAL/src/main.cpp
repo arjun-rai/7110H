@@ -895,6 +895,9 @@ int loaderCount=0;
 bool intakeLift = false;
 bool liftToggle = false;
 
+bool sensorOverrideOn =false;
+bool sensorOverride = false;
+
 void usercontrol(void) {
   // intake.stop();
 
@@ -995,7 +998,7 @@ void usercontrol(void) {
         modeOn=true;
         Controller.Screen.setCursor(0, 0);
         Controller.Screen.clearLine();
-        Controller.Screen.print("B:%d, R:%d, A:%d", boostToggle, modeToggle, autonToggle);
+        Controller.Screen.print("B:%d, R:%d, A:%d, O:%d", boostToggle, modeToggle, autonToggle, sensorOverride);
       }
     }
     else  
@@ -1018,12 +1021,28 @@ void usercontrol(void) {
         autonOn=true;
         Controller.Screen.setCursor(0, 0);
         Controller.Screen.clearLine();
-        Controller.Screen.print("B:%d, R:%d, A:%d", boostToggle, modeToggle, autonToggle);
+        Controller.Screen.print("B:%d, R:%d, A:%d, O:%d", boostToggle, modeToggle, autonToggle, sensorOverride);
       }
     }
     else  
     {
       autonOn=false;
+    }
+
+     if (Controller.ButtonY.pressing())
+    {
+      if (!sensorOverrideOn)
+      {
+        sensorOverride = !sensorOverride;
+        sensorOverrideOn=true;
+        Controller.Screen.setCursor(0, 0);
+        Controller.Screen.clearLine();
+        Controller.Screen.print("B:%d, R:%d, A:%d, O:%d", boostToggle, modeToggle, autonToggle, sensorOverride);
+      }
+    }
+    else
+    {
+      sensorOverrideOn=false;
     }
 
     // if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
@@ -1078,7 +1097,7 @@ void usercontrol(void) {
         boostOn=true;
         Controller.Screen.setCursor(0, 0);
         Controller.Screen.clearLine();
-        Controller.Screen.print("B:%d, R:%d, A:%d", boostToggle, modeToggle, autonToggle);
+        Controller.Screen.print("B:%d, R:%d, A:%d, O:%d", boostToggle, modeToggle, autonToggle, sensorOverride);
       }
     }
     else
@@ -1093,7 +1112,7 @@ void usercontrol(void) {
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
     //printf("%f\n", cataSense.angle());
-    if (Controller.ButtonR2.pressing()&& intakeSense.objectDistance(mm)>170)//&& intakeSense.objectDistance(mm)>170
+    if (Controller.ButtonR2.pressing()&& (intakeSense.objectDistance(mm)>170||sensorOverride))//&& intakeSense.objectDistance(mm)>170
     {
       intakeToggle=false;
       reload=false;
