@@ -749,8 +749,8 @@ void autonomous(void) {
   intake.spin(reverse, 600, rpm);
   PIDMove(-60);
   intake.stop();
-  PIDTurn(125.5);
-  PIDMove(-19);
+  PIDTurn(126.5);
+  PIDMove(-19, 0.8);
   intake.spinFor(forward, 500, degrees, 600, rpm);
   wait(15000, msec);
 
