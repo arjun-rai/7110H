@@ -743,7 +743,17 @@ void autonomous(void) {
   PIDMove(10);
   if (intakeSense.objectDistance(mm)>170)
     fire=true;
-  wait(400, msec);
+  wait(200, msec);//400
+  PIDMove(-10);
+  PIDTurn(116);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(-60);
+  intake.stop();
+  PIDTurn(125.5);
+  PIDMove(-19);
+  intake.spinFor(forward, 500, degrees, 600, rpm);
+  wait(15000, msec);
+
   // else
   // {
   //   wait(50, msec);
@@ -912,7 +922,7 @@ void usercontrol(void) {
     {
       expansion.set(false);
     }
-    driveBrake(coast);
+    driveBrake(brake);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     leftExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));

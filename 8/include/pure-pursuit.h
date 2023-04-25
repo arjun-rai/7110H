@@ -19,6 +19,7 @@ struct vect{
 };
 
 pathPoint point(double x1, double y1);
+float clamp(float input, float min, float max);
 //distance between two points using coordinates
 double distanceP(double x1, double y1, double x2, double y2);
 double distanceP(pathPoint p1, pathPoint p2);

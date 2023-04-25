@@ -12,6 +12,13 @@ pathPoint point(double x1, double y1)
   return p;
 }
 
+float clamp(float input, float min, float max){
+  if( input > max ){ return(max); }
+  if(input < min){ return(min); }
+  return(input);
+}
+
+
 //distance between two points using coordinates
 double distanceP(double x1, double y1, double x2, double y2)
 {
@@ -126,10 +133,10 @@ void curv_func(std::vector<pathPoint>& p)
   }
 }
 
-double max_vel = 600*(3.25*M_PI*(3.0/5))/60.0; //rpm to in/s
-double turning_const = 4; //changes how fast it goes around turns
-double max_accel = 9; //in/s^3  used to be 6
-double starting_vel = 20*(3.25*M_PI*(3.0/5))/60.0; //rpm to in/s
+double max_vel = (600*4*3.25*M_PI)/(5*60); //rpm to in/s
+double turning_const = 1; //changes how fast it goes around turns
+double max_accel = 200; //in/s^3  used to be 6 150
+double starting_vel = (350*4*3.25*M_PI)/(5*60); //rpm to in/s 300
 void speed_func(std::vector<pathPoint>& p)
 {
   for (int i =0;i<p.size(); i++)
@@ -142,7 +149,7 @@ void speed_func(std::vector<pathPoint>& p)
   //   wait(50, msec);
   // }
 
-  p[p.size()-1].finVel =0;
+  p[p.size()-1].finVel =0; //end velocity
   for (int i=p.size()-2; i>=0;i--)
   {
     double d = distanceP(p[i+1], p[i]);
@@ -180,7 +187,7 @@ int closest(double pos[], std::vector<pathPoint> p)
   return minDist[0];
 }
 
-double l = 10;
+double l = 22; //22
 //double angle = 0; //radians
 int t_i=0;
 void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
@@ -232,6 +239,10 @@ void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
 
 double sign(double x) 
 {
+  if ((int)x==0)
+  {
+    return 1;
+  }
   return copysign(1, x);
 }
 

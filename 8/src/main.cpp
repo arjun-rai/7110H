@@ -43,50 +43,61 @@ void driveBrake(vex::brakeType b)
   MiddleRight.setBrake(b);
 }
 int autonNum =-1;
-//point(10, 20), point(15, 30), point(10, 50),
+
+//LEFTTT
+// std::vector<std::vector<pathPoint>> pathMain = {
+//   {point(0, 0), point(0,15)},
+//   {point(8, 24), point(17, 3)},
+//   {point(17,3), point(-12, 36), point(-14,41), point(-24,50)},
+//   {point(-24,50), point(-42, 44), point(-38,24)},
+//   {point(-38,24), point(-7,36)}
+//   };
+//RIGHTTT
 std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(0, -10)},
-  {point(0, -10), point(-10,-10)}
+  {point(0, 0), point(8,24)}, //8 24
+  {point(8, 24), point(18, 6)}, //8 //17
+  {point(25,9), point(-12, 42), point(-18,50)}, //38 50
+  {point(-26,51),point(-42,36), point(-42,10)},
+  // {point(-8,50), point(-42, 44), point(-38,24)},
+  {point(-45,10),point(-13,28)}
   };
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  for (int i =0;i<pathMain.size(); i++)
-  {
-    pathMain[i] = inject(pathMain[i]);
-    pathMain[i] = smooth(pathMain[i]);
-    curv_func(pathMain[i]);
-    speed_func(pathMain[i]);
-  }
-  //double test[] = {0,0};
-  
-  // for (int i =0;i<path.size(); i++)
+  // for (int i =0;i<pathMain.size(); i++)
   // {
-  //   printf("%d\t%f\n", i, path[i].finVel);
-  //   wait(50 ,msec);
+  //   pathMain[i] = inject(pathMain[i]);
+  //   pathMain[i] = smooth(pathMain[i]);
+  //   curv_func(pathMain[i]);
+  //   speed_func(pathMain[i]);
   // }
+
+  // for (int i=0;i<pathMain[0].size(); i++)
+  // {
+  //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
+  //   wait(20, msec);
+  // }
+  
 
   //shows button, allows user to select button and then stops once submit is pressed
   //autonNum = autonSelector();
   Brain.Screen.clearScreen(vex::black);
   //Inertial.calibrate(2000);
-  Inertial.resetRotation();
-  Inertial.setHeading(0, degrees);
   Inertial.calibrate();
-  Inertial2.resetRotation();
-  Inertial2.setHeading(0, degrees);
-  Inertial2.calibrate();
-  cataSense.setPosition(0, deg);
   cataSense.resetPosition();
-  while (Inertial.isCalibrating()||Inertial2.isCalibrating()) {
+  hEncoder.resetPosition();
+  fEncoder.resetPosition();
+  while (Inertial.isCalibrating()) {
   wait(100, msec);
   }
+  Inertial.resetRotation();
+  Inertial.setHeading(18, degrees);
   
   leftDrive.resetRotation();
   rightDrive.resetRotation();
   // leftEncoder.resetRotation();
   // rightEncoder.resetRotation();
-  driveBrake(brake);
+  driveBrake(coast);
   catapult.setBrake(hold);
   intake.setBrake(coast);
   // All activities that occur before the competition starts
@@ -96,44 +107,88 @@ void pre_auton(void) {
 double pos[] = {0,0};
 double lastLeft = 0;
 double lastRight =0;
+double last_orientation_rad = 0;
+double last_hEncoder =0;
+double last_fEncoder =0;
 void getCurrLoc()
 {
-  double dist = ((leftDrive.rotation(rev)*(3.0/5)*M_PI*3.25)-lastLeft + (rightDrive.rotation(rev)*(3.0/5)*M_PI*3.25)-lastRight)/2.0;
-  // if (dist*cos(radians(Inertial.rotation()))>100 || dist*sin(radians(Inertial.rotation()))>100)
-  //   return;
-  // Controller.Screen.setCursor(0,0);
-  // Controller.Screen.clearLine();
-  // Controller.Screen.print(pos[0]);
-  // printf("%f\t%f\t%f\n", pos[0], pos[1], (Inertial.rotation()+Inertial2.rotation())/2.0);
-  //printf("%f\t%f\n", wheels[0], wheels[1]);
-  pos[0] += dist*sin(radians((Inertial.rotation()+Inertial2.rotation())/2.0));
-  pos[1] += dist*cos(radians((Inertial.rotation()+Inertial2.rotation())/2.0));
-  lastLeft = leftDrive.rotation(rev)*M_PI*3.25*(3.0/5);
-  lastRight = rightDrive.rotation(rev)*M_PI*3.25*(3.0/5);
+
+  double hEncoder_angle = hEncoder.position(deg);
+  double fEncoder_angle = fEncoder.position(deg);
+  double hEncoder_delta = hEncoder_angle-last_hEncoder;
+  double fEncoder_delta = fEncoder_angle-last_fEncoder;
+
+
+
+
+
+  double orientation_rad = radians(Inertial.rotation());
+  double orientation_delta = orientation_rad-last_orientation_rad;
+  
+
+  double local_X;
+  double local_Y;
+
+  if (orientation_delta==0)
+  {
+    local_X=hEncoder_delta;
+    local_Y=fEncoder_delta;
+  }
+  else{
+    local_X=(2*sin(orientation_delta/2.0))*((hEncoder_delta/orientation_delta)+2.5);
+    local_Y=(2*sin(orientation_delta/2.0))*((fEncoder_delta/orientation_delta)+0.75);
+  }
+
+  double local_polar_angle;
+  double local_polar_length;
+  if (local_X==0&local_Y==0)
+  {
+    local_polar_angle=0;
+    local_polar_length=0;
+  }
+  else 
+  {
+    local_polar_angle=atan2(local_Y, local_X);
+    local_polar_length=distanceP(local_X, 0, local_Y, 0);
+  }
+
+  double global_polar_angle = local_polar_angle-last_orientation_rad-(orientation_delta/2.0);
+
+  double X_position_delta = local_polar_length*cos(global_polar_angle);
+  double Y_position_delta = local_polar_length*sin(global_polar_angle);
+
+  X_position_delta = (X_position_delta/360.0)*M_PI*2.75;
+  Y_position_delta = (Y_position_delta/360.0)*M_PI*2.75;
+
+  pos[0]+=X_position_delta;
+  pos[1]+=Y_position_delta;
+  last_orientation_rad=orientation_rad;
+  last_fEncoder=fEncoder_angle;
+  last_hEncoder=hEncoder_angle;
 }
 
-double kP = 0.07; //steady minor oscillations, should stop close to the correct point
+double kP = 0; //steady minor oscillations, should stop close to the correct point 0.07
 double kI = 0; //compensate for undershoot
 double kD = 0; //until steady 0.0001
 
-double turnkP = 0.404; //0.068 0.0517 0.063 0.23 0.138     0.45  0.446  0.404
+double turnkP = 0.254; //0.068 0.0517 0.063 0.23 0.138     0.45  0.446  0.404
 double turnkI = 0;//.0044     0.001
-double turnkD = 0.1; //0.0001  0.5 0.1  0.000001
-double turnkF = 0.001;
+double turnkD = 0; //0.0001  0.5 0.1  0.000001
+double turnkF = 0.001; //0.001
 //Autonomous Settings
 double desiredValue = 0;
 double desiredTurnValue = 0;
 double startingTurnValue =0;
 
-int error; //SensorValue - DesiredValue : Position 
-int prevError = 0; //Position 2- milleseconds ago
-int derivative; // error - prevError : Speed
-int totalError=0; //totalError = totalError + error;
+double error; //SensorValue - DesiredValue : Position 
+double prevError = 0; //Position 2- milleseconds ago
+double derivative; // error - prevError : Speed
+double totalError=0; //totalError = totalError + error;
 
-int turnError; //SensorValue - DesiredValue : Position 
-int turnPrevError = 0; //Position 2- milleseconds ago
-int turnDerivative; // error - prevError : Speed
-int turnTotalError=0; //totalError = totalError + error;
+double turnError; //SensorValue - DesiredValue : Position 
+double turnPrevError = 0; //Position 2- milleseconds ago
+double turnDerivative; // error - prevError : Speed
+double turnTotalError=0; //totalError = totalError + error;
 
 double tuckyLeftVar= 1;
 double tuckyRightVar  =1;
@@ -163,7 +218,7 @@ int drivePID(){
       rightDrive.resetPosition();
       leftDrive.resetRotation();
       rightDrive.resetRotation();
-      startingTurnValue=(Inertial.rotation()+Inertial2.rotation())/2.0;
+      startingTurnValue=(Inertial.rotation());
       
     }
     //Get the position of both motors
@@ -197,8 +252,8 @@ int drivePID(){
     //int turnDifference = leftMotorPosition - rightMotorPosition;
 
     //Potential
-    turnError =desiredTurnValue-((Inertial.rotation()+Inertial2.rotation())/2.0);
-    if (abs(turnError)<1&&abs(error)<50)
+    turnError =desiredTurnValue-((Inertial.rotation()));
+    if (fabs(turnError)<4)
     {
       break;
     }
@@ -219,7 +274,7 @@ int drivePID(){
     {
       turnTotalError = 0;
     }
-    if ( abs(turnError) > 45)
+    if ( fabs(turnError) > 45)
     {
       turnTotalError = 0;
     }
@@ -256,9 +311,9 @@ int drivePID(){
     // {
     //   turnMotorPower=-maxTurningPower;
     // }
-    Controller.Screen.setCursor(0,0);
-    Controller.Screen.clearLine();
-    Controller.Screen.print((Inertial.rotation()+Inertial2.rotation())/2.0);//(Inertial.rotation()+Inertial2.rotation())/2.0
+    // Controller.Screen.setCursor(0,0);
+    // Controller.Screen.clearLine();
+    // Controller.Screen.print((Inertial.rotation()));//(Inertial.rotation()+Inertial2.rotation())/2.0
     if (lateralMotorPower>0 && lateralMotorPower-lastLateralVoltage>maxLateralChange)
     {
       lateralMotorPower = lastLateralVoltage+maxLateralChange;
@@ -270,31 +325,153 @@ int drivePID(){
 
     lastLateralVoltage=lateralMotorPower;
     
-    leftDrive.spin(fwd, tuckyLeftVar*(lateralMotorPower + turnMotorPower), pct);
-    rightDrive.spin(fwd, tuckyRightVar*(lateralMotorPower - turnMotorPower), pct);
+    leftDrive.spin(fwd, tuckyLeftVar*(lateralMotorPower - turnMotorPower), pct);
+    rightDrive.spin(fwd, tuckyRightVar*(lateralMotorPower + turnMotorPower), pct);
     prevError = error;
     turnPrevError = turnError;
     vex::task::sleep(10);
   }
 
-  leftDrive.stop();
-  rightDrive.stop();
+  leftDrive.stop(vex::brakeType::brake);
+  rightDrive.stop(vex::brakeType::brake);
   return 1;
 }
 
 
+double moveError;
+double movePrevError;
+double moveDerivative;
 
-void PID(double x, double y)
+double KpMove=1;
+double KdMove=10;
+
+
+double lastMovePct =0;
+
+double maxMoveVoltage =10; //8
+
+double desiredLength = 0;
+
+bool enableDist = true;
+int dist(double timeout, brakeType chooseBrakeType)
+{
+  double timeout_loop = (timeout*1000.0);
+  double timeout_time =0;
+  double startingDist = (fEncoder.position(deg)/360.0)*M_PI*2.75;
+  while (enableDist&&timeout_time<timeout_loop)
+  {
+    moveError = desiredLength-(((fEncoder.position(deg)/360.0)*M_PI*2.75)-startingDist);
+    moveDerivative = moveError-movePrevError;
+
+    double moveVolt = (moveError*KpMove+moveDerivative*KdMove);
+
+    moveVolt = clamp(moveVolt, -maxMoveVoltage, maxMoveVoltage);
+    // if(straightPct-lastStraightPct>5)
+    // {
+    //   straightPct=lastStraightPct+5;
+    // }
+    //printf("%f\n", timeout_time);
+    
+    leftDrive.spin(fwd, moveVolt, voltageUnits::volt);
+    rightDrive.spin(fwd, moveVolt, voltageUnits::volt);
+
+
+    if (fabs(moveError)<3)
+    {
+      break;
+    }
+
+    movePrevError=moveError;
+    lastMovePct=moveVolt;
+    timeout_time+=20;
+    wait(20, msec);
+  }
+  leftDrive.stop(chooseBrakeType);
+  rightDrive.stop(chooseBrakeType);
+  return 1;
+}
+
+double track_width = 11;
+//double dt = 0.005;
+double maxVelChange=6; //3
+bool pathing(std::vector<pathPoint> path, bool backwards)
+{
+  double lastVel = 0;
+  while (closest(pos, path)!=path.size()-1)
+  {
+    getCurrLoc();
+    double look[] = {};
+    lookahead(pos, path, look);
+    int close = closest(pos, path);
+    double curv;
+    if (look[2]>close)
+    {
+      curv = curvature(path, pos, look, radians((Inertial.rotation())));
+      //curv = curvature(path, pos, look, radians(0));
+    }
+    else
+      curv = 0.00001;
+    double vel = path[close].finVel;
+    vel = lastVel+constrain(vel, lastVel, -maxVelChange, maxVelChange);
+    lastVel = vel;
+    double wheels[] = {};
+    turn(curv, vel, track_width, wheels);
+    //can add coefficients and tune for better velocity accuracy if 
+    if (backwards)
+    {
+      // printf("%f\t%f\n", wheels[0], wheels[1]);
+      //printf("%f\t%f\n", pos[0], pos[1]);
+      rightDrive.spin(fwd, (-wheels[0]*4*60)/(3.25*M_PI*5), vex::velocityUnits::rpm);
+      leftDrive.spin(fwd, (-wheels[1]*4*60)/(3.25*M_PI*5), vex::velocityUnits::rpm);
+    }
+    else
+    {
+      rightDrive.spin(fwd, (wheels[0]*4*60)/(3.25*M_PI*5), vex::velocityUnits::rpm);
+      leftDrive.spin(fwd, (wheels[1]*4*60)/(3.25*M_PI*5), vex::velocityUnits::rpm);
+    }
+    //double avg = (rightDrive.velocity(vex::velocityUnits::rpm)+leftDrive.velocity(vex::velocityUnits::rpm))/2.0;
+    //printf("%d\t%f\n", close, vel);
+    //printf("%f\n", look[2]);
+    wait(10, msec);
+  }
+  rightDrive.stop(hold);
+  leftDrive.stop(hold);
+  return true;
+}
+
+
+
+void PIDTurn(double x, double y, bool reverse, bool left)
 {
   resetDriveSensors=true;
   double ang = degree(atan2(x-pos[0], y-pos[1]));
   desiredTurnValue=ang;
+  if (reverse&&left)
+  {
+    desiredTurnValue-=180;
+  }
+  else if (reverse)
+  {
+    desiredTurnValue+=180;
+  }
   drivePID();
-  resetDriveSensors=true;
-  desiredValue=((distanceP(pos[0], pos[1], x, y))/(M_PI*3.25))*360.0;
-  drivePID();  
+  // resetDriveSensors=true;
+  // desiredValue=((distanceP(pos[0], pos[1], x, y)*4*360)/(M_PI*3.25*5));
+  // drivePID();  
 }
-void PIDMove(double move, double ang)
+
+void PIDTurn(double angle)
+{
+  resetDriveSensors=true;
+  desiredTurnValue=angle;
+  drivePID();
+}
+void PIDMove (double length, double timeout=5, brakeType chooseBrakeType=hold)
+{
+  desiredLength=length;
+  dist(timeout, chooseBrakeType);
+}
+void PIDTurnMove(double move, double ang)
 {
   resetDriveSensors=true;
   desiredTurnValue=ang;
@@ -314,61 +491,14 @@ int odom()
 {
   while (enableOdom)
   {
-    // Controller.Screen.setCursor(0,0);
-    // Controller.Screen.clearLine();
-    // Controller.Screen.print(pos[1]);
     getCurrLoc();
+    // Controller.Screen.setCursor(0, 0);
+    // Controller.Screen.clearLine();
+    // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
+    //printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
     vex::task::sleep(20);
   }
   return 1;
-}
-
-double track_width = 12;
-//double dt = 0.005;
-double maxVelChange=3;
-bool pathing(std::vector<pathPoint> path, bool backwards)
-{
-  double lastVel = 0;
-  while (closest(pos, path)!=path.size()-1)
-  {
-    getCurrLoc();
-    double look[] = {};
-    lookahead(pos, path, look);
-    int close = closest(pos, path);
-    double curv;
-    if (look[2]>close)
-    {
-      curv = curvature(path, pos, look, radians((Inertial.rotation()+Inertial2.rotation())/2.0));
-      //curv = curvature(path, pos, look, radians(0));
-    }
-    else
-      curv = 0.00001;
-    double vel = path[close].finVel;
-    vel = lastVel+constrain(vel, lastVel, -maxVelChange, maxVelChange);
-    lastVel = vel;
-    double wheels[] = {};
-    turn(curv, vel, track_width, wheels);
-    //can add coefficients and tune for better velocity accuracy if 
-    if (backwards)
-    {
-      // printf("%f\t%f\n", wheels[0], wheels[1]);
-      //printf("%f\t%f\n", pos[0], pos[1]);
-      rightDrive.spin(fwd, -wheels[1]/(3.25*M_PI*(3.0/5))*60, vex::velocityUnits::rpm);
-      leftDrive.spin(fwd, -wheels[0]/(3.25*M_PI*(3.0/5))*60, vex::velocityUnits::rpm);
-    }
-    else
-    {
-      rightDrive.spin(fwd, wheels[1]/(3.25*M_PI*(3.0/5))*60, vex::velocityUnits::rpm);
-      leftDrive.spin(fwd, wheels[0]/(3.25*M_PI*(3.0/5))*60, vex::velocityUnits::rpm);
-    }
-    //double avg = (rightDrive.velocity(vex::velocityUnits::rpm)+leftDrive.velocity(vex::velocityUnits::rpm))/2.0;
-    //printf("%d\t%f\n", close, vel);
-    //printf("%f\n", look[2]);
-    wait(10, msec);
-  }
-  rightDrive.stop();
-  leftDrive.stop();
-  return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -385,296 +515,331 @@ bool load=false;
 bool fire = false;
 bool autonCata=true;
 bool loader=false;
+double shootPoint[] = {0,0};
+double shootDist = 10;
+double shootTime = 0;
+bool singlePiston = false;
 int loadCata()
 {
   while (autonCata)
   {
     if (load)
     {
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<103&&load&&loader)
+    // if (cataSense.angle(deg)<103&&load&&loader)
+    // {
+    //   catapult.stop(hold);
+    //   load=!load;
+    // }
+    if (cataSense.angle(deg)>100&&load)
     {
-      catapult.stop(hold);
-      load=!load;
+      catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)<93&&load)
+    if (cataSense.angle(deg)>117&&load)
     {
       catapult.stop(hold);
       load=!load;
     }
     if (fire)
     {
-      catapult.spin(reverse, 80, vex::velocityUnits::pct);
+      if (shootTime!=0)
+      {
+        wait(shootTime,msec);
+      }
+      if ((shootPoint[0]==0 && shootPoint[1]==0) || (shootPoint[0]!=0 && shootPoint[1]!=0&&distanceP(pos[0], pos[1], shootPoint[0], shootPoint[1])<shootDist))
+      {
+        catapult.spin(reverse, 100, vex::velocityUnits::pct);
+        // wait(70, msec);
+        // if (singlePiston)
+        // {
+        //   cataBoost.set(true);
+        // }
+        // else 
+        // {
+        //   cataBoost.set(true);
+        //   cataBoost2.set(true);
+        // }
+        }
+      }
+    if (cataSense.angle()>119)
+    {
+       if (singlePiston)
+        {
+          cataBoost.set(true);
+        }
+        else 
+        {
+          cataBoost.set(true);
+          cataBoost2.set(true);
+        }
     }
-    if (cataSense.angle(deg)>168&&fire)
+    if (cataSense.angle(deg)<50&&fire)
     {
       catapult.stop(coast);
+      cataBoost.set(false);
+      cataBoost2.set(false);
       fire=!fire;
+      load=true;
     }
     vex::task::sleep(20);
   }
   return 0;
 }
 
+
+
 void autonomous(void) {
-  // autonCata=true;
-  // vex::task PID1(drivePID);
-  // vex::task cata(loadCata);
-  // load=true;
-  // resetDriveSensors=true;
-  // // intake.spin(fwd, 100, vex::velocityUnits::pct);
-  // desiredValue=-280;
-  // wait(800, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
-  // // load=true;
-  // // wait(1000, msec);
-  // desiredValue=50;
-  // wait(200, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-220;
-  // wait(1000, msec);
-  // intake.spin(reverse, 500, rpm);
-  // resetDriveSensors=true;
-  // desiredValue=-1500;
-  // wait(1200, msec);
-  // resetDriveSensors=true;
-  // desiredValue=250;
-  // // desiredTurnValue=180;
-  // wait(600, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-280;
-  // wait(1000, msec);
-  // // intake.spin(reverse, 500, vex::velocityUnits::rpm);
-  // desiredValue=-480;
-  // intake.stop();
-  // wait(1000, msec);
-  
-  // // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
-  // resetDriveSensors=true;
-  // desiredValue=350;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-220;
-  // wait(800, msec);
-  // resetDriveSensors=true;
-  // desiredValue=900;
-  // wait(1000, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-272;//-271
-  // wait(900, msec);
-  // resetDriveSensors=true;
-  // desiredValue=3500;
-  // wait(3000, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-305;
-  // wait(600, msec);
-  // fire=true;
-  // wait(500, msec);
-  // loader=true;
-  // load=true;
-  // resetDriveSensors=true;
-  // desiredTurnValue=-256;
-  // desiredValue=0;
-  // wait(600, msec);
-
-  // resetDriveSensors=true;
-  // desiredValue=-1100;
-  // wait(1000, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-356;
-  // wait(800,msec);
-  // resetDriveSensors=true;
-  // desiredValue=-430;
-  // wait(500, msec);
-  // for (int i =0;i<2;i++)
-  // {
-  // intake.spin(fwd, 500, rpm);
-  // wait(2200, msec);
-  // intake.spin(reverse, 400, rpm);
-  // wait(200,msec);
-  // intake.spin(fwd, 300, rpm);
-  // resetDriveSensors=true;
-  // desiredValue=200;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-274;
-  // desiredValue=0;
-  // wait(700, msec);
-  // fire=true;
-  // wait(500, msec);
-  // load=true;
-  // resetDriveSensors=true;
-  // desiredTurnValue=-360;
-  // desiredValue=0;
-  // wait(700, msec);
-  // resetDriveSensors=true;
-  // desiredValue=-500;
-  // wait(600, msec);
-  // }
-  // load=true;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-360;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredValue=6500;
-  // wait(4000, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-190;
-  // wait(800,msec);
-  // resetDriveSensors=true;
-  // desiredValue=-950;
-  // wait(500, msec);
-  // intake.spin(reverse, 400, rpm);
-  // wait(500, msec);
+  // desiredPos[0]=48;desiredPos[1]=48;
+  vex::task odometry(odom);
+  vex::task autonCatapult(loadCata);
+  // PID(48, 48);Z
+  // desiredLength=48;
+  // dist();
 
 
-  // for (int i =0;i<3;i++)
-  // {
-  // intake.spin(fwd, 500, rpm);
-  // wait(2200, msec);
-  // intake.spin(reverse, 400, rpm);
-  // wait(200,msec);
-  // intake.spin(fwd, 300, rpm);
-  // resetDriveSensors=true;
-  // desiredValue=200;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-98;
-  // desiredValue=0;
-  // wait(700, msec);
-  // fire=true;
-  // wait(500, msec);
-  // if (i==2)
-  // {
-  //   loader=false;
-  // }
-  // load=true;
-  // if (i!=2)
-  // {
-  //   resetDriveSensors=true;
-  //   desiredTurnValue=-188;
-  //   desiredValue=0;
-  //   wait(700, msec);
-  //   resetDriveSensors=true;
-  //   desiredValue=-400;
-  //   wait(600, msec);
-  // }
-  // }
-
-  // // wait(10000, msec);
+  //////////////////////////LEFT/////////////////////////
 
 
+  // intake.spin(forward, 600, rpm);
+  // intake.spinFor(forward, 1200, degrees, 600, rpm);
 
-  // // resetDriveSensors=true;
-  // // desiredValue=0;
-  // // desiredTurnValue=-458;
-  // // wait(800, msec);
-  // // resetDriveSensors=true;
-  // // desiredValue=-640;
-  // // wait(1000, msec);
-  // //  for (int i =0;i<4;i++)
-  // // {
-  // // wait(3500, msec);
-  // // fire=true;
-  // // wait(200, msec);
-  // // load=true;
-  // // wait(300, msec);
-  // // }
-  // resetDriveSensors=true;
-  // intake.stop();
-  // desiredTurnValue=-69;
-  // desiredValue=0;
-  // wait(900,msec);
-  // resetDriveSensors=true;
-  // desiredValue=-2000;
-  // wait(1900, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-182;
-  // desiredValue=0;
-  // wait(700, msec);
-  // resetDriveSensors=true;
-  // desiredValue=-400;
-  // wait(700, msec);
-  // intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
-  
 
-  // desiredValue=50;
-  // wait(200, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-220-182;
-  // wait(1000, msec);
+  // PIDMove(-4);
+  // intake.spinFor(forward, 250, degrees, 600, rpm);
+  // PIDMove(10);
+  // PIDTurn(16, 19, false, false);
+  // PIDMove(15);
+  // PIDTurn(-15, 100, false, true);
+  // wait(350, msec);
+  // PIDTurn(3.25, 15, true, false);
+  // intakeLifter.set(true);
   // intake.spin(reverse, 600, rpm);
-  // resetDriveSensors=true;
-  // desiredValue=-1500;
+  // wait(200, msec);
+  // PIDMove(-9);
+  // //wait(100, msec);
+  // intakeLifter.set(false);
+  // wait(400, msec);
+  // PIDMove(6);
+  // PIDTurn(-15, 100, false, true);
+  // wait(350, msec);
+  // PIDTurn(16, 16, true, true);
+  // intakeLifter.set(true);
+  // PIDMove(-14);
+  // //wait(500, msec);
+  // intakeLifter.set(false);
+  // wait(500, msec);
+  // PIDMove(-12);
+  // wait(400, msec);
+  // PIDTurn(-2, 120, false, true);
+  // wait(15000, msec);
+  // // PIDTurn();
 
-  // wait(1000, msec);
-  // resetDriveSensors=true;
-  // desiredValue=250;
-  // // desiredTurnValue=180;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-280-182;
-  // wait(800, msec);
-  // // intake.spin(reverse, 500, vex::velocityUnits::rpm);
-  // desiredValue=-550;
-  // intake.stop();
-  // wait(730, msec);
-  
-  // // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // intake.spinFor(reverse, 540, deg, 100, vex::velocityUnits::pct);
-  // resetDriveSensors=true;
-  // desiredValue=640;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-302-182;
-  // wait(500, msec);
-  // // wait(800, msec);
+  // PIDTurn(-2, 15, true, false);
+  // intakeLifter.set(true);
+  // intake.spin(reverse, 600, rpm);
+  // PIDMove(-10);
+  // wait(100, msec);
+  // intakeLifter.set(false);
+  // // wait(100, msec);
+  // // PIDMove(-4);
+  // wait(200, msec);
+  // // pathing(pathMain[0], false);
+
+
+  // wait(15000, msec);
+
+
+  /////////////////////////RIGHT////////////////////////////
+
+
+  // PIDTurn(4,24,false);
+  //
+
+  // PIDTurn(4,24,false);
+
+  // load=true;
+  // // singlePiston=true;
+  // pathing(pathMain[0], false);
+  // PIDMove(-8);
+  // PIDTurn(28,120, false, false);
+  // if (intakeSense.objectDistance(mm)>170)
+  //   fire=true;
+  // wait(200, msec);
+  // PIDMove(8);
+  // //wait(200, msec);
+  // // load=true;
+  // //wait(350, msec);//RID
+  // PIDTurn(20, 9, true, true);
+  // //PIDMove(-60);
+  // pathing(pathMain[1], true);
+  // PIDMove(-12.5,0.5, brake);
+  // wait(350, msec);
+  // intake.spinFor(forward, 500, degrees, 600, rpm);
+  // PIDMove(9);
+  // PIDTurn(-12,38, true, false);
+  // intake.spin(reverse, 600, rpm);
+  // maxVelChange=5;
+  // pathing(pathMain[2], true);
+  // PIDMove(-18);
+  // // //PIDMove(-8);
+  // wait(100, msec);
+  // PIDTurn(26,118, false, true);
+  // // // shootPoint[0]=-33;shootPoint[1]=42;
+  // // // shootDist=5;
+  // // singlePiston=false;
+  // // shootTime=50;
   // fire=true;
-  // wait(50,msec);
-  // expansion=true;
-  // resetDriveSensors=true;
-  // desiredValue=-400;
- 
- 
+  // // PIDMove(10);
+  // wait(100, msec);
+  // // // wait(200, msec);
+  // // // load=true;
+  // // PIDMove(-13);
+  // PIDTurn(-40,0, true,false);
+  // maxVelChange=2;
+  // wait(100, msec);
+  // pathing(pathMain[3], true);
+  // // // wait(500, msec); //RID
+  // // // PIDTurn(-41,0, true, false);
+  // // //pathing(pathMain[3], true);
+  // // // wait(100, msec);
+  // maxVelChange=12;
+  // pathing(pathMain[4], false);
+  // // shootPoint[0]=-19;shootPoint[1]=30;
+  // fire=true;
+  // // pathing(pathMain[1], true);
+
+  // while (true)
+  // {
+  //   printf("%f\n", Inertial.rotation());
+  //   wait(20, msec);
+  // }
+
+  //PSI 73 78
+  // load=true;
+  // PIDMove(4); //18 8
+  // // if (intakeSense.objectDistance(mm)>170)
+  //   fire=true;
+  // wait(200, msec);
+  // PIDMove(24); //15 12 14  24
+  // // PIDMove(-12);
+  // PIDTurn(24, 5.5, true, true); //24 7 23 5 24 5.5
+  // PIDMove(-29.5, 1); //24 26.5
+  // intake.spinFor(forward, 500, degrees, 600, rpm);
+  // PIDMove(4); //12 10
+  // PIDTurn(116); //24 6
+  // //printf("%f\n", Inertial.rotation());
+  // intake.spin(reverse, 600, rpm);
+  // PIDMove(-20);
+  // //PIDTurn(24, 6, false, true);
+  // PIDMove(-23);
+  // PIDMove(-25);
+  // wait(250, msec); //200
+  // PIDTurn(23); //33 114
+  // // intake.spin(fwd, 600, rpm);
+  // // wait(500, msec);
+  // // intake.spin(reverse, 600, rpm);
+  // // printf("%f %f %f\n", pos[0], pos[1], Inertial.rotation());
+  // PIDMove(10);
+  // if (intakeSense.objectDistance(mm)>170)
+  //   fire=true;
+  // wait(400, msec);//400
+
+  // // else
+  // // {
+  // //   wait(50, msec);
+  // //   if (intakeSense.objectDistance(mm)>170)
+  // //    fire=true;
+  // // }
+  // // wait(200, msec);
+  // PIDMove(-2);
+  // // PIDTurn(-42, 12, true, false);
+  // PIDTurn(8); //12
+  // // printf("%f\n", Inertial.rotation());
+  // // PIDMove(-20);
+  // // PIDMove(-24);
+  // wait(50, msec);
+  // PIDMove(-38); //-44 <----------------------------------------------------------------------
+  // //PIDTurn(33,128, false, true);
+  // PIDTurn(18); //18
+  // // printf("%f\n", Inertial.rotation());
+  // PIDMove(32);
+  // if (intakeSense.objectDistance(mm)>170)
+  //   fire=true;
   
 }
 
-void leftExpo (vex::directionType type, int percentage){
-  if(percentage >= 0){
-    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  }else{
+
+double LeftPercent = 0;
+double RightPercent = 0;
+double lastLeftPercent = 0;
+double lastRightPercent = 0;
+void leftExpo (vex::directionType type, double percentage){
+  if(fabs(percentage) < 1)
+    percentage = 0;
+  else if(percentage >= 1)
+    percentage = 2*pow(1.0359999, percentage) + 1;
+  else{
     percentage = -percentage;
-    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = 2*pow(1.0359999, percentage) + 1;
     percentage = -percentage;
+  }
+
+  // if(percentage >= 0){
+  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  // }else{
+  //   percentage = -percentage;
+  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  //   percentage = -percentage;
+  // }
+  // if (percentage-lastLeftPercent>0 && percentage!=0 && lastLeftPercent<0)
+  // {
+  //   percentage=lastLeftPercent+5;
+  // }
+  LeftPercent=percentage;
+  // if (LeftPercent>=70&&RightPercent>=70)
+  // {
+  //   percentage=70;
+  // }
+  if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
+  {
+    percentage=lastLeftPercent-0.8;
   }
   leftDrive.spin (type, percentage, vex::velocityUnits::pct);
+  lastLeftPercent=percentage;
 }
 
-void rightExpo (vex::directionType type, int percentage){
-  if(percentage >= 0){
-    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  }else{
+void rightExpo (vex::directionType type, double percentage){
+
+  if(fabs(percentage) < 1)
+    percentage = 0;
+  else if(percentage >= 1)
+    percentage = 2*pow(1.0359999, percentage) + 1;
+  else{
     percentage = -percentage;
-    percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+    percentage = 2*pow(1.0359999, percentage) + 1;
     percentage = -percentage;
   }
+
+
+  // if(percentage >= 0){
+  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  // }else{
+  //   percentage = -percentage;
+  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
+  //   percentage = -percentage;
+  // }
+  RightPercent=percentage;
+  // if (LeftPercent>=70&&RightPercent>=70)
+  // {
+  //   percentage=70;
+  // }
+  if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
+  {
+    percentage=lastRightPercent-0.8;
+  }
   rightDrive.spin (type, percentage, vex::velocityUnits::pct);
+  lastRightPercent=percentage;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -703,8 +868,15 @@ bool driveOn = false;
 bool driveToggle = true;
 bool reload = true;
 bool expand = false;
+
 bool boostOn = false;
 bool boostToggle = false;
+
+bool modeOn = false;
+bool modeToggle = false;
+
+bool autonOn = false;
+bool autonToggle = false;
 
 bool loaderOn = false;
 bool loaderToggle = false;
@@ -712,285 +884,279 @@ bool loaderToggle = false;
 int discCount =0;
 int loaderCount=0;
 
+bool intakeLift = false;
+bool liftToggle = false;
+
 void usercontrol(void) {
-  
-  // autonCata=true;
-  // enableDrivePID=true;
-  // vex::task PID1(drivePID);
-  // vex::task cata(loadCata);
-  // cataBoost.set(false);
-  
-  // load=true;
-  // loader=true;
- 
-  // for (int i =0;i<3;i++)
-  // {
-  // intake.spin(fwd, 500, rpm);
-  // wait(2200, msec);
-  // intake.spin(reverse, 400, rpm);
-  // wait(200,msec);
-  // intake.spin(fwd, 300, rpm);
-  // resetDriveSensors=true;
-  // desiredValue=200;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-277+360;
-  // desiredValue=0;
-  // wait(700, msec);
-  // fire=true;
-  // wait(500, msec);
-  // load=true;
-  // resetDriveSensors=true;
-  // desiredTurnValue=-360+360;
-  // desiredValue=0;
-  // wait(700, msec);
-  // resetDriveSensors=true;
-  // desiredValue=-430;
-  // wait(600, msec);
-  // }
-  // load=true;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-360+360;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredValue=6500;
-  // wait(4000, msec);
-  // resetDriveSensors=true;
-  // desiredValue=0;
-  // desiredTurnValue=-193+360;
-  // wait(800,msec);
-  // resetDriveSensors=true;
-  // desiredValue=-950;
-  // wait(500, msec);
-  // intake.spin(reverse, 400, rpm);
-  // wait(500, msec);
+  // intake.stop();
 
+  cataBoost.set(false);
+  autonCata=false;
+  enableDrivePID=false;
+  enableOdom=false;
+  //Controller.Screen.clearLine();
+  //Controller.Screen.print(averagePosition);
+  // User control code here, inside the loop
+  // vex::task odometry(odom);
+  while (1) {
 
-  // for (int i =0;i<2;i++)
-  // {
-  // intake.spin(fwd, 500, rpm);
-  // wait(2200, msec);
-  // intake.spin(reverse, 400, rpm);
-  // wait(200,msec);
-  // intake.spin(fwd, 300, rpm);
-  // resetDriveSensors=true;
-  // desiredValue=200;
-  // wait(500, msec);
-  // resetDriveSensors=true;
-  // desiredTurnValue=-98+360;
-  // desiredValue=0;
-  // wait(700, msec);
-  // fire=true;
-  // wait(500, msec);
-  // if (i==1)
-  // {
-  //   loader=false;
-  // }
-  // load=true;
-  // if (i!=1)
-  // {
-  //   resetDriveSensors=true;
-  //   desiredTurnValue=-188+360;
-  //   desiredValue=0;
-  //   wait(700, msec);
-  //   resetDriveSensors=true;
-  //   desiredValue=-400;
-  //   wait(600, msec);
-  // }
-  // }
-  // autonCata=false;
-  // enableDrivePID=false;
-  // //Controller.Screen.clearLine();
-  // //Controller.Screen.print(averagePosition);
-  // // User control code here, inside the loop
-  // while (1) {
-  //   if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
-  //   {
-  //     intakeToggle=false;
-  //     expand = true;
-  //     reload=false;
-  //     catapult.spin(reverse, 70, vex::velocityUnits::pct);
-  //     wait(450, msec);
-  //     expansion.set(true);
-  //   }
-  //   else
-  //   {
-  //     expansion.set(false);
-  //   }
-  //   driveBrake(brake);
-  //   // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-  //   // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-  //   leftExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
-  //   rightExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));
+    // if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
+    // {
+    //   intakeToggle=false;
+    //   // expand = true;
+    //   // reload=false;
+    //   // catapult.spin(reverse, 70, vex::velocityUnits::pct);
+    //   // wait(450, msec);
+    //   expansion.set(true);
+    // }
+    // else
+    // {
+    //   expansion.set(false);
+    // }
+    // driveBrake(coast);
+    // // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
+    // leftExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));
+    // rightExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
 
-  //    if (Controller.ButtonL2.pressing())
-  //   {
-  //     if (!indexerOn)
-  //     {
-  //       indexerToggle = !indexerToggle;
-  //       indexerOn=true;
-  //     }
-  //   }
-  //   else
-  //   {
-  //     indexerOn=false;
-  //   }
-  //   if (Controller.ButtonL1.pressing())
-  //   {
-  //     if (!intakeOn)
-  //     {
-  //       intakeToggle = !intakeToggle;
-  //       intakeOn=true;
-  //       indexerToggle=true;
-  //     }
-  //   }
-  //   else
-  //   {
-  //     intakeOn=false;
-  //   }
-  //   if (intakeToggle&&indexerToggle)
-  //   {
-  //     // 10/5: 150->125
-  //     intake.spin(reverse, 600, vex::velocityUnits::rpm); //intake speed <----- this one!
-  //   }
-  //   else if (intakeToggle)
-  //   {
-  //     intake.spin(fwd, 400, vex::velocityUnits::rpm);
-  //   }
-  //   else {
-  //     intake.stop();
-  //   }
+    //  if (Controller.ButtonL2.pressing())
+    // {
+    //   if (!indexerOn)
+    //   {
+    //     indexerToggle = !indexerToggle;
+    //     indexerOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   indexerOn=false;
+    // }
+    // if (Controller.ButtonL1.pressing())
+    // {
+    //   if (!intakeOn)
+    //   {
+    //     intakeToggle = !intakeToggle;
+    //     intakeOn=true;
+    //     indexerToggle=true;
+    //   }
+    // }
+    // else
+    // {
+    //   intakeOn=false;
+    // }
+    // if (intakeToggle&&indexerToggle)
+    // {
+    //   // 10/5: 150->125
+    //   intake.spin(reverse, 600, vex::velocityUnits::rpm); //intake speed <----- this one!
+    // }
+    // else if (intakeToggle)
+    // {
+    //   intake.spin(fwd, 600, vex::velocityUnits::rpm);
+    // }
+    // else {
+    //   intake.stop();
+    // }
 
-  //   // if (Controller.ButtonUp.pressing()&&Controller.ButtonX.pressing())
-  //   // {
-  //   //   blocker.set(true);
-  //   // }
+    // if (Controller.ButtonX.pressing())
+    // {
+    //   if (!intakeLift)
+    //   {
+    //     liftToggle = !liftToggle;
+    //     intakeLift=true;
+    //   }
+    // }
+    // else
+    // {
+    //   intakeLift=false;
+    // }
+    // if (liftToggle)
+    // {
+    //   intakeLifter.set(true);
+    // }
+    // else
+    // {
+    //   intakeLifter.set(false);
+    // }
 
-  //   // if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
-  //   // {
-  //   //   if (!driveOn)
-  //   //   {
-  //   //     driveToggle = !driveToggle;
-  //   //     driveOn = true;
-  //   //   }
-  //   // }
-  //   // else
-  //   // {
-  //   //   driveOn = false;
-  //   // }
-  //   // if (driveToggle)
-  //   // {
-  //   //   driveSpeed = altDriveSpeed;
-  //   //   turnSpeed = altTurnSpeed;
-  //   // }
-  //   // else
-  //   // {
-  //   //   driveSpeed = initDriveSpeed;
-  //   //   turnSpeed=initTurnSpeed;
-  //   // }
-  //   if (Controller.ButtonY.pressing())
-  //   {
-  //     if (!loaderOn)
-  //     {
-  //       loaderToggle = !loaderToggle;
-  //       loaderOn=true;
-  //       loaderCount=0;
-  //     }
-  //   }
-  //   else
-  //   {
-  //     if (loaderCount==5)
-  //     {
-  //       loaderToggle=false;
-  //     }
-  //     loaderOn=false;
-  //   }
+    //  if (Controller.ButtonUp.pressing())
+    // {
+    //   if (!modeOn)
+    //   {
+    //     modeToggle = !modeToggle;
+    //     modeOn=true;
+    //     Controller.Screen.setCursor(0, 0);
+    //     Controller.Screen.clearLine();
+    //     Controller.Screen.print("B:%d, R:%d, A:%d", boostToggle, modeToggle, autonToggle);
+    //   }
+    // }
+    // else  
+    // {
+    //   modeOn=false;
+    // }
+    // if (modeToggle)
+    // {
+    //   cataReduce.set(true);
+    // }
+    // else {
+    //   cataReduce.set(false);
+    // }
+
+    // if (Controller.ButtonLeft.pressing())
+    // {
+    //   if (!autonOn)
+    //   {
+    //     autonToggle = !autonToggle;
+    //     autonOn=true;
+    //     Controller.Screen.setCursor(0, 0);
+    //     Controller.Screen.clearLine();
+    //     Controller.Screen.print("B:%d, R:%d, A:%d", boostToggle, modeToggle, autonToggle);
+    //   }
+    // }
+    // else  
+    // {
+    //   autonOn=false;
+    // }
+
+    // // if (Controller.ButtonLeft.pressing()||Controller.ButtonRight.pressing()||Controller.ButtonY.pressing())
+    // // {
+    // //   if (!driveOn)
+    // //   {
+    // //     driveToggle = !driveToggle;
+    // //     driveOn = true;
+    // //   }
+    // // }
+    // // else
+    // // {
+    // //   driveOn = false;
+    // // }
+    // // if (driveToggle)
+    // // {
+    // //   driveSpeed = altDriveSpeed;
+    // //   turnSpeed = altTurnSpeed;
+    // // }
+    // // else
+    // // {
+    // //   driveSpeed = initDriveSpeed;
+    // //   turnSpeed=initTurnSpeed;
+    // // }
+    // // if (Controller.ButtonY.pressing())
+    // // {
+    // //   if (!loaderOn)
+    // //   {
+    // //     loaderToggle = !loaderToggle;
+    // //     loaderOn=true;
+    // //     loaderCount=0;
+    // //   }
+    // // }
+    // // else
+    // // {
+    // //   if (loaderCount==5)
+    // //   {
+    // //     loaderToggle=false;
+    // //   }
+    // //   loaderOn=false;
+    // // }
 
   
 
 
     
-  //    if (Controller.ButtonA.pressing())
-  //   {
-  //     if (!boostOn)
-  //     {
-  //       boostToggle = false;//!boostToggle
-  //       boostOn=true;
-  //     }
-  //   }
-  //   else
-  //   {
-  //     boostOn=false;
-  //   }
+    // if (Controller.ButtonRight.pressing())
+    // {
+    //   if (!boostOn)
+    //   {
+    //     boostToggle = !boostToggle;//!boostToggle
+    //     boostOn=true;
+    //     Controller.Screen.setCursor(0, 0);
+    //     Controller.Screen.clearLine();
+    //     Controller.Screen.print("B:%d, R:%d, A:%d", boostToggle, modeToggle, autonToggle);
+    //   }
+    // }
+    // else
+    // {
+    //   boostOn=false;
+    // }
 
-  //   if (Controller.ButtonR1.pressing())
-  //   {
-  //     intakeToggle=false;
-  //     reload=true;
-  //     catapult.spin(reverse, 70, vex::velocityUnits::pct);
-  //   }
-  //   if (Controller.ButtonR2.pressing()&&intakeSense.objectDistance(mm)>40)
-  //   {
-  //     intakeToggle=false;
-  //     reload=false;
-  //     catapult.spin(reverse, 70, vex::velocityUnits::pct);
-  //     wait(20, msec);
-  //     if (boostToggle)
-  //       cataBoost.set(true);
-  //   }
-  //   if (reload&&loaderToggle&&cataSense.angle(deg)<103)
-  //   {
-  //     catapult.stop(hold);
+    // if (Controller.ButtonR1.pressing())
+    // {
+    //   intakeToggle=false;
+    //   reload=true;
+    //   catapult.spin(reverse, 100, vex::velocityUnits::pct);
+    // }
+    // //printf("%f\n", cataSense.angle());
+    // if (Controller.ButtonR2.pressing()&& intakeSense.objectDistance(mm)>170)//&& intakeSense.objectDistance(mm)>170
+    // {
+    //   intakeToggle=false;
+    //   reload=false;
+    //   catapult.spin(reverse, 100, vex::velocityUnits::pct);
+    //   // wait (50, msec);
       
-  //   }
-  //   if (reload && cataSense.angle(deg)<93)//93
-  //   {
-  //     catapult.stop(hold);
+    //   // if (true)
+    //   // {
+    //   //   wait(140, msec);
+    //   //   cataBoost.set(false);
+    //   // }
+    // }
+    // if (cataSense.angle()>119)
+    // {
+    //   if (boostToggle)
+    //     cataBoost.set(true);
+    //   if (autonToggle)
+    //   {
+    //     cataBoost.set(true);
+    //     cataBoost2.set(true);
+    //   }
+    // }
+    // // if (reload&&loaderToggle&&cataSense.angle(deg)>116.5)
+    // // {
+    // //   catapult.stop(hold);
       
-  //   }
-  //   else if (!reload && cataSense.angle(deg)>168)
-  //   {
-  //     intakeToggle=false;
-  //     catapult.stop(coast);
-  //     cataBoost.set(false);
-  //     if (loaderToggle)
-  //     {
-  //       loaderCount+=1;
-  //     }
-  //     if (!expand)
-  //     {
-  //       intakeToggle=false;
-  //       reload=true;
-  //       catapult.spin(reverse, 80, vex::velocityUnits::pct);
-  //     }
-  //   }
+    // // }
+    // if (reload && cataSense.angle(deg)>100)
+    // {
+    //    catapult.spin(reverse, 20, vex::velocityUnits::pct);
+    // }
+    // if (reload && cataSense.angle(deg)>117.3)//93
+    // {
+    //   catapult.stop(hold);
+    // }
+    // else if (!reload && cataSense.angle(deg)<50)
+    // {
+    //   intakeToggle=false;
+    //   catapult.stop(coast);
+    //   cataBoost.set(false);
+    //   cataBoost2.set(false);
 
-  //   // if (intakeSense.objectDistance(mm)<=23)
-  //   // {
-  //   //   // Controller.Screen.setCursor(0,0);
-  //   //   // Controller.Screen.clearLine();
-  //   //   // Controller.Screen.print(1);
-  //   //   discCount+=1;
-  //   // }
-  //   // else {
-  //   //   //  Controller.Screen.setCursor(0,0);
-  //   //   // Controller.Screen.clearLine();
-  //   //   // Controller.Screen.print(0);
-  //   // }
+    //   reload=true;
+    //   catapult.spin(reverse, 100, vex::velocityUnits::pct);
+    // }
 
-  //   // if (discCount>=6 && intakeSense.objectDistance(mm)>30)
-  //   // {
-  //   //   intakeToggle=false;
-  //   // }
+    
+
+    // // if (intakeSense.objectDistance(mm)<=23)
+    // // {
+    // //   // Controller.Screen.setCursor(0,0);
+    // //   // Controller.Screen.clearLine();
+    // //   // Controller.Screen.print(1);
+    // //   discCount+=1;
+    // // }
+    // // else {
+    // //   //  Controller.Screen.setCursor(0,0);
+    // //   // Controller.Screen.clearLine();
+    // //   // Controller.Screen.print(0);
+    // // }
+
+    // // if (discCount>=6 && intakeSense.objectDistance(mm)>30)
+    // // {
+    // //   intakeToggle=false;
+    // // }
 
 
 
 
-  //   wait(20, msec); // Sleep the task for a short amount of time to
-  //                   // prevent wasted resources.
-  // }
+    wait(10, msec); // Sleep the task for a short amount of time to
+                    // prevent wasted resources.
+  }
 }
 
 //
