@@ -760,7 +760,7 @@ void autonomous(void) {
   // wait(200, msec);
   PIDMove(-2);
   // PIDTurn(-42, 12, true, false);
-  PIDTurn(3.5); //12
+  PIDTurn(1); //12
   // printf("%f\n", Inertial.rotation());
   // PIDMove(-20);
   // PIDMove(-24);
