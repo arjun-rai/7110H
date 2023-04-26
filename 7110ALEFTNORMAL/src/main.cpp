@@ -55,13 +55,13 @@ std::vector<std::vector<pathPoint>> pathMain = {
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  for (int i =0;i<pathMain.size(); i++)
-  {
-    pathMain[i] = inject(pathMain[i]);
-    pathMain[i] = smooth(pathMain[i]);
-    curv_func(pathMain[i]);
-    speed_func(pathMain[i]);
-  }
+  // for (int i =0;i<pathMain.size(); i++)
+  // {
+  //   pathMain[i] = inject(pathMain[i]);
+  //   pathMain[i] = smooth(pathMain[i]);
+  //   curv_func(pathMain[i]);
+  //   speed_func(pathMain[i]);
+  // }
 
   // for (int i=0;i<pathMain[0].size(); i++)
   // {
@@ -898,6 +898,9 @@ bool liftToggle = false;
 bool sensorOverrideOn =false;
 bool sensorOverride = false;
 
+bool expansionOn = false;
+bool expansionToggle = false;
+
 void usercontrol(void) {
   // intake.stop();
 
@@ -911,8 +914,20 @@ void usercontrol(void) {
   // User control code here, inside the loop
   // vex::task odometry(odom);
   while (1) {
-
+    
     if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
+    {
+      if (!expansionOn)
+      {
+        expansionToggle = !expansionToggle;
+        expansionOn=true;
+      }
+    }
+    else
+    {
+      expansionOn=false;
+    }
+    if (expansionToggle)
     {
       intakeToggle=false;
       // expand = true;
@@ -925,6 +940,7 @@ void usercontrol(void) {
     {
       expansion.set(false);
     }
+
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);

@@ -900,6 +900,9 @@ bool liftToggle = false;
 bool sensorOverrideOn =false;
 bool sensorOverride = false;
 
+bool expansionOn = false;
+bool expansionToggle = false;
+
 void usercontrol(void) {
   // intake.stop();
 
@@ -913,8 +916,20 @@ void usercontrol(void) {
   // User control code here, inside the loop
   // vex::task odometry(odom);
   while (1) {
-
+    
     if (Controller.ButtonDown.pressing()&&Controller.ButtonB.pressing())
+    {
+      if (!expansionOn)
+      {
+        expansionToggle = !expansionToggle;
+        expansionOn=true;
+      }
+    }
+    else
+    {
+      expansionOn=false;
+    }
+    if (expansionToggle)
     {
       intakeToggle=false;
       // expand = true;
@@ -927,6 +942,7 @@ void usercontrol(void) {
     {
       expansion.set(false);
     }
+
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
@@ -1185,7 +1201,7 @@ void usercontrol(void) {
 
 
     wait(10, msec); // Sleep the task for a short amount of time to
-                    // prevent wasted resources.
+     // prevent wasted resources.
   }
 }
 
