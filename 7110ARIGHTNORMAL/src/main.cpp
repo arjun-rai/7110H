@@ -562,7 +562,8 @@ int loadCata()
         // }
         }
       }
-    if (cataSense.angle()>119)
+    //printf("%f\n", cataSense.angle());
+    if (cataSense.angle()>126)
     {
        if (singlePiston)
         {
@@ -572,6 +573,7 @@ int loadCata()
         {
           cataBoost.set(true);
           cataBoost2.set(true);
+          //printf("good\n");
         }
     }
     if (cataSense.angle(deg)<50&&fire)
@@ -727,7 +729,7 @@ void autonomous(void) {
   PIDMove(-29.5, 1); //24 26.5
   intake.spinFor(forward, 500, degrees, 600, rpm);
   PIDMove(3); //12 10
-  PIDTurn(119); //24 6
+  PIDTurn(121); //24 6
   //printf("%f\n", Inertial.rotation());
   intake.spin(reverse, 600, rpm);
   PIDMove(-20);
@@ -742,9 +744,12 @@ void autonomous(void) {
   // printf("%f %f %f\n", pos[0], pos[1], Inertial.rotation());
   PIDMove(10);
   wait(50,msec);
-  if (intakeSense.objectDistance(mm)>170)
+  if (intakeSense.objectDistance(mm)>45)
     fire=true;
-  wait(250, msec);//400
+  else {
+  wait(15,sec);
+  }
+  wait(300, msec);//400
 
   // else
   // {
@@ -755,7 +760,7 @@ void autonomous(void) {
   // wait(200, msec);
   PIDMove(-2);
   // PIDTurn(-42, 12, true, false);
-  PIDTurn(5); //12
+  PIDTurn(3.5); //12
   // printf("%f\n", Inertial.rotation());
   // PIDMove(-20);
   // PIDMove(-24);
@@ -765,9 +770,11 @@ void autonomous(void) {
   PIDTurn(18); //18
   // printf("%f\n", Inertial.rotation());
   PIDMove(32);
-  if (intakeSense.objectDistance(mm)>170)
+  if (intakeSense.objectDistance(mm)>45)
     fire=true;
-  
+  else {
+  wait(15,sec);
+  }
 }
 
 
@@ -1121,7 +1128,7 @@ void usercontrol(void) {
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
     //printf("%f\n", cataSense.angle());
-    if (Controller.ButtonR2.pressing()&& (intakeSense.objectDistance(mm)>170||sensorOverride))//&& intakeSense.objectDistance(mm)>170
+    if (Controller.ButtonR2.pressing()&& (intakeSense.objectDistance(mm)>45||sensorOverride))//&& intakeSense.objectDistance(mm)>170
     {
       intakeToggle=false;
       reload=false;
@@ -1134,7 +1141,7 @@ void usercontrol(void) {
       //   cataBoost.set(false);
       // }
     }
-    if (cataSense.angle()>119)
+    if (cataSense.angle()>126)
     {
       if (boostToggle)
         cataBoost.set(true);
@@ -1142,7 +1149,10 @@ void usercontrol(void) {
       {
         cataBoost.set(true);
         cataBoost2.set(true);
+        //printf("%f\n", 0.0);
       }
+      // cataBoost.set(true);
+      // cataBoost2.set(true);
     }
     // if (reload&&loaderToggle&&cataSense.angle(deg)>116.5)
     // {
@@ -1157,7 +1167,7 @@ void usercontrol(void) {
     {
       catapult.stop(hold);
     }
-    else if (!reload && cataSense.angle(deg)<50)
+    else if (!reload && cataSense.angle(deg)<48)
     {
       intakeToggle=false;
       catapult.stop(coast);

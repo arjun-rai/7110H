@@ -562,7 +562,7 @@ int loadCata()
         // }
         }
       }
-    if (cataSense.angle()>119)
+    if (cataSense.angle()>126)
     {
        if (singlePiston)
         {
@@ -742,8 +742,11 @@ void autonomous(void) {
   // printf("%f %f %f\n", pos[0], pos[1], Inertial.rotation());
   PIDMove(10);
   wait(50, msec);
-  if (intakeSense.objectDistance(mm)>170)
+  if (intakeSense.objectDistance(mm)>45)
     fire=true;
+  else {
+  wait(15, msec);
+  }
   wait(250, msec);//400
   PIDMove(-10);
   PIDTurn(119);
@@ -774,8 +777,11 @@ void autonomous(void) {
   PIDTurn(18); //18
   // printf("%f\n", Inertial.rotation());
   PIDMove(32);
-  if (intakeSense.objectDistance(mm)>170)
+  if (intakeSense.objectDistance(mm)>45)
     fire=true;
+  else {
+    wait(15, msec);
+  }
   
 }
 
@@ -1130,7 +1136,7 @@ void usercontrol(void) {
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
     //printf("%f\n", cataSense.angle());
-    if (Controller.ButtonR2.pressing()&& (intakeSense.objectDistance(mm)>170||sensorOverride))//&& intakeSense.objectDistance(mm)>170
+    if (Controller.ButtonR2.pressing()&& (intakeSense.objectDistance(mm)>45||sensorOverride))//&& intakeSense.objectDistance(mm)>170
     {
       intakeToggle=false;
       reload=false;
@@ -1143,7 +1149,7 @@ void usercontrol(void) {
       //   cataBoost.set(false);
       // }
     }
-    if (cataSense.angle()>119)
+    if (cataSense.angle()>126)
     {
       if (boostToggle)
         cataBoost.set(true);
