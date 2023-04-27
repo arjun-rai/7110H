@@ -562,7 +562,7 @@ int loadCata()
         // }
         }
       }
-    if (cataSense.angle()>126)
+    if (cataSense.angle()>125)
     {
        if (singlePiston)
         {
@@ -720,20 +720,21 @@ void autonomous(void) {
   PIDMove(4); //18 8
   // if (intakeSense.objectDistance(mm)>170)
     fire=true;
+    wait(200, msec);
   PIDMove(24); //15 12 14  24
   // PIDMove(-12);
-  PIDTurn(24, 5.5, true, true); //24 7 23 5 24 5.5
+  PIDTurn(26.5, 5.5, true, true); //24 7 23 5 24 5.5
   PIDMove(-29.5, 1); //24 26.5
   intake.spinFor(forward, 500, degrees, 600, rpm);
   PIDMove(4); //12 10
-  PIDTurn(119); //24 6
+  PIDTurn(117); //24 6
   //printf("%f\n", Inertial.rotation());
   intake.spin(reverse, 600, rpm);
   PIDMove(-20);
   //PIDTurn(24, 6, false, true);
   PIDMove(-23);
   PIDMove(-25);
-  wait(200, msec); //200
+  wait(100, msec); //200
   PIDTurn(23); //33 114
   // intake.spin(fwd, 600, rpm);
   // wait(500, msec);
@@ -746,14 +747,14 @@ void autonomous(void) {
   else {
   wait(15000, msec);
   }
-  wait(300, msec);//400
+  wait(200, msec);//400
   PIDMove(-10);
-  PIDTurn(119);
+  PIDTurn(117);
   intake.spin(reverse, 600, rpm);
   PIDMove(-60);
-  PIDTurn(123.5);
+  PIDTurn(121.5);
   intake.stop();
-  PIDMove(-20, 0.7);
+  PIDMove(-22, 0.7);
   intake.spinFor(forward, 500, degrees, 600, rpm);
   wait(15000, msec);
 

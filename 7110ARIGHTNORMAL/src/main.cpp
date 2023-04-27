@@ -563,7 +563,7 @@ int loadCata()
         }
       }
     //printf("%f\n", cataSense.angle());
-    if (cataSense.angle()>126)
+    if (cataSense.angle()>125)
     {
        if (singlePiston)
         {
@@ -725,11 +725,11 @@ void autonomous(void) {
   wait(200, msec);
   PIDMove(24); //15 12 14  24
   // PIDMove(-12);
-  PIDTurn(24, 5.5, true, true); //24 7 23 5 24 5.5
+  PIDTurn(26.5, 5.5, true, true); //24 7 23 5 24 5.5
   PIDMove(-29.5, 1); //24 26.5
   intake.spinFor(forward, 500, degrees, 600, rpm);
   PIDMove(3); //12 10
-  PIDTurn(121); //24 6
+  PIDTurn(117); //24 6 121
   //printf("%f\n", Inertial.rotation());
   intake.spin(reverse, 600, rpm);
   PIDMove(-20);
