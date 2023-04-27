@@ -789,7 +789,7 @@ void leftExpo (vex::directionType type, double percentage){
     percentage = 2*pow(1.0359999, percentage) + 1;
   else{
     percentage = -percentage;
-    percentage = 2*pow(1.0359999, percentage) + 1;
+    percentage = 1.1609*pow(1.043, percentage) + 0.2*percentage + 1.84;
     percentage = -percentage;
   }
 
@@ -825,7 +825,7 @@ void rightExpo (vex::directionType type, double percentage){
     percentage = 2*pow(1.0359999, percentage) + 1;
   else{
     percentage = -percentage;
-    percentage = 2*pow(1.0359999, percentage) + 1;
+    percentage = 1.1609*pow(1.043, percentage) + 0.2*percentage + 1.84;
     percentage = -percentage;
   }
 

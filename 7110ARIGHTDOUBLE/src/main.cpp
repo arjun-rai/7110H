@@ -720,7 +720,6 @@ void autonomous(void) {
   PIDMove(4); //18 8
   // if (intakeSense.objectDistance(mm)>170)
     fire=true;
-  wait(200, msec);
   PIDMove(24); //15 12 14  24
   // PIDMove(-12);
   PIDTurn(24, 5.5, true, true); //24 7 23 5 24 5.5
@@ -734,7 +733,7 @@ void autonomous(void) {
   //PIDTurn(24, 6, false, true);
   PIDMove(-23);
   PIDMove(-25);
-  wait(250, msec); //200
+  wait(200, msec); //200
   PIDTurn(23); //33 114
   // intake.spin(fwd, 600, rpm);
   // wait(500, msec);
@@ -745,16 +744,16 @@ void autonomous(void) {
   if (intakeSense.objectDistance(mm)>45)
     fire=true;
   else {
-  wait(15, msec);
+  wait(15000, msec);
   }
-  wait(250, msec);//400
+  wait(300, msec);//400
   PIDMove(-10);
   PIDTurn(119);
   intake.spin(reverse, 600, rpm);
   PIDMove(-60);
-  intake.stop();
   PIDTurn(123.5);
-  PIDMove(-19, 0.8);
+  intake.stop();
+  PIDMove(-20, 0.7);
   intake.spinFor(forward, 500, degrees, 600, rpm);
   wait(15000, msec);
 
