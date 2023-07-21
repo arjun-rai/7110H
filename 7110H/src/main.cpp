@@ -69,8 +69,6 @@ void pre_auton(void) {
   Inertial.setHeading(0, degrees);
   Inertial.calibrate();
   cataSense.resetPosition();
-  hEncoder.resetPosition();
-  fEncoder.resetPosition();
   while (Inertial.isCalibrating()) {
   wait(100, msec);
   }
@@ -80,8 +78,8 @@ void pre_auton(void) {
   // leftEncoder.resetRotation();
   // rightEncoder.resetRotation();
   driveBrake(coast);
-  catapult.setBrake(hold);
-  intake.setBrake(coast);
+  cata.setBrake(hold);
+  cata2.setBrake(hold);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -257,64 +255,64 @@ int drivePID(){
 }
 
 
-double moveError;
-double movePrevError;
-double moveDerivative;
+// double moveError;
+// double movePrevError;
+// double moveDerivative;
 
-double KpMove=1;
-double KdMove=10;
+// double KpMove=1;
+// double KdMove=10;
 
 
-double lastMovePct =0;
+// double lastMovePct =0;
 
-double maxMoveVoltage =10; //8
+// double maxMoveVoltage =10; //8
 
-double desiredLength = 0;
+// double desiredLength = 0;
 
-float clamp(float input, float min, float max){
-  if( input > max ){ return(max); }
-  if(input < min){ return(min); }
-  return(input);
-}
+// float clamp(float input, float min, float max){
+//   if( input > max ){ return(max); }
+//   if(input < min){ return(min); }
+//   return(input);
+// }
 
-bool enableDist = true;
-int dist(double timeout, brakeType chooseBrakeType)
-{
-  double timeout_loop = (timeout*1000.0);
-  double timeout_time =0;
-  double startingDist = (fEncoder.position(deg)/360.0)*M_PI*2.75;
-  while (enableDist&&timeout_time<timeout_loop)
-  {
-    moveError = desiredLength-(((fEncoder.position(deg)/360.0)*M_PI*2.75)-startingDist);
-    moveDerivative = moveError-movePrevError;
+// bool enableDist = true;
+// int dist(double timeout, brakeType chooseBrakeType)
+// {
+//   double timeout_loop = (timeout*1000.0);
+//   double timeout_time =0;
+//   double startingDist = (fEncoder.position(deg)/360.0)*M_PI*2.75;
+//   while (enableDist&&timeout_time<timeout_loop)
+//   {
+//     moveError = desiredLength-(((fEncoder.position(deg)/360.0)*M_PI*2.75)-startingDist);
+//     moveDerivative = moveError-movePrevError;
 
-    double moveVolt = (moveError*KpMove+moveDerivative*KdMove);
+//     double moveVolt = (moveError*KpMove+moveDerivative*KdMove);
 
-    moveVolt = clamp(moveVolt, -maxMoveVoltage, maxMoveVoltage);
-    // if(straightPct-lastStraightPct>5)
-    // {
-    //   straightPct=lastStraightPct+5;
-    // }
-    //printf("%f\n", timeout_time);
+//     moveVolt = clamp(moveVolt, -maxMoveVoltage, maxMoveVoltage);
+//     // if(straightPct-lastStraightPct>5)
+//     // {
+//     //   straightPct=lastStraightPct+5;
+//     // }
+//     //printf("%f\n", timeout_time);
     
-    leftDrive.spin(fwd, moveVolt, voltageUnits::volt);
-    rightDrive.spin(fwd, moveVolt, voltageUnits::volt);
+//     leftDrive.spin(fwd, moveVolt, voltageUnits::volt);
+//     rightDrive.spin(fwd, moveVolt, voltageUnits::volt);
 
 
-    if (fabs(moveError)<3)
-    {
-      break;
-    }
+//     if (fabs(moveError)<3)
+//     {
+//       break;
+//     }
 
-    movePrevError=moveError;
-    lastMovePct=moveVolt;
-    timeout_time+=20;
-    wait(20, msec);
-  }
-  leftDrive.stop(chooseBrakeType);
-  rightDrive.stop(chooseBrakeType);
-  return 1;
-}
+//     movePrevError=moveError;
+//     lastMovePct=moveVolt;
+//     timeout_time+=20;
+//     wait(20, msec);
+//   }
+//   leftDrive.stop(chooseBrakeType);
+//   rightDrive.stop(chooseBrakeType);
+//   return 1;
+// }
 
 
 void PIDTurn(double angle)
@@ -323,11 +321,11 @@ void PIDTurn(double angle)
   desiredTurnValue=angle;
   drivePID();
 }
-void PIDMove (double length, double timeout=5, brakeType chooseBrakeType=hold)
-{
-  desiredLength=length;
-  dist(timeout, chooseBrakeType);
-}
+// void PIDMove (double length, double timeout=5, brakeType chooseBrakeType=hold)
+// {
+//   desiredLength=length;
+//   dist(timeout, chooseBrakeType);
+// }
 void PIDTurnMove(double move, double ang)
 {
   resetDriveSensors=true;
@@ -589,15 +587,15 @@ void usercontrol(void) {
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>100)
+    if (reload && cataSense.angle(deg)>225)
     {
-       catapult.spin(reverse, 20, vex::velocityUnits::pct);
+       catapult.spin(reverse, 10, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>118)//93
+    if (reload && cataSense.angle(deg)>257)//93
     {
       catapult.stop(hold);
     }
-    else if (!reload && cataSense.angle(deg)<50)
+    else if (!reload && cataSense.angle(deg)<185)
     {
       catapult.stop(coast);
 
