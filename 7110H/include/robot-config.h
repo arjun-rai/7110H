@@ -17,6 +17,7 @@ extern motor cata;
 extern motor cata2;
 extern motor_group catapult;
 extern digital_out claw;
+extern digital_out claw2;
 extern digital_out lifter;
 extern digital_out balance;
 extern digital_out wedge;

@@ -396,10 +396,10 @@ void leftExpo (vex::directionType type, double percentage){
   if(fabs(percentage) < 1)
     percentage = 0;
   else if(percentage >= 1)
-    percentage = 2*pow(1.0359999, percentage) + 1;
+    percentage = 2*pow(1.05, percentage-42) + 1;
   else{
     percentage = -percentage;
-    percentage = 2*pow(1.0359999, percentage) + 1;
+    percentage = 2*pow(1.05, percentage+42) + 1;
     percentage = -percentage;
   }
 
@@ -432,10 +432,10 @@ void rightExpo (vex::directionType type, double percentage){
   if(fabs(percentage) < 1)
     percentage = 0;
   else if(percentage >= 1)
-    percentage = 2*pow(1.0359999, percentage) + 1;
+    percentage = 2*pow(1.05, percentage-42) + 1;
   else{
     percentage = -percentage;
-    percentage = 2*pow(1.0359999, percentage) + 1;
+    percentage = 2*pow(1.05, percentage+42) + 1;
     percentage = -percentage;
   }
 
@@ -507,10 +507,12 @@ void usercontrol(void) {
     if (clawToggle)
     {
       claw.set(true);
+      claw2.set(true);
     }
     else
     {
       claw.set(false);
+      claw2.set(false);
     }
 
     if (Controller.ButtonL2.pressing())
@@ -534,26 +536,26 @@ void usercontrol(void) {
       lifter.set(false);
     }
 
-    if (Controller.ButtonUp.pressing())
-    {
-      if (!balanceOn)
-      {
-        balanceToggle = !balanceToggle;
-        balanceOn=true;
-      }
-    }
-    else
-    {
-      balanceOn=false;
-    }
-    if (balanceToggle)
-    {
-      balance.set(true);
-    }
-    else
-    {
-      balance.set(false);
-    }
+    // if (Controller.ButtonUp.pressing())
+    // {
+    //   if (!balanceOn)
+    //   {
+    //     balanceToggle = !balanceToggle;
+    //     balanceOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   balanceOn=false;
+    // }
+    // if (balanceToggle)
+    // {
+    //   balance.set(true);
+    // }
+    // else
+    // {
+    //   balance.set(false);
+    // }
 
     if (Controller.ButtonX.pressing())
     {
