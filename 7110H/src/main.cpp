@@ -84,14 +84,14 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
-double kP = 0; //steady minor oscillations, should stop close to the correct point 0.07
+double kP = 0; //steady minor oscillations, should stop close to the correct point
 double kI = 0; //compensate for undershoot
-double kD = 0; //until steady 0.0001
+double kD = 0; //until steady
 
-double turnkP = 0.254; //0.068 0.0517 0.063 0.23 0.138     0.45  0.446  0.404
-double turnkI = 0;//.0044     0.001
-double turnkD = 0; //0.0001  0.5 0.1  0.000001
-double turnkF = 0.001; //0.001
+double turnkP = 0;
+double turnkI = 0;
+double turnkD = 0;
+double turnkF = 0;
 //Autonomous Settings
 double desiredValue = 0;
 double desiredTurnValue = 0;
@@ -174,9 +174,6 @@ int drivePID(){
     {
       break;
     }
-
-    //getCurrLoc();
-    
     // printf("%f\n", Inertial.rotation());
     // Controller.Screen.setCursor(0,0);
     // Controller.Screen.clearLine();
@@ -230,7 +227,7 @@ int drivePID(){
     // }
     // Controller.Screen.setCursor(0,0);
     // Controller.Screen.clearLine();
-    // Controller.Screen.print((Inertial.rotation()));//(Inertial.rotation()+Inertial2.rotation())/2.0
+    // Controller.Screen.print((Inertial.rotation()));
     if (lateralMotorPower>0 && lateralMotorPower-lastLateralVoltage>maxLateralChange)
     {
       lateralMotorPower = lastLateralVoltage+maxLateralChange;
@@ -351,8 +348,6 @@ void PIDTurnMove(double move, double ang)
 bool load=false;
 bool fire = false;
 bool autonCata=true;
-bool loader=false;
-bool singlePiston = false;
 int loadCata()
 {
   while (autonCata)
@@ -361,16 +356,16 @@ int loadCata()
     {
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>100&&load)
+    if (cataSense.angle(deg)>225&&load)
     {
-      catapult.spin(reverse, 20, vex::velocityUnits::pct);
+      catapult.spin(reverse, 10, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>118&&load)
+    if (cataSense.angle(deg)>257&&load)
     {
       catapult.stop(hold);
       load=!load;
     }
-    if (cataSense.angle(deg)<50&&fire)
+    if (cataSense.angle(deg)<185&&fire)
     {
       catapult.stop(coast);
       fire=!fire;
