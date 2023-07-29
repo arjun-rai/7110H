@@ -371,6 +371,10 @@ int loadCata()
       fire=!fire;
       load=true;
     }
+    if (fire)
+    {
+      catapult.spin(reverse, 100, vex::velocityUnits::pct);
+    }
     vex::task::sleep(20);
   }
   return 0;
