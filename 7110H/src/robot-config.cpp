@@ -24,9 +24,9 @@ motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
 rotation cataSense = rotation(PORT20);
 digital_out claw = digital_out(Brain.ThreeWirePort.H);
 digital_out claw2 = digital_out(Brain.ThreeWirePort.F);
-digital_out lifter = digital_out(Brain.ThreeWirePort.E);
+digital_out lifter = digital_out(Brain.ThreeWirePort.G);
 digital_out balance = digital_out(Brain.ThreeWirePort.A);
-digital_out wedge = digital_out(Brain.ThreeWirePort.G);
+digital_out wedge = digital_out(Brain.ThreeWirePort.E);
 
 
 

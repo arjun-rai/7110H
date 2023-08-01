@@ -65,14 +65,15 @@ void pre_auton(void) {
   //autonNum = autonSelector();
   Brain.Screen.clearScreen(vex::black);
   //Inertial.calibrate(2000);
-  Inertial.resetRotation();
-  Inertial.setHeading(0, degrees);
   Inertial.calibrate();
-  cataSense.resetPosition();
   while (Inertial.isCalibrating()) {
   wait(100, msec);
   }
   
+  Inertial.resetRotation();
+  Inertial.setHeading(0, degrees);
+  
+  cataSense.resetPosition();
   leftDrive.resetRotation();
   rightDrive.resetRotation();
   // leftEncoder.resetRotation();
@@ -84,12 +85,12 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
-double kP = 0; //steady minor oscillations, should stop close to the correct point
-double kI = 0; //compensate for undershoot
+double kP = 0.015; //steady minor oscillations, should stop close to the correct point
+double kI = 0.00003; //compensate for undershoot
 double kD = 0; //until steady
 
-double turnkP = 0;
-double turnkI = 0;
+double turnkP = 0.05; //0.057
+double turnkI = 0.015; //0.0035
 double turnkD = 0;
 double turnkF = 0;
 //Autonomous Settings
@@ -113,16 +114,16 @@ double curveRightVar  =1;
 int integralBound =90;
 int averagePosition;
 bool resetDriveSensors = false;
-double maxLateralPower = 100;
-double maxTurningPower = 24;
-double maxLateralChange=15;
+double maxLateralPower = 12;
+double maxTurningPower = 6;
+double maxLateralChange=1;
 double lastLateralVoltage = 0;
-
+timer t;
 //Variables modified for use
 bool enableDrivePID = true;
+bool turning = false;
 
 int drivePID(){
-
   while(enableDrivePID)
   {
     if (resetDriveSensors)
@@ -158,6 +159,14 @@ int drivePID(){
     //Integral (Highly suggested do not use it)
     //Velocity -> Postion -> Absement (Position and Time)
     totalError += error;
+    if (fabs(error)>fabs(totalError))
+    {
+      totalError=0;
+    }
+    if (error == 0)
+    {
+      totalError = 0;
+    }
 
     //Maybe /12.0 ?
     double lateralMotorPower = error*kP + derivative*kD+totalError*kI;
@@ -170,7 +179,8 @@ int drivePID(){
 
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
-    if (fabs(turnError)<4)
+    // printf("%f\t%d\n", t.time(seconds), averagePosition);
+    if ((fabs(turnError)<2 && turning) || (fabs(error)<10 && !turning))
     {
       break;
     }
@@ -188,7 +198,7 @@ int drivePID(){
     {
       turnTotalError = 0;
     }
-    if ( fabs(turnError) > 45)
+    if ( fabs(turnError)<fabs(turnTotalError))
     {
       turnTotalError = 0;
     }
@@ -216,6 +226,15 @@ int drivePID(){
     {
       lateralMotorPower=-maxLateralPower;
     }
+
+    if(turnMotorPower>maxTurningPower)
+    {
+      turnMotorPower=maxTurningPower;
+    }
+    if(turnMotorPower<-maxTurningPower)
+    {
+      turnMotorPower=-maxTurningPower;
+    }
      
     // if(turnMotorPower>maxTurningPower)
     // {
@@ -239,15 +258,15 @@ int drivePID(){
 
     lastLateralVoltage=lateralMotorPower;
     
-    leftDrive.spin(fwd, curveLeftVar*(lateralMotorPower - turnMotorPower), pct);
-    rightDrive.spin(fwd, curveRightVar*(lateralMotorPower + turnMotorPower), pct);
+    leftDrive.spin(fwd, curveLeftVar*(lateralMotorPower + turnMotorPower), volt);
+    rightDrive.spin(fwd, curveRightVar*(lateralMotorPower - turnMotorPower), volt);
     prevError = error;
     turnPrevError = turnError;
-    vex::task::sleep(10);
+    // printf("%f\n", Inertial.rotation());
+    wait(10, msec);
   }
-
-  leftDrive.stop(vex::brakeType::brake);
-  rightDrive.stop(vex::brakeType::brake);
+  leftDrive.stop(vex::brakeType::hold);
+  rightDrive.stop(vex::brakeType::hold);
   return 1;
 }
 
@@ -316,6 +335,8 @@ void PIDTurn(double angle)
 {
   resetDriveSensors=true;
   desiredTurnValue=angle;
+  desiredValue=0;
+  turning=true;
   drivePID();
 }
 // void PIDMove (double length, double timeout=5, brakeType chooseBrakeType=hold)
@@ -331,6 +352,14 @@ void PIDTurnMove(double move, double ang)
   drivePID();
   resetDriveSensors=true;
   desiredValue=move;
+  drivePID();
+}
+
+void PIDMove(double move)
+{
+  resetDriveSensors=true;
+  desiredValue=move;
+  turning=false;
   drivePID();
 }
 
@@ -381,8 +410,17 @@ int loadCata()
 }
 
 
-
 void autonomous(void) {
+// t = timer();
+// lifter.set(true);
+PIDMove(-600);
+ Controller.Screen.setCursor(0,0);
+    Controller.Screen.clearLine();
+    Controller.Screen.print((averagePosition));
+// PIDMove(-600);
+// PIDMove(-800);
+// wait(500, msec;
+
  
 }
 
@@ -398,7 +436,7 @@ void leftExpo (vex::directionType type, double percentage){
     percentage = 2*pow(1.05, percentage-42) + 1;
   else{
     percentage = -percentage;
-    percentage = 2*pow(1.05, percentage+42) + 1;
+    percentage = 2*pow(1.05, percentage-42) + 1;
     percentage = -percentage;
   }
 
@@ -434,7 +472,7 @@ void rightExpo (vex::directionType type, double percentage){
     percentage = 2*pow(1.05, percentage-42) + 1;
   else{
     percentage = -percentage;
-    percentage = 2*pow(1.05, percentage+42) + 1;
+    percentage = 2*pow(1.05, percentage-42) + 1;
     percentage = -percentage;
   }
 
@@ -491,28 +529,28 @@ void usercontrol(void) {
     leftExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
     rightExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));
 
-    if (Controller.ButtonL1.pressing())
-    {
-      if (!clawOn)
-      {
-        clawToggle = !clawToggle;
-        clawOn=true;
-      }
-    }
-    else
-    {
-      clawOn=false;
-    }
-    if (clawToggle)
-    {
-      claw.set(true);
-      claw2.set(true);
-    }
-    else
-    {
-      claw.set(false);
-      claw2.set(false);
-    }
+    // if (Controller.ButtonL1.pressing())
+    // {
+    //   if (!clawOn)
+    //   {
+    //     clawToggle = !clawToggle;
+    //     clawOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   clawOn=false;
+    // }
+    // if (clawToggle)
+    // {
+    //   claw.set(true);
+    //   claw2.set(true);
+    // }
+    // else
+    // {
+    //   claw.set(false);
+    //   claw2.set(false);
+    // }
 
     if (Controller.ButtonL2.pressing())
     {
