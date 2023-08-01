@@ -124,8 +124,13 @@ bool enableDrivePID = true;
 bool turning = false;
 
 int drivePID(){
+  t = timer();
   while(enableDrivePID)
   {
+    if (t.time(seconds)>1.5)
+    {
+      break;
+    }
     if (resetDriveSensors)
     {
       resetDriveSensors = false;
@@ -180,7 +185,7 @@ int drivePID(){
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
     // printf("%f\t%d\n", t.time(seconds), averagePosition);
-    if ((fabs(turnError)<2 && turning) || (fabs(error)<10 && !turning))
+    if ((fabs(turnError)<2 && turning) || (fabs(error)<20 && !turning))
     {
       break;
     }
@@ -412,13 +417,48 @@ int loadCata()
 
 void autonomous(void) {
 // t = timer();
-// lifter.set(true);
-PIDMove(-600);
- Controller.Screen.setCursor(0,0);
-    Controller.Screen.clearLine();
-    Controller.Screen.print((averagePosition));
+lifter.set(true);
+PIDMove(-250);
+PIDMove(-250);
+PIDMove(-1800);
+//  Controller.Screen.setCursor(0,0);
+//     Controller.Screen.clearLine();
+//     Controller.Screen.print((averagePosition));
 // PIDMove(-600);
-// PIDMove(-800);
+// PIDMove(-1000);
+PIDTurn(90);
+// PIDMove(500);
+wait(500, msec);
+lifter.set(false);
+PIDMove(100);
+wait(500, msec);
+
+//PIDMove(-700);
+leftDrive.spinFor(reverse, 800, degrees, 100, vex::velocityUnits::pct, false);
+rightDrive.spinFor(reverse, 800, degrees, 100, vex::velocityUnits::pct);
+// PIDMove(800);
+lifter.set(true);
+PIDTurn(-110);
+PIDMove(-1400);
+wait(500, msec);
+PIDMove(1000);
+PIDTurn(90);
+wait(500, msec);
+lifter.set(false);
+PIDMove(200);
+wait(200, msec);
+leftDrive.spinFor(reverse, 900, degrees, 100, vex::velocityUnits::pct, false);
+rightDrive.spinFor(reverse, 900, degrees, 100, vex::velocityUnits::pct);
+PIDMove(500);
+lifter.set(true);
+PIDTurn(-55);
+PIDMove(-1000);
+// PIDMove(600);
+PIDTurn(-155);
+leftDrive.spinFor(reverse, 1800, degrees, 100, vex::velocityUnits::pct, false);
+rightDrive.spinFor(reverse, 1900, degrees, 100, vex::velocityUnits::pct);
+
+
 // wait(500, msec;
 
  
