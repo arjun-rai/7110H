@@ -548,8 +548,8 @@ void usercontrol(void) {
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    leftExpo(vex::directionType::fwd, (Controller.Axis3.value() + Controller.Axis1.value()));
-    rightExpo(vex::directionType::fwd, (Controller.Axis3.value() - Controller.Axis1.value()));
+    leftExpo(reverse, (Controller.Axis3.value() - Controller.Axis1.value()));
+    rightExpo(reverse, (Controller.Axis3.value() + Controller.Axis1.value()));
 
     // if (Controller.ButtonL1.pressing())
     // {
