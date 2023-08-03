@@ -119,6 +119,7 @@ double maxTurningPower = 6;
 double maxLateralChange=1;
 double lastLateralVoltage = 0;
 timer t;
+double maxTime = 1.5;
 //Variables modified for use
 bool enableDrivePID = true;
 bool turning = false;
@@ -127,7 +128,7 @@ int drivePID(){
   t = timer();
   while(enableDrivePID)
   {
-    if (t.time(seconds)>1.5)
+    if (t.time(seconds)>maxTime)
     {
       break;
     }
@@ -417,36 +418,38 @@ int loadCata()
 
 void autonomous(void) {
 // t = timer();
+// lifter2.set(true);
+// PIDMove(-250);
+// PIDMove(-250);
+lifter2.set(true);
+maxTime=5;
+PIDMove(2000);
+maxTime=1.5;
+PIDTurn(80);
+PIDMove(800);
+// PIDTurn(-110);
+PIDMove(-500);
 lifter.set(true);
-PIDMove(-250);
-PIDMove(-250);
-PIDMove(-1800);
-PIDTurn(90);
 wait(500, msec);
-lifter.set(false);
-PIDMove(100);
+PIDTurn(50);
+PIDMove(-950);
 wait(500, msec);
-leftDrive.spinFor(reverse, 800, degrees, 100, vex::velocityUnits::pct, false);
-rightDrive.spinFor(reverse, 800, degrees, 100, vex::velocityUnits::pct);
-lifter.set(true);
-PIDTurn(-110);
-PIDMove(-1400);
-wait(500, msec);
-PIDMove(1000);
-PIDTurn(90);
+PIDMove(500);
+PIDTurn(-90);
 wait(500, msec);
 lifter.set(false);
 PIDMove(200);
 wait(200, msec);
-leftDrive.spinFor(reverse, 900, degrees, 100, vex::velocityUnits::pct, false);
-rightDrive.spinFor(reverse, 900, degrees, 100, vex::velocityUnits::pct);
+leftDrive.spinFor(reverse, 1100, degrees, 100, vex::velocityUnits::pct, false);
+rightDrive.spinFor(reverse, 1100, degrees, 100, vex::velocityUnits::pct);
 PIDMove(500);
 lifter.set(true);
-PIDTurn(-55);
-PIDMove(-1000);
-PIDTurn(-155);
-leftDrive.spinFor(reverse, 1800, degrees, 100, vex::velocityUnits::pct, false);
-rightDrive.spinFor(reverse, 1900, degrees, 100, vex::velocityUnits::pct);
+// wait(25000, msec);
+// PIDTurn(-55);
+// PIDMove(-1000);
+PIDTurn(45);
+leftDrive.spinFor(reverse, 1400, degrees, 100, vex::velocityUnits::pct, false);
+rightDrive.spinFor(reverse, 1400, degrees, 100, vex::velocityUnits::pct);
 
 
 // wait(500, msec;
@@ -545,8 +548,9 @@ bool lifterOn = false;
 bool lifterToggle = false;
 bool balanceOn = false;
 bool balanceToggle = false;
-bool wedgeOn = false;
-bool wedgeToggle = false;
+bool lifter2On = false;
+bool lifter2Toggle = false;
+double loadAngle = 250;
 
 
 void usercontrol(void) {
@@ -624,25 +628,27 @@ void usercontrol(void) {
     //   balance.set(false);
     // }
 
-    if (Controller.ButtonX.pressing())
+    if (Controller.ButtonL1.pressing())
     {
-      if (!wedgeOn)
+      if (!lifter2On)
       {
-        wedgeToggle = !wedgeToggle;
-        wedgeOn=true;
+        lifter2Toggle = !lifter2Toggle;
+        lifter2On=true;
       }
     }
     else
     {
-      wedgeOn=false;
+      lifter2On=false;
     }
-    if (wedgeToggle)
+    if (lifter2Toggle)
     {
-      wedge.set(true);
+      lifter2.set(false);
+      loadAngle=257;
     }
     else
     {
-      wedge.set(false);
+      lifter2.set(true);
+      loadAngle=250;
     }
 
 
@@ -660,7 +666,8 @@ void usercontrol(void) {
     {
        catapult.spin(reverse, 10, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>257)//93
+    //printf("%f\n", cataSense.angle());
+    if (reload && cataSense.angle(deg)>loadAngle)//93
     {
       catapult.stop(hold);
     }

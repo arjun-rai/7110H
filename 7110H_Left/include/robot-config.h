@@ -17,7 +17,7 @@ extern motor cata;
 extern motor cata2;
 extern motor_group catapult;
 extern digital_out lifter;
-extern digital_out wedge;
+extern digital_out lifter2;
 extern digital_out auton_grabber;
 extern rotation cataSense;
 /**

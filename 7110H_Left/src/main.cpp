@@ -418,28 +418,29 @@ int loadCata()
 void autonomous(void) {
 // t = timer();
 auton_grabber.set(true);
-wait(1000, msec);
+wait(1200, msec);
 maxTurningPower=12;
 PIDTurn(150);
 maxTurningPower=6;
-PIDTurn(10);
+PIDTurn(5);
 auton_grabber.set(false);
 lifter.set(true);
 wait(500, msec);
-PIDMove(-900);
-PIDTurn(-40);
-PIDMove(-1400);
-PIDTurn(-120);
+PIDMove(-700);
+PIDTurn(155);
+PIDMove(1550);
+PIDTurn(225);
 PIDMove(-200);
 wait(1000, msec);
 lifter.set(false);
+PIDMove(300);
 wait(1000, msec);
-leftDrive.spinFor(reverse, 600, degrees, 100, vex::velocityUnits::pct, false);
-rightDrive.spinFor(reverse, 600, degrees, 100, vex::velocityUnits::pct);
-PIDMove(700);
-PIDTurn(-248);
+leftDrive.spinFor(reverse, 725, degrees, 100, vex::velocityUnits::pct, false);
+rightDrive.spinFor(reverse, 725, degrees, 100, vex::velocityUnits::pct);
+PIDMove(500);
+PIDTurn(95);
 lifter.set(true);
-PIDMove(-1350);
+PIDMove(-1450);
 
 // wait(500, msec;
 
@@ -537,8 +538,9 @@ bool lifterOn = false;
 bool lifterToggle = false;
 bool balanceOn = false;
 bool balanceToggle = false;
-bool wedgeOn = false;
-bool wedgeToggle = false;
+bool lifter2On = false;
+bool lifter2Toggle = false;
+double loadAngle = 250;
 
 
 void usercontrol(void) {
@@ -616,25 +618,27 @@ void usercontrol(void) {
     //   balance.set(false);
     // }
 
-    if (Controller.ButtonX.pressing())
+    if (Controller.ButtonL1.pressing())
     {
-      if (!wedgeOn)
+      if (!lifter2On)
       {
-        wedgeToggle = !wedgeToggle;
-        wedgeOn=true;
+        lifter2Toggle = !lifter2Toggle;
+        lifter2On=true;
       }
     }
     else
     {
-      wedgeOn=false;
+      lifter2On=false;
     }
-    if (wedgeToggle)
+    if (lifter2Toggle)
     {
-      wedge.set(true);
+      lifter2.set(false);
+      loadAngle=257;
     }
     else
     {
-      wedge.set(false);
+      lifter2.set(true);
+      loadAngle=250;
     }
 
 
@@ -652,7 +656,8 @@ void usercontrol(void) {
     {
        catapult.spin(reverse, 10, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>257)//93
+    //printf("%f\n", cataSense.angle());
+    if (reload && cataSense.angle(deg)>loadAngle)//93
     {
       catapult.stop(hold);
     }
