@@ -417,37 +417,47 @@ int loadCata()
 
 
 void autonomous(void) {
-// t = timer();
-// lifter2.set(true);
-// PIDMove(-250);
-// PIDMove(-250);
+//Set the intake to the right height
 lifter2.set(true);
 maxTime=5;
+//Go towards the goal
 PIDMove(2000);
 maxTime=1.5;
+//Turn towards the goal
 PIDTurn(80);
+//Push triball into goal
 PIDMove(800);
 // PIDTurn(-110);
+//Move away from the goal
 PIDMove(-500);
+//Drop the intake
 lifter.set(true);
 wait(500, msec);
+//Turn towards the triball
 PIDTurn(50);
+//Intake the triball by moving towards it
 PIDMove(-950);
 wait(500, msec);
+//Move towards the goal again
 PIDMove(500);
+//Turn towards the goal
 PIDTurn(-90);
 wait(500, msec);
+//Lift up the intake
 lifter.set(false);
+//Move back a little bit to let the triball fall out
 PIDMove(200);
 wait(200, msec);
+//Slam the triball into the goal at max speed
 leftDrive.spinFor(reverse, 1100, degrees, 100, vex::velocityUnits::pct, false);
 rightDrive.spinFor(reverse, 1100, degrees, 100, vex::velocityUnits::pct);
+//Move away from the goal
 PIDMove(500);
+//Drop the intake
 lifter.set(true);
-// wait(25000, msec);
-// PIDTurn(-55);
-// PIDMove(-1000);
+//Turn towards the pole
 PIDTurn(45);
+//Drive towards the pole
 leftDrive.spinFor(reverse, 1400, degrees, 100, vex::velocityUnits::pct, false);
 rightDrive.spinFor(reverse, 1400, degrees, 100, vex::velocityUnits::pct);
 

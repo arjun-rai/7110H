@@ -416,49 +416,32 @@ int loadCata()
 
 
 void autonomous(void) {
-//Deploy auton grabber
-auton_grabber.set(true);
-wait(1200, msec);
-//Make it turn quickly (max is 12)
-maxTurningPower=12;
-//Turn to hit the triball out of the match loading zone
-PIDTurn(150);
-//Reduce the speed to the normal speed (6)
-maxTurningPower=6;
-//Turn to try to grab the preload triball
-PIDTurn(5);
-//Retract the Triball
-auton_grabber.set(false);
-//Drop the intake
-lifter.set(true);
-wait(500, msec);
-//Move to try to intake the alliance triball
-PIDMove(-700);
-//Turn towards the goal
-PIDTurn(155);
-//Move towards the goal
-PIDMove(1550);
-//Turn to push into the goal
-PIDTurn(225);
-//Move towards the goal again slightly 
-PIDMove(-200);
-wait(1000, msec);
-//Lift the intake to drop the triball
-lifter.set(false);
-//Move bacwards to let the triball fall out
-PIDMove(300);
-wait(1000, msec);
-//Push the triball into the goal
-leftDrive.spinFor(reverse, 725, degrees, 100, vex::velocityUnits::pct, false);
-rightDrive.spinFor(reverse, 725, degrees, 100, vex::velocityUnits::pct);
-//Move away from the goal
-PIDMove(500);
-//Turn towards the pole
-PIDTurn(95);
-//Drop the intake
-lifter.set(true);
-//Touch the pole
-PIDMove(-1450);
+  // vex::task autonCatapult(loadCata);
+  // load=true;
+  //
+  //move away from match load pole
+  PIDMove(500);
+  //turn towards the wall
+  PIDTurn(-40);
+  //move to the better match loading position
+  PIDMove(-600);
+  wait(1000, msec);
+  //Shoot 55
+  for (int i =0;i<55; i++)
+  {
+    fire=true;
+    //Wait time to let it reload
+    wait(50, msec);
+    load=true;
+    wait(1250,msec);
+  }
+  // PIDMove(900);
+  // PIDTurn(20);
+  // PIDMove(1400);
+  // PIDTurn(-40);
+  // leftDrive.spinFor(fwd, 3000, degrees, 100, vex::velocityUnits::pct, false);
+  // rightDrive.spinFor(fwd, 3000, degrees, 100, vex::velocityUnits::pct);
+
 
 // wait(500, msec;
 
