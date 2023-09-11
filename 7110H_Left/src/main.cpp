@@ -79,8 +79,7 @@ void pre_auton(void) {
   // leftEncoder.resetRotation();
   // rightEncoder.resetRotation();
   driveBrake(coast);
-  cata.setBrake(hold);
-  cata2.setBrake(hold);
+  catapult.setBrake(hold);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -550,69 +549,61 @@ void rightExpo (vex::directionType type, double percentage){
 bool CataOn = false;
 bool CataToggle =false;
 bool reload = true;
-bool clawOn = false;
-bool clawToggle = false;
-bool lifterOn = false;
-bool lifterToggle = false;
+bool intakeOn = false;
+bool intakeToggle = false;
+bool reverseOn = false;
+bool reverseToggle = false;
 bool balanceOn = false;
 bool balanceToggle = false;
-bool lifter2On = false;
-bool lifter2Toggle = false;
+bool angleOn = false;
+bool angleToggle = false;
 double loadAngle = 250;
 
 
 void usercontrol(void) {
-   enableDrivePID=false;
+  enableDrivePID=false;
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    leftExpo(reverse, (Controller.Axis3.value() - Controller.Axis1.value()));
-    rightExpo(reverse, (Controller.Axis3.value() + Controller.Axis1.value()));
+    rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()));
+    leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()));
 
-    // if (Controller.ButtonL1.pressing())
-    // {
-    //   if (!clawOn)
-    //   {
-    //     clawToggle = !clawToggle;
-    //     clawOn=true;
-    //   }
-    // }
-    // else
-    // {
-    //   clawOn=false;
-    // }
-    // if (clawToggle)
-    // {
-    //   claw.set(true);
-    //   claw2.set(true);
-    // }
-    // else
-    // {
-    //   claw.set(false);
-    //   claw2.set(false);
-    // }
-
-    if (Controller.ButtonL2.pressing())
+    if (Controller.ButtonL1.pressing())
     {
-      if (!lifterOn)
+      if (!intakeOn)
       {
-        lifterToggle = !lifterToggle;
-        lifterOn=true;
+        intakeToggle = !intakeToggle;
+        intakeOn=true;
       }
     }
     else
     {
-      lifterOn=false;
+      intakeOn=false;
     }
-    if (lifterToggle)
+    if (Controller.ButtonL2.pressing())
     {
-      lifter.set(true);
+      if (!reverseOn)
+      {
+        reverseToggle = !reverseToggle;
+        reverseOn=true;
+      }
     }
     else
     {
-      lifter.set(false);
+      reverseOn=false;
+    }
+    if (intakeToggle && reverseToggle)
+    {
+      intake.spin(fwd, 600, rpm);
+    }
+    else if (intakeToggle)
+    {
+      intake.spin(reverse, 600, rpm);
+    }
+    else {
+      intake.stop();
     }
 
     // if (Controller.ButtonUp.pressing())
@@ -636,29 +627,37 @@ void usercontrol(void) {
     //   balance.set(false);
     // }
 
-    if (Controller.ButtonL1.pressing())
+    // if (Controller.ButtonL1.pressing())
+    // {
+    //   if (!cataOn)
+    //   {
+    //     cataToggle = !cataToggle;
+    //     cataOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   cataOn=false;
+    // }
+    // if (cataToggle)
+    // {
+    //   loadAngle=270;
+    // }
+    // else
+    // {
+    //   loadAngle=290;
+    // }
+    if (Controller.ButtonR1.pressing())
     {
-      if (!lifter2On)
+      if (!angleOn)
       {
-        lifter2Toggle = !lifter2Toggle;
-        lifter2On=true;
+        angleOn=true;
+        angleToggle=!angleToggle;
       }
     }
-    else
-    {
-      lifter2On=false;
+    else {
+      angleOn=false;
     }
-    if (lifter2Toggle)
-    {
-      lifter2.set(false);
-      loadAngle=257;
-    }
-    else
-    {
-      lifter2.set(true);
-      loadAngle=250;
-    }
-
 
     if (Controller.ButtonR1.pressing())
     {
@@ -669,17 +668,22 @@ void usercontrol(void) {
     {
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
+      angleToggle=true;
     }
-    if (reload && cataSense.angle(deg)>225)
+    if (reload && cataSense.angle(deg)>270)
     {
-       catapult.spin(reverse, 10, vex::velocityUnits::pct);
+       catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
     //printf("%f\n", cataSense.angle());
-    if (reload && cataSense.angle(deg)>loadAngle)//93
+    if (reload && cataSense.angle(deg)>270&&angleToggle)//93
     {
       catapult.stop(hold);
     }
-    else if (!reload && cataSense.angle(deg)<185)
+    if (reload && cataSense.angle(deg)>290&&!angleToggle)//93
+    {
+      catapult.stop(hold);
+    }
+    else if (!reload && cataSense.angle(deg)<232)
     {
       catapult.stop(coast);
 

@@ -15,16 +15,15 @@ motor FrontLeft = motor(PORT14, ratio6_1, true);
 motor FrontRight = motor(PORT17, ratio6_1, false);
 motor MiddleLeft = motor(PORT15, ratio6_1, true);
 motor MiddleRight = motor(PORT18, ratio6_1, false);
-motor cata = motor(PORT11, ratio36_1,false);
-motor cata2 = motor(PORT12, ratio36_1,true);
-motor_group catapult = motor_group(cata, cata2);
+motor catapult = motor(PORT11, ratio36_1,true);
+motor intake = motor(PORT12, ratio36_1, false);
 inertial Inertial = inertial(PORT19);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
-rotation cataSense = rotation(PORT20);
-digital_out lifter = digital_out(Brain.ThreeWirePort.G);
-digital_out lifter2 = digital_out(Brain.ThreeWirePort.E);
-digital_out auton_grabber = digital_out(Brain.ThreeWirePort.F);
+rotation cataSense = rotation(PORT19);
+// digital_out lifter = digital_out(Brain.ThreeWirePort.G);
+// digital_out lifter2 = digital_out(Brain.ThreeWirePort.E);
+// digital_out auton_grabber = digital_out(Brain.ThreeWirePort.F);
 
 
 
