@@ -416,51 +416,6 @@ int loadCata()
 
 void autonomous(void) {
 //Deploy auton grabber
-auton_grabber.set(true);
-wait(1200, msec);
-//Make it turn quickly (max is 12)
-maxTurningPower=12;
-//Turn to hit the triball out of the match loading zone
-PIDTurn(150);
-//Reduce the speed to the normal speed (6)
-maxTurningPower=6;
-//Turn to try to grab the preload triball
-PIDTurn(5);
-//Retract the Triball
-auton_grabber.set(false);
-//Drop the intake
-lifter.set(true);
-wait(500, msec);
-//Move to try to intake the alliance triball
-PIDMove(-700);
-//Turn towards the goal
-PIDTurn(155);
-//Move towards the goal
-PIDMove(1550);
-//Turn to push into the goal
-PIDTurn(225);
-//Move towards the goal again slightly 
-PIDMove(-200);
-wait(1000, msec);
-//Lift the intake to drop the triball
-lifter.set(false);
-//Move bacwards to let the triball fall out
-PIDMove(300);
-wait(1000, msec);
-//Push the triball into the goal
-leftDrive.spinFor(reverse, 725, degrees, 100, vex::velocityUnits::pct, false);
-rightDrive.spinFor(reverse, 725, degrees, 100, vex::velocityUnits::pct);
-//Move away from the goal
-PIDMove(500);
-//Turn towards the pole
-PIDTurn(95);
-//Drop the intake
-lifter.set(true);
-//Touch the pole
-PIDMove(-1450);
-
-// wait(500, msec;
-
  
 }
 
@@ -549,20 +504,22 @@ void rightExpo (vex::directionType type, double percentage){
 bool CataOn = false;
 bool CataToggle =false;
 bool reload = true;
-bool intakeOn = false;
-bool intakeToggle = false;
-bool reverseOn = false;
-bool reverseToggle = false;
+// bool intakeOn = false;
+// bool intakeToggle = false;
+// bool reverseOn = false;
+// bool reverseToggle = false;
 bool balanceOn = false;
 bool balanceToggle = false;
 bool angleOn = false;
 bool angleToggle = false;
 double loadAngle = 250;
-
+bool wingsOn = false;
+bool wingsToggle = false;
 
 void usercontrol(void) {
   enableDrivePID=false;
   // User control code here, inside the loop
+  intakeLifter.set(true);
   while (1) {
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
@@ -570,40 +527,70 @@ void usercontrol(void) {
     rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()));
     leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()));
 
+    // if (Controller.ButtonL1.pressing())
+    // {
+    //   if (!intakeOn)
+    //   {
+    //     intakeToggle = !intakeToggle;
+    //     intakeOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   intakeOn=false;
+    // }
+    // if (Controller.ButtonL2.pressing())
+    // {
+    //   if (!reverseOn)
+    //   {
+    //     reverseToggle = !reverseToggle;
+    //     reverseOn=true;
+    //   }
+    // }
+    // else
+    // {
+    //   reverseOn=false;
+    // }
+    // if (intakeToggle && reverseToggle)
+    // {
+    //   intake.spin(fwd, 600, rpm);
+    // }
+    // else if (intakeToggle)
+    // {
+    //   intake.spin(reverse, 600, rpm);
+    // }
+    // else {
+    //   intake.stop();
+    // }
     if (Controller.ButtonL1.pressing())
-    {
-      if (!intakeOn)
-      {
-        intakeToggle = !intakeToggle;
-        intakeOn=true;
-      }
-    }
-    else
-    {
-      intakeOn=false;
-    }
-    if (Controller.ButtonL2.pressing())
-    {
-      if (!reverseOn)
-      {
-        reverseToggle = !reverseToggle;
-        reverseOn=true;
-      }
-    }
-    else
-    {
-      reverseOn=false;
-    }
-    if (intakeToggle && reverseToggle)
     {
       intake.spin(fwd, 600, rpm);
     }
-    else if (intakeToggle)
+    else if (Controller.ButtonL2.pressing())
     {
       intake.spin(reverse, 600, rpm);
     }
     else {
       intake.stop();
+    }
+
+    if (Controller.ButtonL1.pressing()&&Controller.ButtonL2.pressing())
+    {
+      if (!wingsOn)
+      {
+        wingsToggle=!wingsToggle;
+        wingsOn=true;
+      }
+    }
+    else {
+      wingsOn=false;
+    }
+    if (wingsToggle)
+    {
+      wings.set(true);
+    }
+    else {
+      wings.set(false);
     }
 
     // if (Controller.ButtonUp.pressing())
