@@ -519,7 +519,7 @@ bool wingsToggle = false;
 void usercontrol(void) {
   enableDrivePID=false;
   // User control code here, inside the loop
-  intakeLifter.set(true);
+  intakeLifter.set(false);
   while (1) {
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
