@@ -424,7 +424,7 @@ double LeftPercent = 0;
 double RightPercent = 0;
 double lastLeftPercent = 0;
 double lastRightPercent = 0;
-void leftExpo (vex::directionType type, double percentage){
+void leftExpo (vex::directionType type, double percentage, double maxSpeed){
   if(fabs(percentage) < 1)
     percentage = 0;
   else if(percentage >= 1)
@@ -455,11 +455,15 @@ void leftExpo (vex::directionType type, double percentage){
   // {
   //   percentage=lastLeftPercent-0.8;
   // }
+  if (percentage>maxSpeed)
+  {
+    percentage=maxSpeed;
+  }
   leftDrive.spin (type, percentage, vex::velocityUnits::pct);
   lastLeftPercent=percentage;
 }
 
-void rightExpo (vex::directionType type, double percentage){
+void rightExpo (vex::directionType type, double percentage, double maxSpeed){
 
   if(fabs(percentage) < 1)
     percentage = 0;
@@ -488,6 +492,10 @@ void rightExpo (vex::directionType type, double percentage){
   // {
   //   percentage=lastRightPercent-0.8;
   // }
+  if (percentage>maxSpeed)
+  {
+    percentage=maxSpeed;
+  }
   rightDrive.spin (type, percentage, vex::velocityUnits::pct);
   lastRightPercent=percentage;
 }
@@ -515,7 +523,11 @@ bool angleToggle = false;
 double loadAngle = 250;
 bool wingsOn = false;
 bool wingsToggle = false;
-
+bool speedOn = false;
+bool speedToggle = false;
+double maxSpeed = 127;
+bool lifterOn = false;
+bool lifterToggle = false;
 void usercontrol(void) {
   enableDrivePID=false;
   // User control code here, inside the loop
@@ -524,8 +536,8 @@ void usercontrol(void) {
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()));
-    leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()));
+    rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
+    leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
 
     // if (Controller.ButtonL1.pressing())
     // {
@@ -591,6 +603,44 @@ void usercontrol(void) {
     }
     else {
       wings.set(false);
+    }
+
+    if (Controller.ButtonUp.pressing())
+    {
+      if (!speedOn)
+      {
+        speedToggle=!speedToggle;
+        speedOn=true;
+      }
+    }
+    else {
+      speedOn=false;
+    }
+    if (speedToggle)
+    {
+      maxSpeed=65;
+    }
+    else {
+      maxSpeed=127;
+    }
+
+    if (Controller.ButtonDown.pressing())
+    {
+      if (!lifterOn)
+      {
+        lifterToggle=!lifterToggle;
+        lifterOn=true;
+      }
+    }
+    else {
+      lifterOn=false;
+    }
+    if (lifterToggle)
+    {
+      intakeLifter.set(true);
+    }
+    else {
+      intakeLifter.set(false);
     }
 
     // if (Controller.ButtonUp.pressing())
@@ -662,7 +712,7 @@ void usercontrol(void) {
        catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
     //printf("%f\n", cataSense.angle());
-    if (reload && cataSense.angle(deg)>270&&angleToggle)//93
+    if (reload && cataSense.angle(deg)>272&&angleToggle)//93
     {
       catapult.stop(hold);
     }
@@ -670,7 +720,8 @@ void usercontrol(void) {
     {
       catapult.stop(hold);
     }
-    else if (!reload && cataSense.angle(deg)<232)
+    // else if (!reload && cataSense.angle(deg)<232)
+    else if (!reload && cataSense.angle(deg)<242)
     {
       catapult.stop(coast);
 
