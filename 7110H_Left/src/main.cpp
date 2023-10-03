@@ -80,6 +80,7 @@ void pre_auton(void) {
   // rightEncoder.resetRotation();
   driveBrake(coast);
   catapult.setBrake(hold);
+  intakeLifter.set(true);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -88,7 +89,7 @@ double kP = 0.015; //steady minor oscillations, should stop close to the correct
 double kI = 0.00003; //compensate for undershoot
 double kD = 0; //until steady
 
-double turnkP = 0.05; //0.057
+double turnkP = 0.15; //0.057
 double turnkI = 0.015; //0.0035
 double turnkD = 0;
 double turnkF = 0;
@@ -183,7 +184,7 @@ int drivePID(){
 
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
-    // printf("%f\t%d\n", t.time(seconds), averagePosition);
+    //printf("%f\t%d\n", t.time(seconds), averagePosition);
     if ((fabs(turnError)<2 && turning) || (fabs(error)<20 && !turning))
     {
       break;
@@ -266,7 +267,7 @@ int drivePID(){
     rightDrive.spin(fwd, curveRightVar*(lateralMotorPower - turnMotorPower), volt);
     prevError = error;
     turnPrevError = turnError;
-    // printf("%f\n", Inertial.rotation());
+    printf("%f\n", Inertial.rotation());
     wait(10, msec);
   }
   leftDrive.stop(vex::brakeType::hold);
@@ -415,8 +416,19 @@ int loadCata()
 
 
 void autonomous(void) {
-//Deploy auton grabber
- 
+  intakeLifter.set(false);
+  blooper.set(true);
+  PIDMove(-700);
+  PIDTurn(-220);
+  blooper.set(false);
+  wings.set(true);
+  // PIDMove(-800);
+  // PIDMove(800);
+  // PIDTurn(0);
+  // PIDMove(-300);
+  // wait(500, msec);
+  // PIDTurn(-40);
+  PIDMove(1500);
 }
 
 
@@ -529,6 +541,7 @@ double maxSpeed = 127;
 bool lifterOn = false;
 bool lifterToggle = false;
 void usercontrol(void) {
+  intakeLifter.set(false);
   enableDrivePID=false;
   // User control code here, inside the loop
   intakeLifter.set(false);
