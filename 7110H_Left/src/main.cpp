@@ -419,8 +419,9 @@ void autonomous(void) {
   intakeLifter.set(false);
   blooper.set(true);
   PIDMove(-700);
-  PIDTurn(-220);
+  PIDTurn(-210);
   blooper.set(false);
+  intake.spin(fwd, 600, rpm);
   wings.set(true);
   // PIDMove(-800);
   // PIDMove(800);
@@ -428,7 +429,9 @@ void autonomous(void) {
   // PIDMove(-300);
   // wait(500, msec);
   // PIDTurn(-40);
-  PIDMove(1500);
+  wait(250, msec);
+  leftDrive.spinFor(fwd, 1800, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 1800, degrees, 100, vex::velocityUnits::pct);
 }
 
 
