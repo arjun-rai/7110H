@@ -379,8 +379,10 @@ void PIDMove(double move)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
-bool load=false;
-bool fire = false;
+// bool load = true;
+// bool fire = false;
+bool load = true;
+bool fire = true;
 bool autonCata=true;
 int loadCata()
 {
@@ -416,22 +418,65 @@ int loadCata()
 
 
 void autonomous(void) {
+  autonCata = false;
+
   intakeLifter.set(false);
   blooper.set(true);
-  PIDMove(-700);
-  PIDTurn(-210);
+  wait(300, msec);
+  // catapult.spinFor(reverse, .72, rev, 100, vex::velocityUnits::pct, true);
+  PIDMove(-650);
   blooper.set(false);
+  PIDMove(-350);
+  // PIDTurn(-210);
+  PIDTurn(-30);
+  // blooper.set(false);
+  // intake.spin(fwd, 600, rpm);
   intake.spin(fwd, 600, rpm);
-  wings.set(true);
+  // wings.set(true);
   // PIDMove(-800);
   // PIDMove(800);
   // PIDTurn(0);
   // PIDMove(-300);
   // wait(500, msec);
   // PIDTurn(-40);
-  wait(250, msec);
-  leftDrive.spinFor(fwd, 1800, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 1800, degrees, 100, vex::velocityUnits::pct);
+  // wait(250, msec);
+  wait(50, msec);
+  // leftDrive.spinFor(fwd, 1750, degrees, 100, vex::velocityUnits::pct, false);
+  // rightDrive.spinFor(fwd, 1750, degrees, 100, vex::velocityUnits::pct);
+
+
+  // Andrew's Bullshit Begins Here X)
+  leftDrive.spinFor(reverse, 1750, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(reverse, 1750, degrees, 100, vex::velocityUnits::pct);
+
+  intake.stop();
+
+  PIDMove(800);
+
+  PIDTurn(63);
+
+  // intake.spin(fwd, 600, rpm);
+  intake.spin(reverse, 600, rpm);
+
+  PIDMove(3700);
+  wait(750, msec);
+  
+
+  PIDTurn(210);
+  intake.stop();
+  PIDMove(1500);
+
+  intake.spin(fwd, 600, rpm);
+  wait(750, msec);
+
+  leftDrive.spinFor(fwd, 700, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 700, degrees, 100, vex::velocityUnits::pct);
+
+  PIDMove(-800);
+
+  PIDTurn(361);
+  PIDMove(2400);
+  PIDTurn(390);
 }
 
 

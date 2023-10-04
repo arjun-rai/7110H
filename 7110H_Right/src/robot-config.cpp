@@ -23,6 +23,7 @@ motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
 rotation cataSense = rotation(PORT19);
 digital_out intakeLifter = digital_out(Brain.ThreeWirePort.B);
 digital_out wings = digital_out(Brain.ThreeWirePort.A);
+digital_out blooper = digital_out(Brain.ThreeWirePort.C);
 // digital_out auton_grabber = digital_out(Brain.ThreeWirePort.F);
 
 
