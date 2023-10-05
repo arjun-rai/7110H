@@ -679,10 +679,10 @@ void usercontrol(void) {
     }
     if (speedToggle)
     {
-      maxSpeed=65;
+      blooper.set(true);
     }
     else {
-      maxSpeed=127;
+      blooper.set(false);
     }
 
     if (Controller.ButtonDown.pressing())
