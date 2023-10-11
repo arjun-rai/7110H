@@ -576,15 +576,17 @@ bool reload = true;
 // bool intakeToggle = false;
 // bool reverseOn = false;
 // bool reverseToggle = false;
-bool balanceOn = false;
-bool balanceToggle = false;
+bool elevationUpOn = false;
+bool elevationUpToggle = false;
+bool elevationOn = false;
+bool elevationToggle = false;
 bool angleOn = false;
 bool angleToggle = false;
 double loadAngle = 250;
 bool wingsOn = false;
 bool wingsToggle = false;
-bool speedOn = false;
-bool speedToggle = false;
+bool blooperOn = false;
+bool blooperToggle = false;
 double maxSpeed = 127;
 bool lifterOn = false;
 bool lifterToggle = false;
@@ -668,16 +670,16 @@ void usercontrol(void) {
 
     if (Controller.ButtonUp.pressing())
     {
-      if (!speedOn)
+      if (!blooperOn)
       {
-        speedToggle=!speedToggle;
-        speedOn=true;
+        blooperToggle=!blooperToggle;
+        blooperOn=true;
       }
     }
     else {
-      speedOn=false;
+      blooperOn=false;
     }
-    if (speedToggle)
+    if (blooperToggle)
     {
       blooper.set(true);
     }
@@ -704,26 +706,47 @@ void usercontrol(void) {
       intakeLifter.set(false);
     }
 
-    // if (Controller.ButtonUp.pressing())
-    // {
-    //   if (!balanceOn)
-    //   {
-    //     balanceToggle = !balanceToggle;
-    //     balanceOn=true;
-    //   }
-    // }
-    // else
-    // {
-    //   balanceOn=false;
-    // }
-    // if (balanceToggle)
-    // {
-    //   balance.set(true);
-    // }
-    // else
-    // {
-    //   balance.set(false);
-    // }
+    if (Controller.ButtonX.pressing())
+    {
+      if (!elevationUpOn)
+      {
+        elevationUpToggle = !elevationUpToggle;
+        elevationUpOn=true;
+      }
+    }
+    else
+    {
+      elevationUpOn=false;
+    }
+    if (elevationUpToggle)
+    {
+      elevationLifter.set(true);
+    }
+    else
+    {
+      elevationLifter.set(false);
+    }
+
+    if (Controller.ButtonB.pressing())
+    {
+      if (!elevationOn)
+      {
+        elevationToggle = !elevationToggle;
+        elevationOn=true;
+      }
+    }
+    else
+    {
+      elevationOn=false;
+    }
+    if (elevationToggle)
+    {
+      elevation.set(true);
+    }
+    else
+    {
+      elevation.set(false);
+    }
 
     // if (Controller.ButtonL1.pressing())
     // {

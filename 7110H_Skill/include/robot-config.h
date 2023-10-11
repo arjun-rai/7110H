@@ -18,6 +18,8 @@ extern digital_out intakeLifter;
 extern digital_out wings;
 extern motor intake;
 extern digital_out blooper;
+extern digital_out elevation;
+extern digital_out elevationLifter;
 //extern digital_out auton_grabber;
 extern rotation cataSense;
 /**

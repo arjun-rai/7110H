@@ -15,15 +15,17 @@ motor FrontLeft = motor(PORT14, ratio6_1, true);
 motor FrontRight = motor(PORT17, ratio6_1, false);
 motor MiddleLeft = motor(PORT15, ratio6_1, true);
 motor MiddleRight = motor(PORT18, ratio6_1, false);
-motor catapult = motor(PORT11, ratio36_1,false);
+motor catapult = motor(PORT11, ratio36_1,true);
 motor intake = motor(PORT12, ratio36_1, false);
 inertial Inertial = inertial(PORT20);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
 rotation cataSense = rotation(PORT19);
-digital_out intakeLifter = digital_out(Brain.ThreeWirePort.B);
-digital_out wings = digital_out(Brain.ThreeWirePort.A);
-digital_out blooper = digital_out(Brain.ThreeWirePort.C);
+digital_out intakeLifter = digital_out(Brain.ThreeWirePort.E);
+digital_out wings = digital_out(Brain.ThreeWirePort.C);
+digital_out blooper = digital_out(Brain.ThreeWirePort.A);
+digital_out elevation = digital_out(Brain.ThreeWirePort.B);
+digital_out elevationLifter = digital_out(Brain.ThreeWirePort.D);
 // digital_out auton_grabber = digital_out(Brain.ThreeWirePort.F);
 
 

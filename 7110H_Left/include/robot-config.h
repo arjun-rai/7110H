@@ -20,6 +20,8 @@ extern motor intake;
 extern digital_out blooper;
 //extern digital_out auton_grabber;
 extern rotation cataSense;
+extern digital_out elevation;
+extern digital_out elevationLifter;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 
