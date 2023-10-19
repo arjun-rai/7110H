@@ -444,71 +444,61 @@ void autonomous(void) {
   autonCata = false;
 
   intakeLifter.set(true);
-  blooper.set(true);
-  wait(300, msec);
-  // catapult.spinFor(reverse, .72, rev, 100, vex::velocityUnits::pct, true);
-  PIDMove(-650);
-  blooper.set(false);
-  wait(450, msec);
-  PIDMove(-450);
-  // PIDTurn(-210);
-  leftStop=false;
-  pivot=true;
-  PIDTurn(-30);
-  leftStop=false;
-  pivot=false;
   // blooper.set(true);
-  // intake.spin(fwd, 600, rpm);
-  // intake.spin(fwd, 600, rpm);
-  // wings.set(true);
-  // PIDMove(-800);
-  // PIDMove(800);
-  // PIDTurn(0);
-  // PIDMove(-300);
-  // wait(500, msec);
-  // PIDTurn(-40);
-  // wait(250, msec);
-  // wait(50, msec);
-  // leftDrive.spinFor(fwd, 1750, degrees, 100, vex::velocityUnits::pct, false);
-  // rightDrive.spinFor(fwd, 1750, degrees, 100, vex::velocityUnits::pct);
-  // Andrew's Bullshit Begins Here X)
-  leftDrive.spinFor(reverse, 1500, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(reverse, 1500, degrees, 100, vex::velocityUnits::pct, false);
-  wait(1200, msec);
-  leftDrive.stop();
-  rightDrive.stop();
-  // intake.stop();
-
-  PIDMove(900);
-
-  PIDTurn(65);
-
-  // intake.spin(fwd, 600, rpm);
+  wings.set(true);
+  wait(400, msec);
+  wings.set(false);
   intake.spin(reverse, 600, rpm);
   timeLimit=2;
-  PIDMove(3600);
-  timeLimit=1.5;
-  wait(500, msec);
-  
-
-  PIDTurn(205);
-  intake.stop();
-  PIDMove(1500);
-
+  PIDMove(4500);
+  timeLimit=1;
+  PIDTurn(135);  
+  wings.set(true);
+  PIDMove(1400);
   intake.spin(fwd, 600, rpm);
-  wait(900, msec);
-
+  wait(500, msec);
+  leftDrive.spinFor(fwd, 600, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 600, degrees, 100, vex::velocityUnits::pct, false);
+  wait(600, msec);
+  leftDrive.stop();
+  rightDrive.stop();
+  PIDMove(-400);
+  wings.set(false);
+  PIDTurn(280);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(1800);
+  PIDTurn(115);
+  PIDMove(1000);
+  intake.spin(fwd, 600, rpm);
+  wait(500, msec);
   leftDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
   rightDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
+  wait(800, msec);
+  leftDrive.stop();
+  rightDrive.stop();
+  PIDMove(-1000);
+  PIDTurn(0);
+  timeLimit=2.5;
+  PIDMove(-3200);
+  timeLimit=1;
+  
+  PIDTurn(-100);
+  // blooper.set(true);
+  // PIDMove(-900);
+  // blooper.set(false);
+  // wait(450, msec);
+  // PIDMove(-250);
+  // PIDTurn(-210);
+  // leftStop=false;
+  // pivot=true;
+  // PIDTurn(-140);
+  // leftStop=false;
+  // pivot=false;
+  leftDrive.spinFor(reverse, 2000, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(reverse, 2000, degrees, 100, vex::velocityUnits::pct, false);
   wait(1200, msec);
   leftDrive.stop();
   rightDrive.stop();
-
-  PIDMove(-800);
-
-  PIDTurn(361);
-  PIDMove(2400);
-  PIDTurn(371);
 }
 
 
