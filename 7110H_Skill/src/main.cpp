@@ -442,8 +442,8 @@ int loadCata()
 
 
 void autonomous(void) {
- 
-  // intakeLifter.set(false);
+  
+  intakeLifter.set(true);
   // blooper.set(true);
   // wait(300, msec);
   // catapult.spinFor(reverse, .72, rev, 100, vex::velocityUnits::pct, true);
@@ -668,6 +668,7 @@ double maxSpeed = 127;
 bool lifterOn = false;
 bool lifterToggle = false;
 void usercontrol(void) {
+  intakeLifter.set(true);
   PIDMove(-1000);
   PIDTurn(-45);
   leftDrive.spinFor(reverse, 1200, degrees, 100, vex::velocityUnits::pct, false);
@@ -678,6 +679,7 @@ void usercontrol(void) {
   timeLimit = 0.6;
   PIDMove(250);
   wings.set(true);
+
   catapult.spin(reverse, 127, vex::velocityUnits::pct);
   wait(32, sec);
   catapult.stop();

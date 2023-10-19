@@ -92,6 +92,9 @@ double turnkP = 0.15; //0.057
 double turnkI = 0.015; //0.0035
 double turnkD = 0;
 double turnkF = 0;
+
+double pivotP = 0.21;
+double pivotI =0.08;
 //Autonomous Settings
 double desiredValue = 0;
 double desiredTurnValue = 0;
@@ -121,12 +124,16 @@ timer t;
 //Variables modified for use
 bool enableDrivePID = true;
 bool turning = false;
+double timeLimit = 1;
+bool pivot = false;
+bool rightStop = true;
+bool leftStop = true;
 
 int drivePID(){
   t = timer();
   while(enableDrivePID)
   {
-    if (t.time(seconds)>1.5)
+    if (t.time(seconds)>timeLimit)
     {
       break;
     }
@@ -219,8 +226,14 @@ int drivePID(){
     
 
     //Maybe /12.0 ?
-    double turnMotorPower = turnError*turnkP + turnDerivative*turnkD+turnTotalError*turnkI + turnkF*(desiredTurnValue-startingTurnValue);
-    // x
+    double turnMotorPower;
+    if (!pivot)
+    {
+      turnMotorPower = turnError*turnkP + turnDerivative*turnkD+turnTotalError*turnkI + turnkF*(desiredTurnValue-startingTurnValue);
+    }// x
+    else {
+      turnMotorPower = pivotP*turnError+pivotI*turnTotalError;
+    }
     
     if(lateralMotorPower>maxLateralPower)
     {
@@ -231,11 +244,11 @@ int drivePID(){
       lateralMotorPower=-maxLateralPower;
     }
 
-    if(turnMotorPower>maxTurningPower)
+    if(turnMotorPower>maxTurningPower && !pivot)
     {
       turnMotorPower=maxTurningPower;
     }
-    if(turnMotorPower<-maxTurningPower)
+    if(turnMotorPower<-maxTurningPower && !pivot)
     {
       turnMotorPower=-maxTurningPower;
     }
@@ -261,12 +274,23 @@ int drivePID(){
     }
 
     lastLateralVoltage=lateralMotorPower;
-    
-    leftDrive.spin(fwd, curveLeftVar*(lateralMotorPower + turnMotorPower), volt);
-    rightDrive.spin(fwd, curveRightVar*(lateralMotorPower - turnMotorPower), volt);
+    if (rightStop && pivot)
+    {
+        leftDrive.spin(fwd, (-turnMotorPower), volt);   
+        rightDrive.stop(hold);   
+    }
+    if (leftStop && pivot)
+    {
+        rightDrive.spin(fwd, (-turnMotorPower), volt);   
+        leftDrive.stop(hold);   
+    }
+    else if (!pivot){
+      leftDrive.spin(fwd, curveLeftVar*(lateralMotorPower + turnMotorPower), volt);
+      rightDrive.spin(fwd, curveRightVar*(lateralMotorPower - turnMotorPower), volt);
+    }
     prevError = error;
     turnPrevError = turnError;
-    //printf("%f\n", Inertial.rotation());
+    // printf("%f\n", Inertial.rotation());
     wait(10, msec);
   }
   leftDrive.stop(vex::brakeType::hold);
@@ -391,16 +415,16 @@ int loadCata()
     {
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>225&&load)
+    if (cataSense.angle(deg)>250&&load)
     {
       catapult.spin(reverse, 10, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>257&&load)
+    if (cataSense.angle(deg)>272&&load)
     {
       catapult.stop(hold);
       load=!load;
     }
-    if (cataSense.angle(deg)<185&&fire)
+    if (cataSense.angle(deg)<242&&fire)
     {
       catapult.stop(coast);
       fire=!fire;
@@ -417,21 +441,38 @@ int loadCata()
 
 
 void autonomous(void) {
-  autonCata = false;
-  PIDTurn(-50);
+  intakeLifter.set(true);
+  autonCata = true;
+  vex::task autonCatapult(loadCata);
   blooper.set(true);
   PIDTurn(-110);
-  PIDMove(750);
   blooper.set(false);
-  PIDTurn(-45);
-  PIDMove(1700);
-  PIDMove(-1500);
-  PIDTurn(67);
-  PIDMove(1650);
-  PIDTurn(45);
-  driveBrake(coast);
-  leftDrive.spinFor(fwd, 1440, degrees, 90, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 1440, degrees, 90, vex::velocityUnits::pct);
+  load=true;
+  PIDTurn(-5);
+  timeLimit=2;
+  PIDMove(2450);
+  timeLimit=1;
+  pivot=true;
+  leftStop=true;
+  PIDTurn(-40);
+  pivot=false;
+  leftStop=false;
+  PIDMove(900);
+  wings.set(true);
+  timeLimit=2;
+  PIDTurn(230);
+  timeLimit=1;
+  intake.spin(fwd, 600, rpm);
+  PIDMove(500);
+  wings.set(false);
+  wait(1000, msec);
+  leftDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  wait(1000, msec);
+  leftDrive.stop();
+  rightDrive.stop();
+  PIDMove(-800);
+  PIDTurn(160);
 }
 
 
@@ -546,8 +587,9 @@ double maxSpeed = 127;
 bool lifterOn = false;
 bool lifterToggle = false;
 void usercontrol(void) {
-   intakeLifter.set(true);
+  intakeLifter.set(true);
   enableDrivePID=false;
+  autonCata=false;
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);
