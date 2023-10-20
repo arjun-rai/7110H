@@ -506,9 +506,9 @@ void autonomous(void) {
 
   PIDMove(-800);
 
-  PIDTurn(361);
+  PIDTurn(350);
   PIDMove(2400);
-  PIDTurn(371);
+  // PIDTurn(364);
 }
 
 

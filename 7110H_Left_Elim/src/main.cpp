@@ -463,16 +463,21 @@ void autonomous(void) {
   PIDTurn(230);
   timeLimit=1;
   intake.spin(fwd, 600, rpm);
-  PIDMove(500);
+  PIDMove(200);
   wings.set(false);
   wait(1000, msec);
-  leftDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  leftDrive.spinFor(fwd, 1300, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 1300, degrees, 100, vex::velocityUnits::pct, false);
   wait(1000, msec);
   leftDrive.stop();
   rightDrive.stop();
   PIDMove(-800);
   PIDTurn(160);
+  timeLimit=1.5;
+  PIDMove(3000);
+  PIDTurn(70);
+  intakeLifter.set(false);
+  PIDMove(2500);
 }
 
 

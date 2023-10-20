@@ -430,8 +430,8 @@ void autonomous(void) {
   PIDMove(1650);
   PIDTurn(45);
   driveBrake(coast);
-  leftDrive.spinFor(fwd, 1440, degrees, 90, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 1440, degrees, 90, vex::velocityUnits::pct);
+  leftDrive.spinFor(fwd, 1500, degrees, 90, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 1500, degrees, 90, vex::velocityUnits::pct);
 }
 
 
@@ -546,7 +546,7 @@ double maxSpeed = 127;
 bool lifterOn = false;
 bool lifterToggle = false;
 void usercontrol(void) {
-   intakeLifter.set(true);
+  intakeLifter.set(true);
   enableDrivePID=false;
   // User control code here, inside the loop
   while (1) {
