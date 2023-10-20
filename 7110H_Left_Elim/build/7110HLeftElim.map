@@ -3656,18 +3656,24 @@ Linker script and memory map
                 0x03804c6c                autonCata
  .data.reload   0x03804c6d        0x1 build/src/main.o
                 0x03804c6d                reload
- *fill*         0x03804c6e        0x2 
+ .data.angleToggle
+                0x03804c6e        0x1 build/src/main.o
+                0x03804c6e                angleToggle
+ *fill*         0x03804c6f        0x1 
  .data.maxSpeed
                 0x03804c70        0x8 build/src/main.o
                 0x03804c70                maxSpeed
+ .data.lifterToggle
+                0x03804c78        0x1 build/src/main.o
+                0x03804c78                lifterToggle
+ *fill*         0x03804c79        0x3 
  .data.appRunning
-                0x03804c78        0x4 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(v5_startup.c.obj)
-                0x03804c78                appRunning
- .data.__yoff   0x03804c7c        0x4 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(v5_apijump.c.obj)
+                0x03804c7c        0x4 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(v5_startup.c.obj)
+                0x03804c7c                appRunning
+ .data.__yoff   0x03804c80        0x4 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(v5_apijump.c.obj)
  .data._ZN3vex24__default_motor_velocityE
-                0x03804c80        0x4 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(vex_motor.cpp.obj)
-                0x03804c80                vex::__default_motor_velocity
- *fill*         0x03804c84        0x4 
+                0x03804c84        0x4 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(vex_motor.cpp.obj)
+                0x03804c84                vex::__default_motor_velocity
  .data.impure_data
                 0x03804c88      0x428 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5/gcc/libs\libc.a(lib_a-impure.o)
  .data._impure_ptr
@@ -3984,54 +3990,49 @@ Linker script and memory map
                 0x038051b3                elevationToggle
  .bss.angleOn   0x038051b4        0x1 build/src/main.o
                 0x038051b4                angleOn
- .bss.angleToggle
-                0x038051b5        0x1 build/src/main.o
-                0x038051b5                angleToggle
- .bss.wingsOn   0x038051b6        0x1 build/src/main.o
-                0x038051b6                wingsOn
+ .bss.wingsOn   0x038051b5        0x1 build/src/main.o
+                0x038051b5                wingsOn
  .bss.wingsToggle
-                0x038051b7        0x1 build/src/main.o
-                0x038051b7                wingsToggle
+                0x038051b6        0x1 build/src/main.o
+                0x038051b6                wingsToggle
  .bss.blooperOn
-                0x038051b8        0x1 build/src/main.o
-                0x038051b8                blooperOn
+                0x038051b7        0x1 build/src/main.o
+                0x038051b7                blooperOn
  .bss.blooperToggle
-                0x038051b9        0x1 build/src/main.o
-                0x038051b9                blooperToggle
- .bss.lifterOn  0x038051ba        0x1 build/src/main.o
-                0x038051ba                lifterOn
- .bss.lifterToggle
-                0x038051bb        0x1 build/src/main.o
-                0x038051bb                lifterToggle
+                0x038051b8        0x1 build/src/main.o
+                0x038051b8                blooperToggle
+ .bss.lifterOn  0x038051b9        0x1 build/src/main.o
+                0x038051b9                lifterOn
  .bss._ZStL8__ioinit
-                0x038051bc        0x1 build/src/robot-config.o
- *fill*         0x038051bd        0x3 
- .bss.Brain     0x038051c0      0x2bc build/src/robot-config.o
-                0x038051c0                Brain
+                0x038051ba        0x1 build/src/robot-config.o
+ *fill*         0x038051bb        0x1 
+ .bss.Brain     0x038051bc      0x2bc build/src/robot-config.o
+                0x038051bc                Brain
  .bss.Controller
-                0x0380547c      0x1ac build/src/robot-config.o
-                0x0380547c                Controller
- .bss.BackLeft  0x03805628       0x24 build/src/robot-config.o
-                0x03805628                BackLeft
+                0x03805478      0x1ac build/src/robot-config.o
+                0x03805478                Controller
+ .bss.BackLeft  0x03805624       0x24 build/src/robot-config.o
+                0x03805624                BackLeft
  .bss.BackRight
-                0x0380564c       0x24 build/src/robot-config.o
-                0x0380564c                BackRight
+                0x03805648       0x24 build/src/robot-config.o
+                0x03805648                BackRight
  .bss.FrontLeft
-                0x03805670       0x24 build/src/robot-config.o
-                0x03805670                FrontLeft
+                0x0380566c       0x24 build/src/robot-config.o
+                0x0380566c                FrontLeft
  .bss.FrontRight
-                0x03805694       0x24 build/src/robot-config.o
-                0x03805694                FrontRight
+                0x03805690       0x24 build/src/robot-config.o
+                0x03805690                FrontRight
  .bss.MiddleLeft
-                0x038056b8       0x24 build/src/robot-config.o
-                0x038056b8                MiddleLeft
+                0x038056b4       0x24 build/src/robot-config.o
+                0x038056b4                MiddleLeft
  .bss.MiddleRight
-                0x038056dc       0x24 build/src/robot-config.o
-                0x038056dc                MiddleRight
- .bss.catapult  0x03805700       0x24 build/src/robot-config.o
-                0x03805700                catapult
- .bss.intake    0x03805724       0x24 build/src/robot-config.o
-                0x03805724                intake
+                0x038056d8       0x24 build/src/robot-config.o
+                0x038056d8                MiddleRight
+ .bss.catapult  0x038056fc       0x24 build/src/robot-config.o
+                0x038056fc                catapult
+ .bss.intake    0x03805720       0x24 build/src/robot-config.o
+                0x03805720                intake
+ *fill*         0x03805744        0x4 
  .bss.Inertial  0x03805748       0x38 build/src/robot-config.o
                 0x03805748                Inertial
  .bss.leftDrive

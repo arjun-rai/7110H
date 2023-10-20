@@ -536,7 +536,7 @@ bool elevationUpToggle = false;
 bool elevationOn = false;
 bool elevationToggle = false;
 bool angleOn = false;
-bool angleToggle = false;
+bool angleToggle = true;
 double loadAngle = 250;
 bool wingsOn = false;
 bool wingsToggle = false;
@@ -544,7 +544,7 @@ bool blooperOn = false;
 bool blooperToggle = false;
 double maxSpeed = 127;
 bool lifterOn = false;
-bool lifterToggle = false;
+bool lifterToggle = true;
 void usercontrol(void) {
   intakeLifter.set(true);
   enableDrivePID=false;

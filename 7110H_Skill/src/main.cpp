@@ -658,7 +658,7 @@ bool elevationUpToggle = false;
 bool elevationOn = false;
 bool elevationToggle = false;
 bool angleOn = false;
-bool angleToggle = false;
+bool angleToggle = true;
 double loadAngle = 250;
 bool wingsOn = false;
 bool wingsToggle = false;
@@ -666,7 +666,7 @@ bool blooperOn = false;
 bool blooperToggle = false;
 double maxSpeed = 127;
 bool lifterOn = false;
-bool lifterToggle = false;
+bool lifterToggle = true;
 void usercontrol(void) {
   intakeLifter.set(true);
   PIDMove(-1000);
@@ -687,7 +687,6 @@ void usercontrol(void) {
   enableDrivePID=false;
   autonCata=false;
   // User control code here, inside the loop
-  intakeLifter.set(false);
   while (1) {
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
