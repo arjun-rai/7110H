@@ -126,7 +126,7 @@ int drivePID(){
   t = timer();
   while(enableDrivePID)
   {
-    if (t.time(seconds)>1.5)
+    if (t.time(seconds)>2)
     {
       break;
     }
@@ -418,20 +418,17 @@ int loadCata()
 
 void autonomous(void) {
   autonCata = false;
-  PIDTurn(-50);
-  blooper.set(true);
-  PIDTurn(-110);
-  PIDMove(750);
-  blooper.set(false);
-  PIDTurn(-45);
-  PIDMove(1700);
-  PIDMove(-1500);
-  PIDTurn(67);
-  PIDMove(1650);
-  PIDTurn(45);
-  driveBrake(coast);
-  leftDrive.spinFor(fwd, 1550, degrees, 90, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 1550, degrees, 90, vex::velocityUnits::pct);
+  
+  PIDMove(3000);
+  PIDTurn(-70);
+  // PIDMove(900);
+  leftDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  wings.set(true);
+  wait(1000, msec);
+  leftDrive.spinFor(reverse, 1000, degrees, 10, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(reverse, 1000, degrees, 10, vex::velocityUnits::pct);
+  
 }
 
 

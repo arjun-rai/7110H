@@ -462,19 +462,19 @@ void autonomous(void) {
 
 
   // Andrew's Bullshit Begins Here X)
-  leftDrive.spinFor(reverse, 1200, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(reverse, 1200, degrees, 100, vex::velocityUnits::pct);
+  leftDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct);
 
   // intake.stop();
 
   PIDMove(825);
 
-  PIDTurn(-118.5);
+  PIDTurn(-116);
   wings.set(true);
   timeLimit = 0.6;
   PIDMove(250);
   catapult.spin(reverse, 127, vex::velocityUnits::pct);
-  wait(32, sec);
+  wait(34.5, sec);
   catapult.stop();
 
   timeLimit = 1;
@@ -489,7 +489,7 @@ void autonomous(void) {
   timeLimit=1;
   PIDTurn(-132);
   timeLimit=10;
-  PIDMove(-4950);
+  PIDMove(-4875);
   timeLimit=1;
   pivot=true;
   rightStop=true;
@@ -538,21 +538,21 @@ void autonomous(void) {
   wings.set(false);
   PIDMove(-2000);
   PIDTurn(135);
-  leftDrive.spinFor(fwd, 2600, degrees, 70, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 2600, degrees, 70, vex::velocityUnits::pct);
+  leftDrive.spinFor(fwd, 2600, degrees, 60, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 2600, degrees, 60, vex::velocityUnits::pct);
   PIDTurn(17);
   wings.set(true);
-  leftDrive.spinFor(fwd, 2000, degrees, 127, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 2000, degrees, 127, vex::velocityUnits::pct);
+  leftDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct);
    wings.set(false);
-  leftDrive.spinFor(reverse, 2000, degrees, 127, vex::velocityUnits::pct,false);
-  rightDrive.spinFor(reverse, 2000, degrees, 127, vex::velocityUnits::pct);
+  leftDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct,false);
+  rightDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct);
    wings.set(true);
-  leftDrive.spinFor(fwd, 2000, degrees, 127, vex::velocityUnits::pct,false);
-  rightDrive.spinFor(fwd, 2000, degrees, 127, vex::velocityUnits::pct);
+  leftDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct,false);
+  rightDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct);
   wings.set(false);
-  leftDrive.spinFor(reverse, 2000, degrees, 127, vex::velocityUnits::pct,false);
-  rightDrive.spinFor(reverse, 2000, degrees, 127, vex::velocityUnits::pct);
+  leftDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct,false);
+  rightDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct);
 
 }
 
@@ -674,14 +674,14 @@ void usercontrol(void) {
   leftDrive.spinFor(reverse, 1200, degrees, 100, vex::velocityUnits::pct, false);
   rightDrive.spinFor(reverse, 1200, degrees, 100, vex::velocityUnits::pct);
   PIDMove(825);
-  PIDTurn(-118.5);
+  PIDTurn(-116);
   wings.set(true);
   timeLimit = 0.6;
   PIDMove(250);
   wings.set(true);
 
   catapult.spin(reverse, 127, vex::velocityUnits::pct);
-  wait(32, sec);
+  wait(33, sec);
   catapult.stop();
   intakeLifter.set(false);
   enableDrivePID=false;
@@ -888,14 +888,14 @@ void usercontrol(void) {
        catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
     //printf("%f\n", cataSense.angle());
-    if (reload && cataSense.angle(deg)>272&&angleToggle)//93
+    if (reload && cataSense.angle(deg)>272&&true)//93
     {
       catapult.stop(hold);
     }
-    if (reload && cataSense.angle(deg)>290&&!angleToggle)//93
-    {
-      catapult.stop(hold);
-    }
+    // if (reload && cataSense.angle(deg)>290&&!angleToggle)//93
+    // {
+    //   catapult.stop(hold);
+    // }
     // else if (!reload && cataSense.angle(deg)<232)
     else if (!reload && cataSense.angle(deg)<242)
     {
