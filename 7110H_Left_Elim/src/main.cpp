@@ -442,15 +442,17 @@ int loadCata()
 
 void autonomous(void) {
   intakeLifter.set(true);
+  elevationLifter.set(true);
   autonCata = true;
   vex::task autonCatapult(loadCata);
-  blooper.set(true);
+  PIDTurn(-60);
+   blooper.set(true);
   PIDTurn(-110);
   blooper.set(false);
   load=true;
   PIDTurn(-5);
   timeLimit=2;
-  PIDMove(2450);
+  PIDMove(2500);
   timeLimit=1;
   pivot=true;
   leftStop=true;
@@ -465,6 +467,7 @@ void autonomous(void) {
   intake.spin(fwd, 600, rpm);
   PIDMove(200);
   wings.set(false);
+  intakeLifter.set(false);
   wait(1000, msec);
   leftDrive.spinFor(fwd, 1300, degrees, 100, vex::velocityUnits::pct, false);
   rightDrive.spinFor(fwd, 1300, degrees, 100, vex::velocityUnits::pct, false);
@@ -474,9 +477,8 @@ void autonomous(void) {
   PIDMove(-800);
   PIDTurn(160);
   timeLimit=1.5;
-  PIDMove(3000);
+  PIDMove(3150);
   PIDTurn(70);
-  intakeLifter.set(false);
   PIDMove(2500);
 }
 

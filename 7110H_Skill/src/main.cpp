@@ -469,7 +469,7 @@ void autonomous(void) {
 
   PIDMove(825);
 
-  PIDTurn(-116);
+  PIDTurn(-118.5);
   wings.set(true);
   timeLimit = 0.6;
   PIDMove(250);
@@ -489,7 +489,7 @@ void autonomous(void) {
   timeLimit=1;
   PIDTurn(-132);
   timeLimit=10;
-  PIDMove(-4875);
+  PIDMove(-4400);
   timeLimit=1;
   pivot=true;
   rightStop=true;
@@ -522,7 +522,7 @@ void autonomous(void) {
   // rightDrive.stop();
 
   timeLimit=1.25;
-  PIDMove(600);
+  PIDMove(525);
   PIDTurn(45);
   PIDMove(-1800);
   PIDTurn(-5);
