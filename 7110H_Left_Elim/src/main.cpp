@@ -593,10 +593,13 @@ bool blooperToggle = false;
 double maxSpeed = 127;
 bool lifterOn = false;
 bool lifterToggle = true;
+bool sensorFireOn = false;
+bool sensorFireToggle = false;
+bool fullSpeedOn = false;
+bool fullSpeedToggle = false;
 void usercontrol(void) {
   intakeLifter.set(true);
   enableDrivePID=false;
-  autonCata=false;
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);
@@ -744,6 +747,7 @@ void usercontrol(void) {
     }
     if (elevationToggle)
     {
+      elevationLifter.set(false);
       elevation.set(true);
     }
     else
@@ -751,26 +755,31 @@ void usercontrol(void) {
       elevation.set(false);
     }
 
-    // if (Controller.ButtonL1.pressing())
-    // {
-    //   if (!cataOn)
-    //   {
-    //     cataToggle = !cataToggle;
-    //     cataOn=true;
-    //   }
-    // }
-    // else
-    // {
-    //   cataOn=false;
-    // }
-    // if (cataToggle)
-    // {
-    //   loadAngle=270;
-    // }
-    // else
-    // {
-    //   loadAngle=290;
-    // }
+    if (Controller.ButtonA.pressing())
+    {
+      if (!sensorFireOn)
+      {
+        sensorFireToggle=!sensorFireToggle;
+        sensorFireOn=true;
+      }
+    }
+    else {
+      sensorFireOn=false;
+    }
+
+    if (Controller.ButtonY.pressing())
+    {
+      if (!fullSpeedOn)
+      {
+        fullSpeedToggle=!fullSpeedToggle;
+        fullSpeedOn=true;
+      }
+    }
+    else {
+      fullSpeedOn=false;
+    }
+
+    
     if (Controller.ButtonR1.pressing())
     {
       if (!angleOn)
@@ -788,13 +797,13 @@ void usercontrol(void) {
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (Controller.ButtonR2.pressing())
+    if (Controller.ButtonR2.pressing() || (sensorFireToggle&&distSensor.objectDistance(mm)<130))
     {
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
       angleToggle=true;
     }
-    if (reload && cataSense.angle(deg)>270)
+    if (reload && cataSense.angle(deg)>270 && !fullSpeedToggle)
     {
        catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
