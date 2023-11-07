@@ -97,9 +97,9 @@ class gainScheduler
 };
 
 
-double kP = 0.4; //steady minor oscillations, should stop close to the correct point
+double kP = 0.2; //steady minor oscillations, should stop close to the correct point
 double kI = 0; //compensate for undershoot
-double kD = 6; //until steady
+double kD = 1; //until steady
 
 double turnkP = 0.915; //0.057
 double turnkI = 0; //0.0035
@@ -429,7 +429,7 @@ int loadCata()
 
 void autonomous(void) {
   // autonCata = false;
-  PIDMove(400);
+  PIDMove(3000);
   wait(1000, msec);
   printf("%d\n", averagePosition);
   // PIDTurn(-50);

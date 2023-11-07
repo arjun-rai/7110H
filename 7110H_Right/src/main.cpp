@@ -74,8 +74,6 @@ void pre_auton(void) {
   Inertial.setHeading(0, degrees);
   
   cataSense.resetPosition();
-  leftDrive.resetRotation();
-  rightDrive.resetRotation();
   // leftEncoder.resetRotation();
   // rightEncoder.resetRotation();
   driveBrake(coast);
@@ -84,13 +82,13 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
-double kP = 0.015; //steady minor oscillations, should stop close to the correct point
-double kI = 0.00003; //compensate for undershoot
-double kD = 0; //until steady
+double kP = 0.2; //steady minor oscillations, should stop close to the correct point
+double kI = 0; //compensate for undershoot
+double kD = 1; //until steady
 
-double turnkP = 0.15; //0.057
-double turnkI = 0.015; //0.0035
-double turnkD = 0;
+double turnkP = 0.915; //0.057
+double turnkI = 0; //0.0035
+double turnkD = 4.3;
 double turnkF = 0;
 
 double pivotP = 0.21;
@@ -117,14 +115,14 @@ int integralBound =90;
 int averagePosition;
 bool resetDriveSensors = false;
 double maxLateralPower = 12;
-double maxTurningPower = 6;
+double maxTurningPower = 12;
 double maxLateralChange=1;
 double lastLateralVoltage = 0;
 timer t;
 //Variables modified for use
 bool enableDrivePID = true;
 bool turning = false;
-double timeLimit = 1;
+double timeLimit = 3;
 bool pivot = false;
 bool rightStop = true;
 bool leftStop = true;
@@ -145,8 +143,6 @@ int drivePID(){
       rightDrive.setPosition(0, degrees);
       leftDrive.resetPosition();
       rightDrive.resetPosition();
-      leftDrive.resetRotation();
-      rightDrive.resetRotation();
       startingTurnValue=(Inertial.rotation());
       
     }
@@ -191,7 +187,7 @@ int drivePID(){
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
     //printf("%f\t%d\n", t.time(seconds), averagePosition);
-    if ((fabs(turnError)<2 && turning) || (fabs(error)<20 && !turning))
+    if ((fabs(turnError)<2 && turning && fabs(turnDerivative)<1) || (fabs(error)<10 && !turning && fabs(derivative)<1))
     {
       break;
     }
@@ -445,69 +441,72 @@ void autonomous(void) {
 
   intakeLifter.set(true);
   blooper.set(true);
+  elevationLifter.set(true);
   wait(300, msec);
   // catapult.spinFor(reverse, .72, rev, 100, vex::velocityUnits::pct, true);
   PIDMove(-650);
   blooper.set(false);
-  wait(450, msec);
-  PIDMove(-450);
+  wait(200, msec);
+  PIDMove(-320);
   // PIDTurn(-210);
+  timeLimit=0.6;
   leftStop=false;
   pivot=true;
   PIDTurn(-30);
   leftStop=false;
   pivot=false;
-  // blooper.set(true);
-  // intake.spin(fwd, 600, rpm);
-  // intake.spin(fwd, 600, rpm);
-  // wings.set(true);
-  // PIDMove(-800);
-  // PIDMove(800);
-  // PIDTurn(0);
-  // PIDMove(-300);
-  // wait(500, msec);
-  // PIDTurn(-40);
-  // wait(250, msec);
-  // wait(50, msec);
-  // leftDrive.spinFor(fwd, 1750, degrees, 100, vex::velocityUnits::pct, false);
-  // rightDrive.spinFor(fwd, 1750, degrees, 100, vex::velocityUnits::pct);
-  // Andrew's Bullshit Begins Here X)
+  timeLimit=3.5;
   leftDrive.spinFor(reverse, 1500, degrees, 100, vex::velocityUnits::pct, false);
   rightDrive.spinFor(reverse, 1500, degrees, 100, vex::velocityUnits::pct, false);
-  wait(1200, msec);
+  wait(1000, msec);
   leftDrive.stop();
   rightDrive.stop();
+  PIDMove(1400);
+  PIDTurn(27);
+  // PIDMove(1200);
+  // PIDTurn(45);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(2600);
+  PIDMove(-1800);
+  intake.stop();
+  timeLimit=1;
+  PIDTurn(135);
+  timeLimit=3;
+  PIDMove(2900);
+  PIDTurn(225);
+  intake.spin(fwd, 600, rpm);
+  wait(250, msec);
+  PIDMove(-400);
+  PIDTurn(390);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(1400);
+  PIDMove(-1400);
+  PIDTurn(225);
+  leftDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  wait(1000, msec);
+  leftDrive.stop();
+  rightDrive.stop();
+
+
+  // PIDTurn(65);
+
+  // // intake.spin(fwd, 600, rpm);
+  // intake.spin(reverse, 600, rpm);
+  // PIDMove(3600);
+  // PIDTurn(205);
   // intake.stop();
-
-  PIDMove(900);
-
-  PIDTurn(65);
+  // PIDMove(1500);
 
   // intake.spin(fwd, 600, rpm);
-  intake.spin(reverse, 600, rpm);
-  timeLimit=2;
-  PIDMove(3600);
-  timeLimit=1.5;
-  wait(500, msec);
-  
-
-  PIDTurn(205);
-  intake.stop();
-  PIDMove(1500);
-
-  intake.spin(fwd, 600, rpm);
-  wait(900, msec);
-
-  leftDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
-  wait(1200, msec);
-  leftDrive.stop();
-  rightDrive.stop();
-
-  PIDMove(-800);
-
-  PIDTurn(350);
-  PIDMove(2400);
+  // leftDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
+  // rightDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
+  // wait(1200, msec);
+  // leftDrive.stop();
+  // rightDrive.stop();
+  // PIDMove(-800);
+  // PIDTurn(350);
+  // PIDMove(2400);
   // PIDTurn(355);
 }
 
