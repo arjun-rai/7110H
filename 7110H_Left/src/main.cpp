@@ -82,20 +82,6 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
-class gainScheduler
-{
-  public:
-    double i;
-    double f;
-    double p;
-    double k;
-    double calc(double x) {
-      double numerator = -(i-f)*pow(fabs(x), p);
-      double denominator = pow(fabs(x),p)+pow(k,p);
-      return (numerator/denominator)+i;
-    }
-};
-
 
 double kP = 0.2; //steady minor oscillations, should stop close to the correct point
 double kI = 0; //compensate for undershoot
@@ -139,7 +125,7 @@ int drivePID(){
   t = timer();
   while(enableDrivePID)
   {
-    if (t.time(seconds)>10)
+    if (t.time(seconds)>3)
     {
       break;
     }
@@ -392,7 +378,7 @@ void PIDMove(double move)
 // bool load = true;
 // bool fire = false;
 bool load = true;
-bool fire = true;
+bool fire = false;
 bool autonCata=true;
 int loadCata()
 {
@@ -402,11 +388,11 @@ int loadCata()
     {
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>225&&load)
+    if (cataSense.angle(deg)>250&&load)
     {
       catapult.spin(reverse, 10, vex::velocityUnits::pct);
     }
-    if (cataSense.angle(deg)>257&&load)
+    if (cataSense.angle(deg)>272&&load)
     {
       catapult.stop(hold);
       load=!load;
@@ -428,24 +414,28 @@ int loadCata()
 
 
 void autonomous(void) {
-  // autonCata = false;
-  PIDMove(3000);
-  wait(1000, msec);
-  printf("%d\n", averagePosition);
-  // PIDTurn(-50);
-  // blooper.set(true);
-  // PIDTurn(-110);
-  // PIDMove(750);
-  // blooper.set(false);
-  // PIDTurn(-45);
-  // PIDMove(1700);
-  // PIDMove(-1500);
-  // PIDTurn(67);
-  // PIDMove(1650);
-  // PIDTurn(45);
-  // driveBrake(coast);
-  // leftDrive.spinFor(fwd, 1550, degrees, 90, vex::velocityUnits::pct, false);
-  // rightDrive.spinFor(fwd, 1550, degrees, 90, vex::velocityUnits::pct);
+  // PIDMove(3000);
+  // wait(1000, msec);
+  // printf("%d\n", averagePosition);
+  elevationLifter.set(true);
+  wings.set(true);
+  wait(500, msec);
+  wings.set(false);
+  blooper.set(true);
+  PIDTurn(-110);
+  PIDMove(750);
+  blooper.set(false);
+  PIDTurn(-60);
+  PIDMove(1500);
+  // intake.spin(fwd, 600, rpm);
+  // PIDMove(400);
+  PIDMove(-1500);
+  PIDTurn(67);
+  PIDMove(1650);
+  PIDTurn(45);
+  driveBrake(coast);
+  leftDrive.spinFor(fwd, 1400, degrees, 70, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 1400, degrees, 70, vex::velocityUnits::pct);
 }
 
 
@@ -566,6 +556,7 @@ bool fullSpeedToggle = false;
 void usercontrol(void) {
   intakeLifter.set(true);
   enableDrivePID=false;
+  autonCata=false;
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);

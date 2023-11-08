@@ -115,7 +115,7 @@ int integralBound =90;
 int averagePosition;
 bool resetDriveSensors = false;
 double maxLateralPower = 12;
-double maxTurningPower = 6;
+double maxTurningPower = 12;
 double maxLateralChange=1;
 double lastLateralVoltage = 0;
 timer t;

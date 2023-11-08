@@ -74,8 +74,6 @@ void pre_auton(void) {
   Inertial.setHeading(0, degrees);
   
   cataSense.resetPosition();
-  leftDrive.resetRotation();
-  rightDrive.resetRotation();
   // leftEncoder.resetRotation();
   // rightEncoder.resetRotation();
   driveBrake(coast);
@@ -84,13 +82,13 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
-double kP = 0.015; //steady minor oscillations, should stop close to the correct point
-double kI = 0.00003; //compensate for undershoot
-double kD = 0; //until steady
+double kP = 0.2; //steady minor oscillations, should stop close to the correct point
+double kI = 0; //compensate for undershoot
+double kD = 1; //until steady
 
-double turnkP = 0.15; //0.057
-double turnkI = 0.015; //0.0035
-double turnkD = 0;
+double turnkP = 0.915; //0.057
+double turnkI = 0; //0.0035
+double turnkD = 4.3;
 double turnkF = 0;
 //Autonomous Settings
 double desiredValue = 0;
@@ -114,7 +112,7 @@ int integralBound =90;
 int averagePosition;
 bool resetDriveSensors = false;
 double maxLateralPower = 12;
-double maxTurningPower = 6;
+double maxTurningPower = 12;
 double maxLateralChange=1;
 double lastLateralVoltage = 0;
 timer t;
@@ -138,8 +136,6 @@ int drivePID(){
       rightDrive.setPosition(0, degrees);
       leftDrive.resetPosition();
       rightDrive.resetPosition();
-      leftDrive.resetRotation();
-      rightDrive.resetRotation();
       startingTurnValue=(Inertial.rotation());
       
     }
@@ -184,7 +180,7 @@ int drivePID(){
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
     //printf("%f\t%d\n", t.time(seconds), averagePosition);
-    if ((fabs(turnError)<2 && turning) || (fabs(error)<20 && !turning))
+     if ((fabs(turnError)<1 && turning && fabs(turnDerivative)<1) || (fabs(error)<10 && !turning && fabs(derivative)<1))
     {
       break;
     }

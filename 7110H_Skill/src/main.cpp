@@ -74,8 +74,6 @@ void pre_auton(void) {
   Inertial.setHeading(0, degrees);
   
   cataSense.resetPosition();
-  leftDrive.resetRotation();
-  rightDrive.resetRotation();
   // leftEncoder.resetRotation();
   // rightEncoder.resetRotation();
   driveBrake(coast);
@@ -85,13 +83,13 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
-double kP = 0.015; //steady minor oscillations, should stop close to the correct point
-double kI = 0.00003; //compensate for undershoot
-double kD = 0; //until steady
+double kP = 0.2; //steady minor oscillations, should stop close to the correct point
+double kI = 0; //compensate for undershoot
+double kD = 1; //until steady
 
-double turnkP = 0.15; //0.057
-double turnkI = 0.015; //0.0035
-double turnkD = 0;
+double turnkP = 0.915; //0.057
+double turnkI = 0; //0.0035
+double turnkD = 4.3;
 double turnkF = 0;
 
 double pivotP = 0.21;
@@ -146,8 +144,6 @@ int drivePID(){
       rightDrive.setPosition(0, degrees);
       leftDrive.resetPosition();
       rightDrive.resetPosition();
-      leftDrive.resetRotation();
-      rightDrive.resetRotation();
       startingTurnValue=(Inertial.rotation());
       
     }
@@ -192,7 +188,7 @@ int drivePID(){
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
     //printf("%f\t%d\n", t.time(seconds), averagePosition);
-    if ((fabs(turnError)<2 && turning) || (fabs(error)<20 && !turning))
+     if ((fabs(turnError)<1 && turning && fabs(turnDerivative)<1) || (fabs(error)<10 && !turning && fabs(derivative)<1))
     {
       break;
     }
@@ -473,9 +469,9 @@ void autonomous(void) {
   wings.set(true);
   timeLimit = 0.6;
   PIDMove(250);
-  catapult.spin(reverse, 127, vex::velocityUnits::pct);
-  wait(34.5, sec);
-  catapult.stop();
+  // catapult.spin(reverse, 127, vex::velocityUnits::pct);
+  // wait(34.5, sec);
+  // catapult.stop();
 
   timeLimit = 1;
   autonCata = true;
@@ -487,17 +483,17 @@ void autonomous(void) {
   timeLimit=1.5;
   PIDMove(-1950);
   timeLimit=1;
-  PIDTurn(-132);
+  PIDTurn(-128);
   timeLimit=10;
-  PIDMove(-4400);
+  PIDMove(-4500);
   timeLimit=1;
   pivot=true;
   rightStop=true;
   // oppositeDir=true;
   PIDTurn(-85);
-  timeLimit=1.5;
+  timeLimit=2;
   pivot=false;
-  PIDMove(-1500);
+  PIDMove(-2300);
   timeLimit=1;
   PIDTurn(-45);
 
@@ -527,7 +523,7 @@ void autonomous(void) {
   PIDMove(-1800);
   PIDTurn(-5);
   timeLimit=2.5;
-  PIDMove(-2300);
+  PIDMove(-1800);
   elevationLifter.set(true);
   timeLimit=1;
   PIDTurn(60);
@@ -536,6 +532,7 @@ void autonomous(void) {
   leftDrive.spinFor(fwd, 2000, degrees, 127, vex::velocityUnits::pct, false);
   rightDrive.spinFor(fwd, 2000, degrees, 127, vex::velocityUnits::pct);
   wings.set(false);
+  wait(250, msec);
   PIDMove(-2000);
   PIDTurn(135);
   leftDrive.spinFor(fwd, 2600, degrees, 60, vex::velocityUnits::pct, false);
