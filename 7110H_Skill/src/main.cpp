@@ -463,15 +463,15 @@ void autonomous(void) {
 
   // intake.stop();
 
-  PIDMove(825);
+  PIDMove(850);
 
-  PIDTurn(-118.5);
+  PIDTurn(-112);
   wings.set(true);
   timeLimit = 0.6;
-  PIDMove(250);
-  // catapult.spin(reverse, 127, vex::velocityUnits::pct);
-  // wait(34.5, sec);
-  // catapult.stop();
+  // PIDMove(150);
+  catapult.spin(reverse, 127, vex::velocityUnits::pct);
+  wait(34.5, sec);
+  catapult.stop();
 
   timeLimit = 1;
   autonCata = true;
@@ -670,6 +670,19 @@ bool fullSpeedOn = false;
 bool fullSpeedToggle = false;
 void usercontrol(void) {
   intakeLifter.set(true);
+  PIDMove(-1000);
+  PIDTurn(-45);
+  leftDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct);
+  PIDMove(850);
+  PIDTurn(-112);
+  wings.set(true);
+  timeLimit = 0.6;
+  // PIDMove(150);
+  catapult.spin(reverse, 127, vex::velocityUnits::pct);
+  wait(34.5, sec);
+  catapult.stop();
+
   enableDrivePID=false;
   // User control code here, inside the loop
   while (1) {
