@@ -461,52 +461,52 @@ void autonomous(void) {
   wait(1000, msec);
   leftDrive.stop();
   rightDrive.stop();
-  PIDMove(1400);
-  PIDTurn(27);
+  // PIDMove(1300);
+  // PIDTurn(0);
   // PIDMove(1200);
   // PIDTurn(45);
-  intake.spin(reverse, 600, rpm);
-  PIDMove(2600);
-  PIDMove(-1800);
-  intake.stop();
-  timeLimit=1;
-  PIDTurn(135);
-  timeLimit=3;
-  PIDMove(2900);
-  PIDTurn(225);
-  intake.spin(fwd, 600, rpm);
-  wait(250, msec);
-  PIDMove(-400);
-  PIDTurn(390);
-  intake.spin(reverse, 600, rpm);
-  PIDMove(1400);
-  PIDMove(-1400);
-  PIDTurn(225);
-  leftDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
-  wait(1000, msec);
-  leftDrive.stop();
-  rightDrive.stop();
-
-
-  // PIDTurn(65);
-
-  // // intake.spin(fwd, 600, rpm);
   // intake.spin(reverse, 600, rpm);
-  // PIDMove(3600);
-  // PIDTurn(205);
+  // PIDMove(2600);
+  // PIDMove(-1800);
   // intake.stop();
-  // PIDMove(1500);
-
+  // timeLimit=1;
+  // PIDTurn(135);
+  // timeLimit=3;
+  // PIDMove(2900);
+  // PIDTurn(225);
   // intake.spin(fwd, 600, rpm);
-  // leftDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
-  // rightDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
-  // wait(1200, msec);
+  // wait(250, msec);
+  // PIDMove(-400);
+  // PIDTurn(390);
+  // intake.spin(reverse, 600, rpm);
+  // PIDMove(1400);
+  // PIDMove(-1400);
+  // PIDTurn(225);
+  // leftDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  // rightDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  // wait(1000, msec);
   // leftDrive.stop();
   // rightDrive.stop();
-  // PIDMove(-800);
-  // PIDTurn(350);
-  // PIDMove(2400);
+
+  PIDMove(600);
+  PIDTurn(65);
+
+  // intake.spin(fwd, 600, rpm);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(3600);
+  PIDTurn(205);
+  intake.stop();
+  PIDMove(1500);
+
+  intake.spin(fwd, 600, rpm);
+  leftDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
+  wait(1200, msec);
+  leftDrive.stop();
+  rightDrive.stop();
+  PIDMove(-800);
+  PIDTurn(360);
+  PIDMove(2100);
   // PIDTurn(355);
 }
 
