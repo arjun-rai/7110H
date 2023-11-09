@@ -579,8 +579,8 @@ bool elevationUpOn = false;
 bool elevationUpToggle = false;
 bool elevationOn = false;
 bool elevationToggle = false;
-bool angleOn = false;
-bool angleToggle = true;
+// bool angleOn = false;
+// bool angleToggle = true;
 double loadAngle = 250;
 bool wingsOn = false;
 bool wingsToggle = false;
@@ -596,6 +596,8 @@ bool fullSpeedToggle = false;
 void usercontrol(void) {
   intakeLifter.set(true);
   enableDrivePID=false;
+  autonCata=false;
+  Controller.Screen.setCursor(0,0);
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);
@@ -775,18 +777,26 @@ void usercontrol(void) {
       fullSpeedOn=false;
     }
 
-    
-    if (Controller.ButtonR1.pressing())
+    if(fullSpeedToggle || sensorFireToggle)
     {
-      if (!angleOn)
-      {
-        angleOn=true;
-        angleToggle=!angleToggle;
-      }
+      intakeLock.set(true);
     }
     else {
-      angleOn=false;
+      intakeLock.set(false);
     }
+
+    
+    // if (Controller.ButtonR1.pressing())
+    // {
+    //   if (!angleOn)
+    //   {
+    //     angleOn=true;
+    //     angleToggle=!angleToggle;
+    //   }
+    // }
+    // else {
+    //   angleOn=false;
+    // }
 
     if (Controller.ButtonR1.pressing())
     {
@@ -797,21 +807,21 @@ void usercontrol(void) {
     {
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
-      angleToggle=true;
+      // angleToggle=true;
     }
     if (reload && cataSense.angle(deg)>270 && !fullSpeedToggle)
     {
        catapult.spin(reverse, 20, vex::velocityUnits::pct);
     }
     //printf("%f\n", cataSense.angle());
-    if (reload && cataSense.angle(deg)>272&&angleToggle)//93
+    if (reload && cataSense.angle(deg)>272)//93
     {
       catapult.stop(hold);
     }
-    if (reload && cataSense.angle(deg)>290&&!angleToggle)//93
-    {
-      catapult.stop(hold);
-    }
+    // if (reload && cataSense.angle(deg)>290&&!angleToggle)//93
+    // {
+    //   catapult.stop(hold);
+    // }
     // else if (!reload && cataSense.angle(deg)<232)
     else if (!reload && cataSense.angle(deg)<242)
     {
@@ -820,6 +830,8 @@ void usercontrol(void) {
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
+    Controller.Screen.clearLine();
+    Controller.Screen.print("F: %d S: %d", fullSpeedToggle, sensorFireToggle);
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }

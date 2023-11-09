@@ -27,6 +27,7 @@ digital_out blooper = digital_out(Brain.ThreeWirePort.A);
 digital_out elevation = digital_out(Brain.ThreeWirePort.B);
 digital_out elevationLifter = digital_out(Brain.ThreeWirePort.D);
 distance distSensor = distance(PORT6);
+digital_out intakeLock = digital_out(Brain.ThreeWirePort.G);
 // digital_out auton_grabber = digital_out(Brain.ThreeWirePort.F);
 
 

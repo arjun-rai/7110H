@@ -465,19 +465,21 @@ void autonomous(void) {
 
   PIDMove(850);
 
-  PIDTurn(-112);
+  PIDTurn(-118);
   wings.set(true);
+  intakeLock.set(true);
   timeLimit = 0.6;
   // PIDMove(150);
-  catapult.spin(reverse, 127, vex::velocityUnits::pct);
-  wait(34.5, sec);
-  catapult.stop();
+  // catapult.spin(reverse, 127, vex::velocityUnits::pct);
+  // wait(35, sec);
+  // catapult.stop();
 
   timeLimit = 1;
   autonCata = true;
   load=true;
   vex::task autonCata(loadCata);
   wings.set(false);
+  intakeLock.set(false);
   PIDMove(-500);
   PIDTurn(-175);
   timeLimit=1.5;
@@ -485,25 +487,25 @@ void autonomous(void) {
   timeLimit=1;
   PIDTurn(-128);
   timeLimit=10;
-  PIDMove(-4500);
-  timeLimit=1;
-  pivot=true;
-  rightStop=true;
-  // oppositeDir=true;
-  PIDTurn(-85);
+  PIDMove(-4650);
   timeLimit=2;
-  pivot=false;
-  PIDMove(-2300);
-  timeLimit=1;
-  PIDTurn(-45);
+  // pivot=true;
+  // rightStop=true;
+  // // oppositeDir=true;
+  // PIDTurn(-85);
+  // timeLimit=2;
+  // pivot=false;
+  // PIDMove(-2300);
+  // timeLimit=1;
+  // PIDTurn(-45);
 
 
 
-  leftDrive.spinFor(reverse, 1500, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(reverse, 1500, degrees, 100, vex::velocityUnits::pct,false);
-  wait(1200, msec);
-  leftDrive.stop();
-  rightDrive.stop();
+  // leftDrive.spinFor(reverse, 1300, degrees, 100, vex::velocityUnits::pct, false);
+  // rightDrive.spinFor(reverse, 1300, degrees, 100, vex::velocityUnits::pct,false);
+  // wait(1200, msec);
+  // leftDrive.stop();
+  // rightDrive.stop();
 
 
 
@@ -517,39 +519,61 @@ void autonomous(void) {
   // leftDrive.stop();
   // rightDrive.stop();
 
-  timeLimit=1.25;
-  PIDMove(525);
-  PIDTurn(45);
-  PIDMove(-1800);
-  PIDTurn(-5);
-  timeLimit=2.5;
-  PIDMove(-1800);
+  // timeLimit=1.25;
+  // PIDMove(525);
+  PIDTurn(-30);
+  PIDMove(-1900);
+  PIDTurn(30);
+  PIDMove(-1600);
+  PIDTurn(70);
+  // PIDMove(1800);
+  // PIDTurn(60);
+  // PIDTurn(-5);
+  // timeLimit=2.5;
+  // PIDMove(-1800);
   elevationLifter.set(true);
-  timeLimit=1;
-  PIDTurn(60);
+  // timeLimit=1;
+  // PIDTurn(60);
   intake.spin(fwd, 600, rpm);
   wings.set(true);
-  leftDrive.spinFor(fwd, 2000, degrees, 127, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 2000, degrees, 127, vex::velocityUnits::pct);
+  leftDrive.spinFor(fwd, 2300, degrees, 90, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 2300, degrees, 90, vex::velocityUnits::pct, false);
+  wait(2000, msec);
+  rightDrive.stop();
+  leftDrive.stop();
   wings.set(false);
   wait(250, msec);
   PIDMove(-2000);
   PIDTurn(135);
-  leftDrive.spinFor(fwd, 2600, degrees, 60, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 2600, degrees, 60, vex::velocityUnits::pct);
-  PIDTurn(17);
+  leftDrive.spinFor(fwd, 2600, degrees, 50, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 2600, degrees, 50, vex::velocityUnits::pct);
+  PIDTurn(35);
   wings.set(true);
-  leftDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct);
-   wings.set(false);
-  leftDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct,false);
-  rightDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct);
-   wings.set(true);
-  leftDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct,false);
-  rightDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct);
+  leftDrive.spinFor(fwd, 2300, degrees, 60, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 2300, degrees, 60, vex::velocityUnits::pct, false);
+  wait(1500, msec);
+  rightDrive.stop();
+  leftDrive.stop();
   wings.set(false);
-  leftDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct,false);
-  rightDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct);
+
+
+  leftDrive.spinFor(reverse, 150, degrees, 127, vex::velocityUnits::pct,false);
+  rightDrive.spinFor(reverse, 150, degrees, 127, vex::velocityUnits::pct);
+  PIDTurn(-45);
+  leftDrive.spinFor(fwd, 4000, degrees, 127, vex::velocityUnits::pct,false);
+  rightDrive.spinFor(fwd, 4000, degrees, 127, vex::velocityUnits::pct);
+  PIDTurn(-85);
+  leftDrive.spinFor(reverse, 2200, degrees, 127, vex::velocityUnits::pct,false);
+  rightDrive.spinFor(reverse, 2200, degrees, 127, vex::velocityUnits::pct);
+  //  wings.set(true);
+  // leftDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct,false);
+  // rightDrive.spinFor(fwd, 2300, degrees, 127, vex::velocityUnits::pct, false);
+  // wait(1500, msec);
+  // rightDrive.stop();
+  // leftDrive.stop();
+  // wings.set(false);
+  // leftDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct,false);
+  // rightDrive.spinFor(reverse, 2300, degrees, 127, vex::velocityUnits::pct);
 
 }
 
@@ -675,8 +699,9 @@ void usercontrol(void) {
   leftDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct, false);
   rightDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct);
   PIDMove(850);
-  PIDTurn(-112);
+  PIDTurn(-118);
   wings.set(true);
+  intakeLock.set(true);
   timeLimit = 0.6;
   // PIDMove(150);
   catapult.spin(reverse, 127, vex::velocityUnits::pct);
@@ -684,6 +709,7 @@ void usercontrol(void) {
   catapult.stop();
 
   enableDrivePID=false;
+  intakeLock.set(false);
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);
