@@ -465,22 +465,26 @@ void autonomous(void) {
 
   PIDMove(850);
 
-  PIDTurn(-116);
+  PIDTurn(-118);
   wings.set(true);
   intakeLock.set(true);
   timeLimit = 0.6;
-  // PIDMove(150);
-  catapult.spin(reverse, 127, vex::velocityUnits::pct);
-  wait(35, sec);
-  catapult.stop();
+  PIDMove(50);
+  // catapult.spin(reverse, 127, vex::velocityUnits::pct);
+  wait(5, sec);
+  // catapult.stop();
 
   timeLimit = 1;
   autonCata = true;
   load=true;
   vex::task autonCata(loadCata);
-  wings.set(false);
   intakeLock.set(false);
-  PIDMove(-500);
+  wings.set(false);
+  PIDMove(-250);
+  wings.set(false);
+  wait(500, msec);
+  wings.set(false);
+  PIDMove(-250);
   PIDTurn(-175);
   timeLimit=1.5;
   PIDMove(-1950);
@@ -489,7 +493,7 @@ void autonomous(void) {
   timeLimit=10;
   PIDMove(-4650);
   timeLimit=2.5;
-  intakeLifter.set(true);
+  intakeLifter.set(false);
   // pivot=true;
   // rightStop=true;
   // // oppositeDir=true;
@@ -733,7 +737,7 @@ void usercontrol(void) {
   leftDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct, false);
   rightDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct);
   PIDMove(850);
-  PIDTurn(-116);
+  PIDTurn(-118);
   wings.set(true);
   intakeLock.set(true);
   timeLimit = 0.6;
