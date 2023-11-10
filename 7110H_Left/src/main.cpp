@@ -181,7 +181,7 @@ int drivePID(){
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
     //printf("%f\t%d\n", t.time(seconds), averagePosition);
-    if ((fabs(turnError)<1 && turning && fabs(turnDerivative)<1) || (fabs(error)<10 && !turning && fabs(derivative)<1))
+    if ((fabs(turnError)<2 && turning && fabs(turnDerivative)<1) || (fabs(error)<10 && !turning && fabs(derivative)<1))
     {
       break;
     }
@@ -436,6 +436,7 @@ void autonomous(void) {
   driveBrake(coast);
   leftDrive.spinFor(fwd, 1400, degrees, 70, vex::velocityUnits::pct, false);
   rightDrive.spinFor(fwd, 1400, degrees, 70, vex::velocityUnits::pct);
+  intakeLifter.set(true);
 }
 
 

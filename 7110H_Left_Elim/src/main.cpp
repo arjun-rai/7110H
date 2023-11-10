@@ -187,7 +187,7 @@ int drivePID(){
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
     //printf("%f\t%d\n", t.time(seconds), averagePosition);
-    if ((fabs(turnError)<1 && turning && fabs(turnDerivative)<1) || (fabs(error)<10 && !turning && fabs(derivative)<1))
+    if ((fabs(turnError)<2 && turning && fabs(turnDerivative)<1) || (fabs(error)<10 && !turning && fabs(derivative)<1))
     {
       break;
     }
@@ -475,7 +475,7 @@ void autonomous(void) {
   timeLimit=2.5;
   PIDMove(3350);
   PIDTurn(60);
-  PIDMove(2500);
+  PIDMove(2550);
 }
 
 
