@@ -470,9 +470,9 @@ void autonomous(void) {
   intakeLock.set(true);
   timeLimit = 0.6;
   PIDMove(50);
-  // catapult.spin(reverse, 127, vex::velocityUnits::pct);
-  wait(5, sec);
-  // catapult.stop();
+  catapult.spin(reverse, 127, vex::velocityUnits::pct);
+  wait(35, sec);
+  catapult.stop();
 
   timeLimit = 1;
   autonCata = true;

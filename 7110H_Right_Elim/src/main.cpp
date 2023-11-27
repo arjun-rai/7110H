@@ -458,7 +458,7 @@ void autonomous(void) {
   rightDrive.stop();
   PIDMove(-600);
   wings.set(false);
-  PIDTurn(270);
+  PIDTurn(265);
   intake.spin(reverse, 600, rpm);
   PIDMove(1600);
   PIDTurn(105);
@@ -472,7 +472,7 @@ void autonomous(void) {
   rightDrive.stop();
   PIDMove(-1200);
   PIDTurn(-2);
-  PIDMove(-3520);
+  PIDMove(-3475);
   blooper.set(true);
   PIDTurn(-125);
   blooper.set(false);

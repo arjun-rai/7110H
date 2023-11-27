@@ -515,7 +515,7 @@ double LeftPercent = 0;
 double RightPercent = 0;
 double lastLeftPercent = 0;
 double lastRightPercent = 0;
-void leftExpo (vex::directionType type, double percentage, double maxSpeed){
+void leftExpo (vex::directionType type, double percentage){
   if(fabs(percentage) < 1)
     percentage = 0;
   else if(percentage >= 1)
@@ -525,36 +525,21 @@ void leftExpo (vex::directionType type, double percentage, double maxSpeed){
     percentage = 2*pow(1.05, percentage-42) + 1;
     percentage = -percentage;
   }
-
-  // if(percentage >= 0){
-  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  // }else{
-  //   percentage = -percentage;
-  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  //   percentage = -percentage;
-  // }
-  // if (percentage-lastLeftPercent>0 && percentage!=0 && lastLeftPercent<0)
+  // if (percentage-lastLeftPercent>50)
   // {
-  //   percentage=lastLeftPercent+5;
+  //   percentage=lastLeftPercent+50;
+  // }
+  // if (percentage-lastLeftPercent<-50)
+  // {
+  //   percentage=lastLeftPercent-50;
   // }
   LeftPercent=percentage;
-  // if (LeftPercent>=70&&RightPercent>=70)
-  // {
-  //   percentage=70;
-  // }
-  // if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
-  // {
-  //   percentage=lastLeftPercent-0.8;
-  // }
-  if (percentage>maxSpeed)
-  {
-    percentage=maxSpeed;
-  }
+
   leftDrive.spin (type, percentage, vex::velocityUnits::pct);
   lastLeftPercent=percentage;
 }
 
-void rightExpo (vex::directionType type, double percentage, double maxSpeed){
+void rightExpo (vex::directionType type, double percentage){
 
   if(fabs(percentage) < 1)
     percentage = 0;
@@ -566,27 +551,17 @@ void rightExpo (vex::directionType type, double percentage, double maxSpeed){
     percentage = -percentage;
   }
 
+  //  if (percentage-lastRightPercent>50)
+  // {
+  //   percentage=lastRightPercent+50;
+  // }
+  // if (percentage-lastRightPercent<-50)
+  // {
+  //   percentage=lastRightPercent-50;
+  // }
 
-  // if(percentage >= 0){
-  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  // }else{
-  //   percentage = -percentage;
-  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  //   percentage = -percentage;
-  // }
+
   RightPercent=percentage;
-  // if (LeftPercent>=70&&RightPercent>=70)
-  // {
-  //   percentage=70;
-  // }
-  // if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
-  // {
-  //   percentage=lastRightPercent-0.8;
-  // }
-  if (percentage>maxSpeed)
-  {
-    percentage=maxSpeed;
-  }
   rightDrive.spin (type, percentage, vex::velocityUnits::pct);
   lastRightPercent=percentage;
 }
@@ -625,6 +600,7 @@ bool sensorFireOn = false;
 bool sensorFireToggle = false;
 bool fullSpeedOn = false;
 bool fullSpeedToggle = false;
+
 void usercontrol(void) {
   intakeLifter.set(true);
   enableDrivePID=false;
@@ -635,8 +611,11 @@ void usercontrol(void) {
     driveBrake(coast);
     // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
-    leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
+    // rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
+    // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
+    rightExpo(forward, (Controller.Axis2.value()));
+    leftExpo(forward, (Controller.Axis3.value()));
+
 
     // if (Controller.ButtonL1.pressing())
     // {
