@@ -510,6 +510,81 @@ void autonomous(void) {
   // PIDTurn(355);
 }
 
+double kTurn = 0.65;
+double turnRemap(double turn){
+  double denom = sin(M_PI/2 * kTurn);
+  double firstRemap = sin(M_PI/2 * kTurn * turn)/denom;
+  return sin(M_PI/2 * kTurn * firstRemap) / denom;
+}
+
+double fastStopAccum = 0.0;
+double negInertiaAccum = 0.0;
+void updateAccum(){
+  if (negInertiaAccum>1){
+    negInertiaAccum-=1;
+  }
+  else if (negInertiaAccum<-1) {
+    negInertiaAccum+=1;
+  }
+  else{
+    negInertiaAccum=0;
+  }
+  // if (fastStopAccum>1){
+  //   fastStopAccum-=1;
+  // }
+  // else if (fastStopAccum<-1) {
+  //   fastStopAccum+=1;
+  // }
+  // else{
+  //   fastStopAccum=0;
+  // }
+}
+
+double prevTurn = 0.0;
+double prevThrottle = 0.0;
+
+double drive_deadband=0.1;
+double drive_slew = 0.02;
+double kInertiaScalar =0.75;//0.5
+double kSensitivty = 1;
+
+void curvatureDrive(double throttle, double turn){
+  bool pointTurn = false;
+  double linear = throttle;
+  if (fabs(throttle)<drive_deadband && fabs(turn)>drive_deadband)
+  {
+    linear = 0.0;
+    pointTurn=true;
+  }
+  else if (throttle-prevThrottle>drive_slew) {
+    linear = prevThrottle+drive_slew;
+  }
+  else if (throttle-prevThrottle<-(drive_slew*2)) {
+    linear = prevThrottle-(drive_slew*2);
+  }
+  double remappedTurn = turnRemap(turn);
+  double left, right;
+  if (pointTurn){
+    left = remappedTurn*fabs(remappedTurn);
+    right = -remappedTurn*fabs(remappedTurn);
+    // printf("%f\n", remappedTurn*fabs(remappedTurn));
+  }
+  else {
+    double negInertiaPower = (turn-prevTurn)*kInertiaScalar;
+    negInertiaAccum+=negInertiaPower;
+    double angular = fabs(linear)*(remappedTurn+negInertiaAccum)*kSensitivty - fastStopAccum;
+
+    right =linear; left = linear;
+    //printf("%f\t%f\n", negInertiaAccum, angular);
+    left += angular;
+    right -=angular;
+    updateAccum();
+  }
+  prevTurn=turn;
+  prevThrottle=throttle;
+  leftDrive.spin (fwd, left*100, vex::velocityUnits::pct);
+  rightDrive.spin (fwd, right*100, vex::velocityUnits::pct);
+}
 
 double LeftPercent = 0;
 double RightPercent = 0;
@@ -613,8 +688,9 @@ void usercontrol(void) {
     // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
     // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
-    rightExpo(forward, (Controller.Axis2.value()));
-    leftExpo(forward, (Controller.Axis3.value()));
+    // rightExpo(forward, (Controller.Axis2.value()));
+    // leftExpo(forward, (Controller.Axis3.value()));
+    curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
 
 
     // if (Controller.ButtonL1.pressing())
