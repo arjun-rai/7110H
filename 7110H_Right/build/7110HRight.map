@@ -3738,10 +3738,7 @@ Linker script and memory map
                 0x03804b18                kSensitivty
  .data.reload   0x03804b20        0x1 build/src/main.o
                 0x03804b20                reload
- .data.lifterToggle
-                0x03804b21        0x1 build/src/main.o
-                0x03804b21                lifterToggle
- *fill*         0x03804b22        0x2 
+ *fill*         0x03804b21        0x3 
  .data.appRunning
                 0x03804b24        0x4 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(v5_startup.c.obj)
                 0x03804b24                appRunning
@@ -4071,9 +4068,12 @@ Linker script and memory map
                 0x0380505f                blooperToggle
  .bss.lifterOn  0x03805060        0x1 build/src/main.o
                 0x03805060                lifterOn
+ .bss.lifterToggle
+                0x03805061        0x1 build/src/main.o
+                0x03805061                lifterToggle
  .bss._ZStL8__ioinit
-                0x03805061        0x1 build/src/robot-config.o
- *fill*         0x03805062        0x2 
+                0x03805062        0x1 build/src/robot-config.o
+ *fill*         0x03805063        0x1 
  .bss.Brain     0x03805064      0x2bc build/src/robot-config.o
                 0x03805064                Brain
  .bss.Controller

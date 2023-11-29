@@ -664,7 +664,7 @@ bool blooperOn = false;
 bool blooperToggle = false;
 double maxSpeed = 127;
 bool lifterOn = false;
-bool lifterToggle = true;
+bool lifterToggle = false;
 bool sensorFireOn = false;
 bool sensorFireToggle = false;
 bool fullSpeedOn = false;
@@ -804,7 +804,7 @@ void usercontrol(void) {
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (reload && cataSense.angle(deg)>285)//93
+    if (reload && cataSense.angle(deg)>265)//93
     {
       catapult.stop(hold);
     }
