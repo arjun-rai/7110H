@@ -787,6 +787,7 @@ void usercontrol(void) {
     if (elevationToggle)
     {
       elevationLifter.set(false);
+      elevationUpToggle=false;
       elevation.set(true);
     }
     else
