@@ -439,7 +439,7 @@ int loadCata()
 void autonomous(void) {
   autonCata = false;
 
-  intakeLifter.set(true);
+  // intakeLifter.set(true);
   blooper.set(true);
   elevationLifter.set(true);
   wait(300, msec);
@@ -653,16 +653,10 @@ void rightExpo (vex::directionType type, double percentage){
 bool CataOn = false;
 bool CataToggle =false;
 bool reload = true;
-// bool intakeOn = false;
-// bool intakeToggle = false;
-// bool reverseOn = false;
-// bool reverseToggle = false;
 bool elevationUpOn = false;
 bool elevationUpToggle = false;
 bool elevationOn = false;
 bool elevationToggle = false;
-// bool angleOn = false;
-// bool angleToggle = true;
 double loadAngle = 250;
 bool wingsOn = false;
 bool wingsToggle = false;
@@ -677,57 +671,17 @@ bool fullSpeedOn = false;
 bool fullSpeedToggle = false;
 
 void usercontrol(void) {
-  intakeLifter.set(true);
+  // intakeLifter.set(false);
   enableDrivePID=false;
   autonCata=false;
-  Controller.Screen.setCursor(0,0);
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);
-    // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
     // rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
     // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
     // rightExpo(forward, (Controller.Axis2.value()));
     // leftExpo(forward, (Controller.Axis3.value()));
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
-
-
-    // if (Controller.ButtonL1.pressing())
-    // {
-    //   if (!intakeOn)
-    //   {
-    //     intakeToggle = !intakeToggle;
-    //     intakeOn=true;
-    //   }
-    // }
-    // else
-    // {
-    //   intakeOn=false;
-    // }
-    // if (Controller.ButtonL2.pressing())
-    // {
-    //   if (!reverseOn)
-    //   {
-    //     reverseToggle = !reverseToggle;
-    //     reverseOn=true;
-    //   }
-    // }
-    // else
-    // {
-    //   reverseOn=false;
-    // }
-    // if (intakeToggle && reverseToggle)
-    // {
-    //   intake.spin(fwd, 600, rpm);
-    // }
-    // else if (intakeToggle)
-    // {
-    //   intake.spin(reverse, 600, rpm);
-    // }
-    // else {
-    //   intake.stop();
-    // }
     if (Controller.ButtonL1.pressing())
     {
       intake.spin(fwd, 600, rpm);
@@ -791,10 +745,10 @@ void usercontrol(void) {
     }
     if (lifterToggle)
     {
-      intakeLifter.set(true);
+      blockerLifter.set(true);
     }
     else {
-      intakeLifter.set(false);
+      blockerLifter.set(false);
     }
 
     if (Controller.ButtonX.pressing())
@@ -840,76 +794,20 @@ void usercontrol(void) {
       elevation.set(false);
     }
 
-    if (Controller.ButtonA.pressing())
-    {
-      if (!sensorFireOn)
-      {
-        sensorFireToggle=!sensorFireToggle;
-        sensorFireOn=true;
-      }
-    }
-    else {
-      sensorFireOn=false;
-    }
-
-    if (Controller.ButtonY.pressing())
-    {
-      if (!fullSpeedOn)
-      {
-        fullSpeedToggle=!fullSpeedToggle;
-        fullSpeedOn=true;
-      }
-    }
-    else {
-      fullSpeedOn=false;
-    }
-
-    if(fullSpeedToggle || sensorFireToggle)
-    {
-      intakeLock.set(true);
-    }
-    else {
-      intakeLock.set(false);
-    }
-
-    
-    // if (Controller.ButtonR1.pressing())
-    // {
-    //   if (!angleOn)
-    //   {
-    //     angleOn=true;
-    //     angleToggle=!angleToggle;
-    //   }
-    // }
-    // else {
-    //   angleOn=false;
-    // }
-
     if (Controller.ButtonR1.pressing())
     {
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (Controller.ButtonR2.pressing() || (sensorFireToggle&&distSensor.objectDistance(mm)<130))
+    if (Controller.ButtonR2.pressing())
     {
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
-      // angleToggle=true;
     }
-    if (reload && cataSense.angle(deg)>270 && !fullSpeedToggle)
-    {
-       catapult.spin(reverse, 20, vex::velocityUnits::pct);
-    }
-    //printf("%f\n", cataSense.angle());
-    if (reload && cataSense.angle(deg)>272)//93
+    if (reload && cataSense.angle(deg)>285)//93
     {
       catapult.stop(hold);
     }
-    // if (reload && cataSense.angle(deg)>290&&!angleToggle)//93
-    // {
-    //   catapult.stop(hold);
-    // }
-    // else if (!reload && cataSense.angle(deg)<232)
     else if (!reload && cataSense.angle(deg)<242)
     {
       catapult.stop(coast);
@@ -917,8 +815,6 @@ void usercontrol(void) {
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    Controller.Screen.clearLine();
-    Controller.Screen.print("F: %d S: %d", fullSpeedToggle, sensorFireToggle);
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }

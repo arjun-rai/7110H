@@ -14,7 +14,7 @@ extern inertial Inertial;
 extern motor_group leftDrive;
 extern motor_group rightDrive;
 extern motor catapult;
-extern digital_out intakeLifter;
+extern digital_out blockerLifter;
 extern digital_out wings;
 extern motor intake;
 extern digital_out blooper;
