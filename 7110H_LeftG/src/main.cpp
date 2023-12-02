@@ -428,11 +428,78 @@ void autonomous(void) {
 }
 
 
+double kTurn = 0.65;
+double turnRemap(double turn){
+  double denom = sin(M_PI/2 * kTurn);
+  double firstRemap = sin(M_PI/2 * kTurn * turn)/denom;
+  return sin(M_PI/2 * kTurn * firstRemap) / denom;
+}
+
+double fastStopAccum = 0.0;
+double negInertiaAccum = 0.0;
+void updateAccum(){
+  if (negInertiaAccum>1){
+    negInertiaAccum-=1;
+  }
+  else if (negInertiaAccum<-1) {
+    negInertiaAccum+=1;
+  }
+  else{
+    negInertiaAccum=0;
+  }
+}
+
+double prevTurn = 0.0;
+double prevThrottle = 0.0;
+
+double drive_deadband=0.1;
+double drive_slew = 0.02;
+double kInertiaScalar =0.75;//0.5
+double kSensitivty = 1;
+
+void curvatureDrive(double throttle, double turn){
+  bool pointTurn = false;
+  double linear = throttle;
+  if (fabs(throttle)<drive_deadband && fabs(turn)>drive_deadband)
+  {
+    linear = 0.0;
+    pointTurn=true;
+  }
+  else if (throttle-prevThrottle>drive_slew) {
+    linear = prevThrottle+drive_slew;
+  }
+  else if (throttle-prevThrottle<-(drive_slew*2)) {
+    linear = prevThrottle-(drive_slew*2);
+  }
+  double remappedTurn = turnRemap(turn);
+  double left, right;
+  if (pointTurn){
+    left = remappedTurn*fabs(remappedTurn);
+    right = -remappedTurn*fabs(remappedTurn);
+    // printf("%f\n", remappedTurn*fabs(remappedTurn));
+  }
+  else {
+    double negInertiaPower = (turn-prevTurn)*kInertiaScalar;
+    negInertiaAccum+=negInertiaPower;
+    double angular = fabs(linear)*(remappedTurn+negInertiaAccum)*kSensitivty - fastStopAccum;
+
+    right =linear; left = linear;
+    //printf("%f\t%f\n", negInertiaAccum, angular);
+    left += angular;
+    right -=angular;
+    updateAccum();
+  }
+  prevTurn=turn;
+  prevThrottle=throttle;
+  leftDrive.spin (fwd, left*100, vex::velocityUnits::pct);
+  rightDrive.spin (fwd, right*100, vex::velocityUnits::pct);
+}
+
 double LeftPercent = 0;
 double RightPercent = 0;
 double lastLeftPercent = 0;
 double lastRightPercent = 0;
-void leftExpo (vex::directionType type, double percentage, double maxSpeed){
+void leftExpo (vex::directionType type, double percentage){
   if(fabs(percentage) < 1)
     percentage = 0;
   else if(percentage >= 1)
@@ -442,36 +509,21 @@ void leftExpo (vex::directionType type, double percentage, double maxSpeed){
     percentage = 2*pow(1.05, percentage-42) + 1;
     percentage = -percentage;
   }
-
-  // if(percentage >= 0){
-  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  // }else{
-  //   percentage = -percentage;
-  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  //   percentage = -percentage;
-  // }
-  // if (percentage-lastLeftPercent>0 && percentage!=0 && lastLeftPercent<0)
+  // if (percentage-lastLeftPercent>50)
   // {
-  //   percentage=lastLeftPercent+5;
+  //   percentage=lastLeftPercent+50;
+  // }
+  // if (percentage-lastLeftPercent<-50)
+  // {
+  //   percentage=lastLeftPercent-50;
   // }
   LeftPercent=percentage;
-  // if (LeftPercent>=70&&RightPercent>=70)
-  // {
-  //   percentage=70;
-  // }
-  // if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
-  // {
-  //   percentage=lastLeftPercent-0.8;
-  // }
-  if (percentage>maxSpeed)
-  {
-    percentage=maxSpeed;
-  }
+
   leftDrive.spin (type, percentage, vex::velocityUnits::pct);
   lastLeftPercent=percentage;
 }
 
-void rightExpo (vex::directionType type, double percentage, double maxSpeed){
+void rightExpo (vex::directionType type, double percentage){
 
   if(fabs(percentage) < 1)
     percentage = 0;
@@ -483,27 +535,17 @@ void rightExpo (vex::directionType type, double percentage, double maxSpeed){
     percentage = -percentage;
   }
 
+  //  if (percentage-lastRightPercent>50)
+  // {
+  //   percentage=lastRightPercent+50;
+  // }
+  // if (percentage-lastRightPercent<-50)
+  // {
+  //   percentage=lastRightPercent-50;
+  // }
 
-  // if(percentage >= 0){
-  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  // }else{
-  //   percentage = -percentage;
-  //   percentage = 1.2*pow(1.043, percentage) + 0.2*percentage - 1.2;
-  //   percentage = -percentage;
-  // }
+
   RightPercent=percentage;
-  // if (LeftPercent>=70&&RightPercent>=70)
-  // {
-  //   percentage=70;
-  // }
-  // if (percentage<-4&&rightDrive.velocity(pct)>0&&leftDrive.velocity(pct)>0&&fabs(LeftPercent-RightPercent)<5)
-  // {
-  //   percentage=lastRightPercent-0.8;
-  // }
-  if (percentage>maxSpeed)
-  {
-    percentage=maxSpeed;
-  }
   rightDrive.spin (type, percentage, vex::velocityUnits::pct);
   lastRightPercent=percentage;
 }
@@ -520,16 +562,10 @@ void rightExpo (vex::directionType type, double percentage, double maxSpeed){
 bool CataOn = false;
 bool CataToggle =false;
 bool reload = true;
-// bool intakeOn = false;
-// bool intakeToggle = false;
-// bool reverseOn = false;
-// bool reverseToggle = false;
 bool elevationUpOn = false;
 bool elevationUpToggle = false;
 bool elevationOn = false;
 bool elevationToggle = false;
-// bool angleOn = false;
-// bool angleToggle = true;
 double loadAngle = 250;
 bool wingsOn = false;
 bool wingsToggle = false;
@@ -537,59 +573,24 @@ bool blooperOn = false;
 bool blooperToggle = false;
 double maxSpeed = 127;
 bool lifterOn = false;
-bool lifterToggle = true;
+bool lifterToggle = false;
 bool sensorFireOn = false;
 bool sensorFireToggle = false;
 bool fullSpeedOn = false;
 bool fullSpeedToggle = false;
+
 void usercontrol(void) {
   intakeLifter.set(true);
   enableDrivePID=false;
   autonCata=false;
-  Controller.Screen.setCursor(0,0);
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);
-    // leftDrive.spin(vex::directionType::fwd, driveSpeed*(Controller.Axis3.value() + turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    // rightDrive.spin(vex::directionType::fwd,  driveSpeed*(Controller.Axis3.value() - turnSpeed*(Controller.Axis1.value())), vex::velocityUnits::pct);
-    rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
-    leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
-
-    // if (Controller.ButtonL1.pressing())
-    // {
-    //   if (!intakeOn)
-    //   {
-    //     intakeToggle = !intakeToggle;
-    //     intakeOn=true;
-    //   }
-    // }
-    // else
-    // {
-    //   intakeOn=false;
-    // }
-    // if (Controller.ButtonL2.pressing())
-    // {
-    //   if (!reverseOn)
-    //   {
-    //     reverseToggle = !reverseToggle;
-    //     reverseOn=true;
-    //   }
-    // }
-    // else
-    // {
-    //   reverseOn=false;
-    // }
-    // if (intakeToggle && reverseToggle)
-    // {
-    //   intake.spin(fwd, 600, rpm);
-    // }
-    // else if (intakeToggle)
-    // {
-    //   intake.spin(reverse, 600, rpm);
-    // }
-    // else {
-    //   intake.stop();
-    // }
+    // rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
+    // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
+    // rightExpo(forward, (Controller.Axis2.value()));
+    // leftExpo(forward, (Controller.Axis3.value()));
+    curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
       intake.spin(fwd, 600, rpm);
@@ -653,10 +654,10 @@ void usercontrol(void) {
     }
     if (lifterToggle)
     {
-      intakeLifter.set(true);
+      blockerLifter.set(true);
     }
     else {
-      intakeLifter.set(false);
+      blockerLifter.set(false);
     }
 
     if (Controller.ButtonX.pressing())
@@ -695,6 +696,7 @@ void usercontrol(void) {
     if (elevationToggle)
     {
       elevationLifter.set(false);
+      elevationUpToggle=false;
       elevation.set(true);
     }
     else
@@ -702,76 +704,20 @@ void usercontrol(void) {
       elevation.set(false);
     }
 
-    if (Controller.ButtonA.pressing())
-    {
-      if (!sensorFireOn)
-      {
-        sensorFireToggle=!sensorFireToggle;
-        sensorFireOn=true;
-      }
-    }
-    else {
-      sensorFireOn=false;
-    }
-
-    if (Controller.ButtonY.pressing())
-    {
-      if (!fullSpeedOn)
-      {
-        fullSpeedToggle=!fullSpeedToggle;
-        fullSpeedOn=true;
-      }
-    }
-    else {
-      fullSpeedOn=false;
-    }
-
-    if(fullSpeedToggle || sensorFireToggle)
-    {
-      intakeLock.set(true);
-    }
-    else {
-      intakeLock.set(false);
-    }
-
-    
-    // if (Controller.ButtonR1.pressing())
-    // {
-    //   if (!angleOn)
-    //   {
-    //     angleOn=true;
-    //     angleToggle=!angleToggle;
-    //   }
-    // }
-    // else {
-    //   angleOn=false;
-    // }
-
     if (Controller.ButtonR1.pressing())
     {
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    if (Controller.ButtonR2.pressing() || (sensorFireToggle&&distSensor.objectDistance(mm)<130))
+    if (Controller.ButtonR2.pressing())
     {
       reload=false;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
-      // angleToggle=true;
     }
-    if (reload && cataSense.angle(deg)>270 && !fullSpeedToggle)
-    {
-       catapult.spin(reverse, 20, vex::velocityUnits::pct);
-    }
-    //printf("%f\n", cataSense.angle());
-    if (reload && cataSense.angle(deg)>272)//93
+    if (reload && cataSense.angle(deg)>265)//93
     {
       catapult.stop(hold);
     }
-    // if (reload && cataSense.angle(deg)>290&&!angleToggle)//93
-    // {
-    //   catapult.stop(hold);
-    // }
-    // else if (!reload && cataSense.angle(deg)<232)
     else if (!reload && cataSense.angle(deg)<242)
     {
       catapult.stop(coast);
@@ -779,8 +725,6 @@ void usercontrol(void) {
       reload=true;
       catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
-    Controller.Screen.clearLine();
-    Controller.Screen.print("F: %d S: %d", fullSpeedToggle, sensorFireToggle);
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }

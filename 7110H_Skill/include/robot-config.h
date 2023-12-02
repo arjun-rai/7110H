@@ -23,7 +23,7 @@ extern digital_out elevationLifter;
 //extern digital_out auton_grabber;
 extern rotation cataSense;
 extern distance distSensor;
-extern digital_out intakeLock;
+extern digital_out blockerLifter;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

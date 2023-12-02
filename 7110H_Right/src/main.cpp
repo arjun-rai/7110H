@@ -439,7 +439,7 @@ int loadCata()
 void autonomous(void) {
   autonCata = false;
 
-  // intakeLifter.set(true);
+  intakeLifter.set(true);
   blooper.set(true);
   elevationLifter.set(true);
   wait(300, msec);
@@ -529,15 +529,6 @@ void updateAccum(){
   else{
     negInertiaAccum=0;
   }
-  // if (fastStopAccum>1){
-  //   fastStopAccum-=1;
-  // }
-  // else if (fastStopAccum<-1) {
-  //   fastStopAccum+=1;
-  // }
-  // else{
-  //   fastStopAccum=0;
-  // }
 }
 
 double prevTurn = 0.0;
@@ -671,7 +662,7 @@ bool fullSpeedOn = false;
 bool fullSpeedToggle = false;
 
 void usercontrol(void) {
-  // intakeLifter.set(false);
+  intakeLifter.set(true);
   enableDrivePID=false;
   autonCata=false;
   // User control code here, inside the loop
