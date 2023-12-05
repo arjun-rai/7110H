@@ -1,2 +1,3 @@
-# 7110A
-Team Repository for 7110A for Vex Spin Up Season 2022-2023
+# 7110H
+Current Team Repository for 71110H for Vex Over Under Season 2023-2024
+Former Team Repository for 7110A for Vex Spin Up Season 2022-2023
