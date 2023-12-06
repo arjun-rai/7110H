@@ -504,9 +504,11 @@ void autonomous(void) {
   wait(1200, msec);
   leftDrive.stop();
   rightDrive.stop();
+  intake.spin(reverse, 600, rpm);
   PIDMove(-800);
   PIDTurn(360);
-  PIDMove(2100);
+  leftDrive.spinFor(fwd, 3000, degrees, 127, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 3000, degrees, 127, vex::velocityUnits::pct, false);
   // PIDTurn(355);
 }
 

@@ -417,28 +417,44 @@ void autonomous(void) {
   // PIDMove(3000);
   // wait(1000, msec);
   // printf("%d\n", averagePosition);
-  elevationLifter.set(true);
-  // wings.set(true);
-  // wait(500, msec);
-  // wings.set(false);
+  PIDMove(700);
   blooper.set(true);
-  PIDTurn(-110);
-  // PIDMove(750);
-  // blooper.set(false);
-  // PIDTurn(-60);
-  // PIDMove(1500);
-  // intake.spin(fwd, 600, rpm);
-  // PIDMove(400);
-  // PIDMove(-1500);
-  // PIDTurn(67);
-  // PIDMove(1650);
-  PIDTurn(95);
+  PIDMove(-900);
   blooper.set(false);
-  driveBrake(coast);
-  intake.spin(fwd, 600, rpm);
-  leftDrive.spinFor(fwd, 2500, degrees, 70, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 2500, degrees, 70, vex::velocityUnits::pct);
-  intakeLifter.set(true);
+  PIDTurn(-180);
+  PIDMove(-1400);
+  PIDTurn(-135);
+  PIDMove(-800);
+  PIDMove(500);
+  PIDTurn(0);
+  PIDMove(-2400);
+  PIDTurn(-45);
+  PIDMove(-1700);
+  blockerLifter.set(true);
+
+
+  // elevationLifter.set(true);
+  // // wings.set(true);
+  // // wait(500, msec);
+  // // wings.set(false);
+  // blooper.set(true);
+  // PIDTurn(-110);
+  // // PIDMove(750);
+  // // blooper.set(false);
+  // // PIDTurn(-60);
+  // // PIDMove(1500);
+  // // intake.spin(fwd, 600, rpm);
+  // // PIDMove(400);
+  // // PIDMove(-1500);
+  // // PIDTurn(67);
+  // // PIDMove(1650);
+  // PIDTurn(95);
+  // blooper.set(false);
+  // driveBrake(coast);
+  // intake.spin(fwd, 600, rpm);
+  // leftDrive.spinFor(fwd, 2500, degrees, 70, vex::velocityUnits::pct, false);
+  // rightDrive.spinFor(fwd, 2500, degrees, 70, vex::velocityUnits::pct);
+  // intakeLifter.set(true);
 }
 
 

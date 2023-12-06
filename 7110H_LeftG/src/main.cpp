@@ -414,16 +414,22 @@ int loadCata()
 
 void autonomous(void) {
   autonCata = false;
-  
-  PIDMove(2950);
-  PIDTurn(-70);
-  // PIDMove(900);
-  leftDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  intakeLifter.set(true);
+  leftDrive.spinFor(fwd, 3200, degrees, 100, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 3200, degrees, 100, vex::velocityUnits::pct);
+  PIDTurn(92);
   wings.set(true);
-  wait(1000, msec);
-  leftDrive.spinFor(reverse, 1000, degrees, 5, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(reverse, 1000, degrees, 5, vex::velocityUnits::pct);
+  leftDrive.spinFor(fwd, 1500, degrees, 127, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(fwd, 1500, degrees, 127, vex::velocityUnits::pct, false);
+  // PIDMove(2950);
+  // PIDTurn(-70);
+  // PIDMove(900);
+  // leftDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  // rightDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
+  // wings.set(true);
+  // wait(1000, msec);
+  // leftDrive.spinFor(reverse, 1000, degrees, 5, vex::velocityUnits::pct, false);
+  // rightDrive.spinFor(reverse, 1000, degrees, 5, vex::velocityUnits::pct);
   
 }
 
