@@ -769,7 +769,22 @@ bool fullSpeedToggle = false;
 
 void usercontrol(void) {
   intakeLifter.set(true);
+  PIDMove(-1000);
+  PIDTurn(-45);
+  leftDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct, false);
+  rightDrive.spinFor(reverse, 1200, degrees, 127, vex::velocityUnits::pct);
+  PIDMove(850);
+  PIDTurn(-118);
+  wings.set(true);
+  // intakeLock.set(true);
+  timeLimit = 0.6;
+  // PIDMove(150);
+  catapult.spin(reverse, 127, vex::velocityUnits::pct);
+  wait(35, sec);
+  catapult.stop();
+
   enableDrivePID=false;
+  // intakeLock.set(false);
   autonCata=false;
   // User control code here, inside the loop
   while (1) {
