@@ -73,11 +73,9 @@ void pre_auton(void) {
   Inertial.resetRotation();
   Inertial.setHeading(0, degrees);
   
-  cataSense.resetPosition();
   // leftEncoder.resetRotation();
   // rightEncoder.resetRotation();
   driveBrake(coast);
-  catapult.setBrake(hold);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -398,118 +396,11 @@ void PIDMove(double move)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
-// bool load = true;
-// bool fire = false;
-bool load = true;
-bool fire = true;
-bool autonCata=true;
-int loadCata()
-{
-  while (autonCata)
-  {
-    if (load)
-    {
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
-    }
-    if (cataSense.angle(deg)>225&&load)
-    {
-      catapult.spin(reverse, 10, vex::velocityUnits::pct);
-    }
-    if (cataSense.angle(deg)>257&&load)
-    {
-      catapult.stop(hold);
-      load=!load;
-    }
-    if (cataSense.angle(deg)<185&&fire)
-    {
-      catapult.stop(coast);
-      fire=!fire;
-      load=true;
-    }
-    if (fire)
-    {
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
-    }
-    vex::task::sleep(20);
-  }
-  return 0;
-}
+
 
 
 void autonomous(void) {
-  autonCata = false;
-
-  intakeLifter.set(true);
-  blooper.set(true);
-  elevationLifter.set(true);
-  wait(300, msec);
-  // catapult.spinFor(reverse, .72, rev, 100, vex::velocityUnits::pct, true);
-  PIDMove(-650);
-  blooper.set(false);
-  wait(200, msec);
-  PIDMove(-320);
-  // PIDTurn(-210);
-  timeLimit=0.6;
-  leftStop=false;
-  pivot=true;
-  PIDTurn(-30);
-  leftStop=false;
-  pivot=false;
-  timeLimit=3.5;
-  leftDrive.spinFor(reverse, 1500, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(reverse, 1500, degrees, 100, vex::velocityUnits::pct, false);
-  wait(1000, msec);
-  leftDrive.stop();
-  rightDrive.stop();
-  // PIDMove(1300);
-  // PIDTurn(0);
-  // PIDMove(1200);
-  // PIDTurn(45);
-  // intake.spin(reverse, 600, rpm);
-  // PIDMove(2600);
-  // PIDMove(-1800);
-  // intake.stop();
-  // timeLimit=1;
-  // PIDTurn(135);
-  // timeLimit=3;
-  // PIDMove(2900);
-  // PIDTurn(225);
-  // intake.spin(fwd, 600, rpm);
-  // wait(250, msec);
-  // PIDMove(-400);
-  // PIDTurn(390);
-  // intake.spin(reverse, 600, rpm);
-  // PIDMove(1400);
-  // PIDMove(-1400);
-  // PIDTurn(225);
-  // leftDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
-  // rightDrive.spinFor(fwd, 1000, degrees, 100, vex::velocityUnits::pct, false);
-  // wait(1000, msec);
-  // leftDrive.stop();
-  // rightDrive.stop();
-
-  PIDMove(600);
-  PIDTurn(65);
-
-  // intake.spin(fwd, 600, rpm);
-  intake.spin(reverse, 600, rpm);
-  PIDMove(3600);
-  PIDTurn(205);
-  intake.stop();
-  PIDMove(1500);
-
-  intake.spin(fwd, 600, rpm);
-  leftDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 900, degrees, 100, vex::velocityUnits::pct, false);
-  wait(1200, msec);
-  leftDrive.stop();
-  rightDrive.stop();
-  intake.spin(reverse, 600, rpm);
-  PIDMove(-800);
-  PIDTurn(360);
-  leftDrive.spinFor(fwd, 3000, degrees, 127, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 3000, degrees, 127, vex::velocityUnits::pct, false);
-  // PIDTurn(355);
+  
 }
 
 double kTurn = 0.65;
@@ -643,30 +534,14 @@ void rightExpo (vex::directionType type, double percentage){
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-bool CataOn = false;
-bool CataToggle =false;
-bool reload = true;
-bool elevationUpOn = false;
-bool elevationUpToggle = false;
-bool elevationOn = false;
-bool elevationToggle = false;
-double loadAngle = 250;
 bool wingsOn = false;
 bool wingsToggle = false;
 bool blooperOn = false;
 bool blooperToggle = false;
 double maxSpeed = 127;
-bool lifterOn = false;
-bool lifterToggle = false;
-bool sensorFireOn = false;
-bool sensorFireToggle = false;
-bool fullSpeedOn = false;
-bool fullSpeedToggle = false;
 
 void usercontrol(void) {
-  intakeLifter.set(true);
   enableDrivePID=false;
-  autonCata=false;
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);
@@ -677,14 +552,17 @@ void usercontrol(void) {
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
-      intake.spin(fwd, 600, rpm);
+      motor1.spin(fwd, 100, rpm);
+      motor2.spin(fwd, 100, rpm);
     }
     else if (Controller.ButtonL2.pressing())
     {
-      intake.spin(reverse, 600, rpm);
+      motor1.spin(reverse, 100, rpm);
+      motor2.spin(reverse, 100, rpm);
     }
     else {
-      intake.stop();
+      motor1.stop();
+      motor2.stop();
     }
 
     if (Controller.ButtonL1.pressing()&&Controller.ButtonL2.pressing())
@@ -704,110 +582,6 @@ void usercontrol(void) {
     }
     else {
       wings.set(false);
-    }
-
-    if (Controller.ButtonUp.pressing())
-    {
-      if (!blooperOn)
-      {
-        blooperToggle=!blooperToggle;
-        blooperOn=true;
-      }
-    }
-    else {
-      blooperOn=false;
-    }
-    if (blooperToggle)
-    {
-      blooper.set(true);
-    }
-    else {
-      blooper.set(false);
-    }
-
-    if (Controller.ButtonDown.pressing())
-    {
-      if (!lifterOn)
-      {
-        lifterToggle=!lifterToggle;
-        lifterOn=true;
-      }
-    }
-    else {
-      lifterOn=false;
-    }
-    if (lifterToggle)
-    {
-      blockerLifter.set(true);
-    }
-    else {
-      blockerLifter.set(false);
-    }
-
-    if (Controller.ButtonX.pressing())
-    {
-      if (!elevationUpOn)
-      {
-        elevationUpToggle = !elevationUpToggle;
-        elevationUpOn=true;
-      }
-    }
-    else
-    {
-      elevationUpOn=false;
-    }
-    if (elevationUpToggle)
-    {
-      elevationLifter.set(true);
-    }
-    else
-    {
-      elevationLifter.set(false);
-    }
-
-    if (Controller.ButtonB.pressing())
-    {
-      if (!elevationOn)
-      {
-        elevationToggle = !elevationToggle;
-        elevationOn=true;
-      }
-    }
-    else
-    {
-      elevationOn=false;
-    }
-    if (elevationToggle)
-    {
-      elevationLifter.set(false);
-      elevationUpToggle=false;
-      elevation.set(true);
-    }
-    else
-    {
-      elevation.set(false);
-    }
-
-    if (Controller.ButtonR1.pressing())
-    {
-      reload=true;
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
-    }
-    if (Controller.ButtonR2.pressing())
-    {
-      reload=false;
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
-    }
-    if (reload && cataSense.angle(deg)>265)//93
-    {
-      catapult.stop(hold);
-    }
-    else if (!reload && cataSense.angle(deg)<242)
-    {
-      catapult.stop(coast);
-
-      reload=true;
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
     }
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
