@@ -19,6 +19,8 @@ extern motor motor2;
 extern digital_out wingsBackLeft;
 extern digital_out wingsBackRight;
 extern digital_out pto;
+extern rotation parallelEncoder;
+extern rotation perpendicularEncoder;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

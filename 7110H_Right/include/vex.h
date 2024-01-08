@@ -8,6 +8,7 @@
 /*----------------------------------------------------------------------------*/
 //
 
+
 #include<vector>
 #include <math.h>
 #include <stdio.h>
@@ -19,7 +20,9 @@
 #include "v5.h"
 #include "v5_vcs.h"
 #include "robot-config.h"
-#include "auton-selector.h"
+// #include "pure-pursuit.h"
+// #include "drive-controller.h"
+// #include "pid.h"
 template <typename T>
 std::string to_string(T value)
 {
