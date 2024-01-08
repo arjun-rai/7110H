@@ -14,11 +14,11 @@ extern inertial Inertial;
 extern motor_group leftDrive;
 extern motor_group rightDrive;
 extern motor motor1;
-// extern digital_out blockerLifter;
 extern digital_out wings;
 extern motor motor2;
-// extern digital_out blooper;
-//extern digital_out auton_grabber;
+extern digital_out wingsBackLeft;
+extern digital_out wingsBackRight;
+extern digital_out pto;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

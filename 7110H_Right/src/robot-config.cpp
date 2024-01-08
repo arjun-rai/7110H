@@ -20,14 +20,10 @@ motor motor2 = motor(PORT16, ratio36_1, false);
 inertial Inertial = inertial(PORT20);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
-// digital_out blockerLifter = digital_out(Brain.ThreeWirePort.E);
-digital_out wings = digital_out(Brain.ThreeWirePort.C);
-// digital_out blooper = digital_out(Brain.ThreeWirePort.A);
-// digital_out elevation = digital_out(Brain.ThreeWirePort.B);
-// digital_out elevationLifter = digital_out(Brain.ThreeWirePort.D);
-// distance distSensor = distance(PORT6);
-// digital_out intakeLifter = digital_out(Brain.ThreeWirePort.G);
-// digital_out auton_grabber = digital_out(Brain.ThreeWirePort.F);
+digital_out wings = digital_out(Brain.ThreeWirePort.A);
+digital_out wingsBackLeft = digital_out(Brain.ThreeWirePort.D);
+digital_out wingsBackRight = digital_out(Brain.ThreeWirePort.C);
+digital_out pto = digital_out(Brain.ThreeWirePort.B);
 
 
 

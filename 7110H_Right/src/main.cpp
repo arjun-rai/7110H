@@ -539,6 +539,10 @@ bool wingsToggle = false;
 bool blooperOn = false;
 bool blooperToggle = false;
 double maxSpeed = 127;
+bool ptoOn = false;
+bool ptoToggle = false;
+bool backWingsOn = false;
+bool backWingsToggle = false;
 
 void usercontrol(void) {
   enableDrivePID=false;
@@ -582,6 +586,47 @@ void usercontrol(void) {
     }
     else {
       wings.set(false);
+    }
+
+    if (Controller.ButtonR1.pressing())
+    {
+      if (!ptoOn)
+      {
+        ptoToggle=!ptoToggle;
+        ptoOn=true;
+      }
+    }
+    else {
+      ptoOn=false;
+    }
+    if (ptoToggle)
+    {
+      pto.set(true);
+    }
+    else {
+      pto.set(false);
+    }
+
+
+     if (Controller.ButtonR2.pressing())
+    {
+      if (!backWingsOn)
+      {
+        backWingsToggle=!backWingsToggle;
+        backWingsOn=true;
+      }
+    }
+    else {
+      backWingsOn=false;
+    }
+    if (backWingsToggle)
+    {
+      wingsBackRight.set(true);
+      wingsBackLeft.set(true);
+    }
+    else {
+      wingsBackRight.set(false);
+      wingsBackLeft.set(false);
     }
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
