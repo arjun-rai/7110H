@@ -103,8 +103,8 @@ void usercontrol(void) {
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
-      motor1.spin(fwd, 100, rpm);
-      motor2.spin(fwd, 100, rpm);
+      motor1.spin(fwd, 40, rpm);
+      motor2.spin(fwd, 40, rpm);
     }
     else if (Controller.ButtonL2.pressing())
     {
@@ -149,9 +149,13 @@ void usercontrol(void) {
     if (ptoToggle)
     {
       pto.set(true);
+      motor1.setBrake(hold);
+      motor2.setBrake(hold);
     }
     else {
       pto.set(false);
+      motor1.setBrake(coast);
+      motor2.setBrake(coast);
     }
 
 
