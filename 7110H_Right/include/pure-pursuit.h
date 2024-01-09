@@ -39,6 +39,7 @@ double curvature(std::vector<pathPoint> path, double pos[], double lookahead[], 
 void turn(double curv, double vel, double width, double ret[]);
 double constrain(double input, double lastInput, double min, double max);
 bool pathing(std::vector<pathPoint> path, bool backwards, bool stop=true);
+void getCurrLoc();
 
 #endif
 

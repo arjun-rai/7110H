@@ -18,9 +18,7 @@ void driveBrake(vex::brakeType b)
   MiddleRight.setBrake(b);
 }
 int autonNum =-1;
-std::vector<std::vector<pathPoint>> pathMain = {
-  {point(0, 0), point(0,15)}
-  };
+
 std::vector<double> finSpeed = {0
   };
 void pre_auton(void) {
@@ -34,11 +32,7 @@ void pre_auton(void) {
     speed_func(pathMain[i], finSpeed[i]);
   }
 
-  // for (int i=0;i<pathMain[0].size(); i++)
-  // {
-  //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
-  //   wait(20, msec);
-  // }
+ 
   
 
   //shows button, allows user to select button and then stops once submit is pressed
@@ -75,7 +69,21 @@ void pre_auton(void) {
 
 
 void autonomous(void) {
-  
+  //  for (int i=0;i<pathMain[0].size(); i++)
+  // {
+  //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
+  //   wait(20, msec);
+  // }
+  // for (int i=0;i<pathMain[0].size(); i++)
+  // {
+  //   printf("%f\n", pathMain[0][i].finVel);
+  //   wait(20, msec);
+  // }
+  pathing(pathMain[0], false, true);
+  // while (true)
+  // {
+  //   getCurrLoc();
+  // }
 }
 
 

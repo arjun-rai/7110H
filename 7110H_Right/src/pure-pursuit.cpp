@@ -262,8 +262,8 @@ double curvature(std::vector<pathPoint> path, double pos[], double lookahead[], 
 
 void turn(double curv, double vel, double width, double ret[])
 {
-  ret[0] = vel*(2+curv*width)/2.0;
-  ret[1] = vel*(2-curv*width)/2.0;
+  ret[0] = vel*(2-curv*width)/2.0;
+  ret[1] = vel*(2+curv*width)/2.0;
 }
 
 //used for rate limiting
@@ -287,7 +287,7 @@ double constrain(double input, double lastInput, double min, double max)
 
 
 
-double pos[] = {0,0};
+double pos[] = {45,-66};
 double lastLeft = 0;
 double lastRight =0;
 double last_orientation_rad = 0;
@@ -318,8 +318,8 @@ void getCurrLoc()
     local_Y=parallelEncoder_delta;
   }
   else{
-    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+2.5);
-    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)+0.75);
+    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+5.5);
+    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-0.5);
   }
 
   double local_polar_angle;
@@ -348,11 +348,12 @@ void getCurrLoc()
   last_orientation_rad=orientation_rad;
   last_parallelEncoder=parallelEncoder_angle;
   last_perpendicularEncoder=perpendicularEncoder_angle;
+  printf("%f\t%f\n", pos[0], pos[1]);
 }
 
 
 
-double track_width = 11;
+double track_width = 12;
 //double dt = 0.005;
 double maxVelChange=6; //3
 bool pathing(std::vector<pathPoint> path, bool backwards, bool stop)
@@ -382,13 +383,13 @@ bool pathing(std::vector<pathPoint> path, bool backwards, bool stop)
     {
       // printf("%f\t%f\n", wheels[0], wheels[1]);
       //printf("%f\t%f\n", pos[0], pos[1]);
-      rightDrive.spin(fwd, (-wheels[0]*3*60)/(2.75*M_PI*4), vex::velocityUnits::rpm);
-      leftDrive.spin(fwd, (-wheels[1]*3*60)/(2.75*M_PI*4), vex::velocityUnits::rpm);
+      rightDrive.spin(fwd, (-wheels[0]*4*60)/(2.75*M_PI*3), vex::velocityUnits::rpm);
+      leftDrive.spin(fwd, (-wheels[1]*4*60)/(2.75*M_PI*3), vex::velocityUnits::rpm);
     }
     else
     {
-      rightDrive.spin(fwd, (wheels[0]*3*60)/(2.75*M_PI*4), vex::velocityUnits::rpm);
-      leftDrive.spin(fwd, (wheels[1]*3*60)/(2.75*M_PI*4), vex::velocityUnits::rpm);
+      rightDrive.spin(fwd, (wheels[0]*4*60)/(2.75*M_PI*3), vex::velocityUnits::rpm);
+      leftDrive.spin(fwd, (wheels[1]*4*60)/(2.75*M_PI*3), vex::velocityUnits::rpm);
     }
     //double avg = (rightDrive.velocity(vex::velocityUnits::rpm)+leftDrive.velocity(vex::velocityUnits::rpm))/2.0;
     //printf("%d\t%f\n", close, vel);
