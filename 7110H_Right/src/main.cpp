@@ -2,8 +2,10 @@
 #include "drive-controller.h"
 #include "pure-pursuit.h"
 #include "pid.h"
+#include "paths.h"
 using namespace vex;
 competition Competition;
+extern std::vector<std::vector<pathPoint>> pathMain;
 
 //Button Class for auton selector buttons, with hex codes for color
 

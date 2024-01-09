@@ -1,26 +1,33 @@
 #include "vex.h"
 #include "paths.h"
 #include "pure-pursuit.h"
-std::vector<pathPoint> convert_to_path(std::string str)
+std::vector<std::vector<pathPoint>> convert_to_path(std::string str)
 {
-    std::vector<double> vect;
-    std::stringstream ss(str);
+    std::istringstream stream(str);
+    std::string line;
+    std::vector<std::vector<pathPoint> > paths;
 
-    for (int i; ss >> i;) {
-        vect.push_back(i);    
-        if (ss.peek() == ',')
-            ss.ignore();
+    while (std::getline(stream, line)) {
+        if (line.find("#PATH-POINTS-START Path") != std::string::npos) {
+            // Start a new path for each "#PATH-POINTS-START Path"
+            paths.push_back(std::vector<pathPoint>());
+            continue;
+        }
+
+        std::istringstream lineStream(line);
+        std::string token;
+
+        // Skip the first two values and only consider the first two for x, y
+        std::getline(lineStream, token, ','); // x
+        double x = atof(token.c_str());
+
+        std::getline(lineStream, token, ','); // y
+        double y = atof(token.c_str());
+
+        paths.back().push_back(point(x,y));
     }
-    std::vector<pathPoint> path;
-    for (int i =0;i<vect.size();i+=3)
-    {
-      pathPoint temp = point(vect[i], vect[i+1]);
-      path.push_back(temp);
-    }
-    return path;
+    return paths;
 }
-std::vector<std::vector<pathPoint>> pathMain = {
-  {
-    convert_to_path(std::string "")
-  }
-};
+const char * test = R"()";
+std::vector<std::vector<pathPoint>> pathMain = convert_to_path(test);
+
