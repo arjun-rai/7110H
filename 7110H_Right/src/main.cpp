@@ -32,6 +32,7 @@ void pre_auton(void) {
     // pathMain[i] = inject(pathMain[i]);
     // pathMain[i] = smooth(pathMain[i]);
     curv_func(pathMain[i]);
+    // std::cout << pathMain[i][0].x;
     speed_func(pathMain[i], startSpeed[i], finSpeed[i]);
   }
 
@@ -114,8 +115,8 @@ void usercontrol(void) {
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
-      motor1.spin(fwd, 40, rpm);
-      motor2.spin(fwd, 40, rpm);
+      motor1.spin(fwd, 57, rpm);
+      motor2.spin(fwd, 57, rpm);
     }
     else if (Controller.ButtonL2.pressing())
     {
