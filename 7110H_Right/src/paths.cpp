@@ -28,6 +28,9 @@ std::vector<std::vector<pathPoint>> convert_to_path(std::string str)
     }
     return paths;
 }
-const char * test = R"()";
-std::vector<std::vector<pathPoint>> pathMain = convert_to_path(test);
+const char * path_str = R"()";
+std::vector<std::vector<pathPoint>> pathMain = convert_to_path(path_str);
+std::vector<double> finSpeed = {0};
+std::vector<double> startSpeed = {0};
+//
 

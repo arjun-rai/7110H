@@ -6,6 +6,8 @@
 using namespace vex;
 competition Competition;
 extern std::vector<std::vector<pathPoint>> pathMain;
+extern std::vector<double> finSpeed;
+extern std::vector<double> startSpeed;
 
 //Button Class for auton selector buttons, with hex codes for color
 
@@ -21,17 +23,16 @@ void driveBrake(vex::brakeType b)
 }
 int autonNum =-1;
 
-std::vector<double> finSpeed = {0
-  };
+
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   for (int i =0;i<pathMain.size(); i++)
   {
-    pathMain[i] = inject(pathMain[i]);
-    pathMain[i] = smooth(pathMain[i]);
+    // pathMain[i] = inject(pathMain[i]);
+    // pathMain[i] = smooth(pathMain[i]);
     curv_func(pathMain[i]);
-    speed_func(pathMain[i], finSpeed[i]);
+    speed_func(pathMain[i], startSpeed[i], finSpeed[i]);
   }
 
  

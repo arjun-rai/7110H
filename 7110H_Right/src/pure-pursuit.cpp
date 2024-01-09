@@ -137,9 +137,10 @@ void curv_func(std::vector<pathPoint>& p)
 double max_vel = (600*3*2.75*M_PI)/(4*60); //rpm to in/s
 double turning_const = 1; //changes how fast it goes around turns
 double max_accel = 200; //in/s^3  used to be 6 150
-double starting_vel = (350*4*3.25*M_PI)/(5*60); //rpm to in/s 300
-void speed_func(std::vector<pathPoint>& p, double finSpeed)
+// double starting_vel = (350*4*3.25*M_PI)/(5*60); //rpm to in/s 300
+void speed_func(std::vector<pathPoint>& p, double starting_rpm, double finSpeed)
 {
+  double starting_vel = (starting_rpm*3*2.75*M_PI)/(4*60);
   for (int i =0;i<p.size(); i++)
   {
     p[i].vel = fmin(max_vel, turning_const/p[i].curve);

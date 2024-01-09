@@ -31,7 +31,7 @@ std::vector<pathPoint> inject(std::vector<pathPoint> p);
 std::vector<pathPoint> smooth(std::vector<pathPoint> p);
 double area_of_triangle(pathPoint a, pathPoint b, pathPoint c);
 void curv_func(std::vector<pathPoint>& p);
-void speed_func(std::vector<pathPoint>& p, double finSpeed);
+void speed_func(std::vector<pathPoint>& p, double starting_rpm, double finSpeed);
 int closest(double pos[], std::vector<pathPoint> p);
 void lookahead(double pos[], std::vector<pathPoint> path, double ret[]);
 double sign(double x);
