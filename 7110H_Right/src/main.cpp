@@ -49,7 +49,7 @@ void pre_auton(void) {
   }
   
   Inertial.resetRotation();
-  Inertial.setHeading(0, degrees);
+  Inertial.setRotation(-90, degrees);
   
   parallelEncoder.resetPosition();
   perpendicularEncoder.resetPosition();
@@ -84,8 +84,9 @@ void autonomous(void) {
   //   wait(20, msec);
   // }
   // std::cout << pathMain[0].size();
-    pathing(pathMain[0], true, true);
-  // pathing(pathMain[1], false, true);
+  pathing(pathMain[0], true, false);
+  wingsBackLeft.set(true);
+  pathing(pathMain[1], true, true);
   // while (true)
   // {
   //   getCurrLoc();

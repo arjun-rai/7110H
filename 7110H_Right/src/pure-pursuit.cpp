@@ -189,7 +189,7 @@ int closest(double pos[], std::vector<pathPoint> p)
   return minDist[0];
 }
 
-double l = 17*2.54; //22
+double l = 13*2.54; //17
 //double angle = 0; //radians
 int t_i=0;
 void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
@@ -288,7 +288,7 @@ double constrain(double input, double lastInput, double min, double max)
 
 
 
-double pos[] = {1.5,-150};
+double pos[] = {0,-150};
 double lastLeft = 0;
 double lastRight =0;
 double last_orientation_rad = 0;
@@ -396,7 +396,7 @@ bool pathing(std::vector<pathPoint> path, bool backwards, bool stop)
       leftDrive.spin(fwd, (wheels[1]*4*60)/(2.75*M_PI*3*2.54), vex::velocityUnits::rpm);
       
     }
-    printf("%f\t%f\n", pos[0], pos[1]);
+    // printf("%f\t%f\n", pos[0], pos[1]);
     //double avg = (rightDrive.velocity(vex::velocityUnits::rpm)+leftDrive.velocity(vex::velocityUnits::rpm))/2.0;
     // printf("%d\t%f\n", close, vel);
     //printf("%f\n", look[2]);
