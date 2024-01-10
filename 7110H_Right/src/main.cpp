@@ -83,7 +83,9 @@ void autonomous(void) {
   //   printf("%f\n", pathMain[0][i].finVel);
   //   wait(20, msec);
   // }
-  pathing(pathMain[0], false, true);
+  // std::cout << pathMain[0].size();
+  pathing(pathMain[0], false, false);
+  pathing(pathMain[1], false, true);
   // while (true)
   // {
   //   getCurrLoc();
