@@ -189,7 +189,7 @@ int closest(double pos[], std::vector<pathPoint> p)
   return minDist[0];
 }
 
-double l = 13*2.54; //17
+double l = 18*2.54; //17
 //double angle = 0; //radians
 int t_i=0;
 void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
@@ -288,7 +288,7 @@ double constrain(double input, double lastInput, double min, double max)
 
 
 
-double pos[] = {0,-150};
+double pos[] = {27,-150};
 double lastLeft = 0;
 double lastRight =0;
 double last_orientation_rad = 0;
@@ -349,12 +349,12 @@ void getCurrLoc()
   last_orientation_rad=orientation_rad;
   last_parallelEncoder=parallelEncoder_angle;
   last_perpendicularEncoder=perpendicularEncoder_angle;
-  // printf("%f\t%f\n", pos[0], pos[1]);
+  //printf("%f\t%f\n", pos[0], pos[1]);
 }
 
 
 
-double track_width = 12*2.54;
+double track_width = 16*2.54;
 //double dt = 0.005;
 double maxVelChange=1000; //3
 bool pathing(std::vector<pathPoint> path, bool backwards, bool stop)
@@ -362,7 +362,7 @@ bool pathing(std::vector<pathPoint> path, bool backwards, bool stop)
   double lastVel = 0;
   while (closest(pos, path)!=path.size()-1)
   {
-    getCurrLoc();
+    // getCurrLoc();
     double look[] = {};
     lookahead(pos, path, look);
     int close = closest(pos, path);

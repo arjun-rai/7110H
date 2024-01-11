@@ -128,6 +128,7 @@ int turnPID(){
     }
     turnPrevError = turnError;
     // printf("%f\n", Inertial.rotation());
+    // getCurrLoc();
     wait(10, msec);
   }
   leftDrive.stop(vex::brakeType::hold);
@@ -182,6 +183,7 @@ int dist(double timeout, brakeType chooseBrakeType)
     movePrevError=moveError;
     lastMovePct=moveVolt;
     timeout_time+=20;
+    // getCurrLoc();
     wait(20, msec);
   }
   leftDrive.stop(chooseBrakeType);

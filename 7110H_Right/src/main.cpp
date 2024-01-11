@@ -31,6 +31,7 @@ void pre_auton(void) {
   {
     // pathMain[i] = inject(pathMain[i]);
     // pathMain[i] = smooth(pathMain[i]);
+    pathMain[i].pop_back();
     curv_func(pathMain[i]);
     // std::cout << pathMain[i][0].x;
     speed_func(pathMain[i], startSpeed[i], finSpeed[i]);
@@ -54,6 +55,7 @@ void pre_auton(void) {
   parallelEncoder.resetPosition();
   perpendicularEncoder.resetPosition();
   driveBrake(coast);
+  printf("yes!\n");
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -70,6 +72,22 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
 
+bool enableOdom=true;
+int odom()
+{
+  while (enableOdom)
+  {
+    getCurrLoc();
+    // Controller.Screen.setCursor(0, 0);
+    // Controller.Screen.clearLine();
+    // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
+    //printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
+    vex::task::sleep(10);
+  }
+  return 1;
+}
+
+
 
 
 void autonomous(void) {
@@ -84,9 +102,25 @@ void autonomous(void) {
   //   wait(20, msec);
   // }
   // std::cout << pathMain[0].size();
+  // motor1.spin(reverse, 100, rpm);
+  // motor2.spin(reverse, 100, rpm);
+  // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
+  vex::task odometry(odom);
   pathing(pathMain[0], true, false);
   wingsBackLeft.set(true);
+  wait(500, msec);
   pathing(pathMain[1], true, true);
+  wingsBackLeft.set(false);
+  PIDMove(12);
+  PIDTurn(-65);
+  PIDMove(48);
+  PIDTurn(-10);
+  pathing(pathMain[2], false, true);
+
+  // pathing(pathMain[2], false, true);
+  // wingsBackLeft.set(false);
+  // wait(5000, msec);
+  // pathing(pathMain[2], true, true);
   // while (true)
   // {
   //   getCurrLoc();
@@ -118,8 +152,14 @@ void usercontrol(void) {
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
+      if (ptoToggle){
+        motor1.spin(fwd, 100, rpm);
+        motor2.spin(fwd, 100, rpm);
+      }
+      else {
       motor1.spin(fwd, 57, rpm);
       motor2.spin(fwd, 57, rpm);
+      }
     }
     else if (Controller.ButtonL2.pressing())
     {
