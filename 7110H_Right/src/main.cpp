@@ -8,7 +8,7 @@ competition Competition;
 extern std::vector<std::vector<pathPoint>> pathMain;
 extern std::vector<double> finSpeed;
 extern std::vector<double> startSpeed;
-
+extern double pos[];
 //Button Class for auton selector buttons, with hex codes for color
 
 //auton buttons with the text, and hex codes for colors
@@ -106,16 +106,45 @@ void autonomous(void) {
   // motor2.spin(reverse, 100, rpm);
   // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
   vex::task odometry(odom);
+  motor1.spin(reverse, 30, rpm);
+  motor2.spin(reverse, 30, rpm);
+  wait(700, msec);
+  PIDMove(6);
+  // wait(500, msec);
   pathing(pathMain[0], true, false);
+  motor1.stop();
+  motor2.stop();
   wingsBackLeft.set(true);
   wait(500, msec);
   pathing(pathMain[1], true, true);
   wingsBackLeft.set(false);
-  PIDMove(12);
-  PIDTurn(-65);
-  PIDMove(48);
+  PIDMove(9);
+ 
+  PIDTurn(20);
+  // motor1.spin(fwd, 100, rpm);
+  // motor2.spin(fwd, 100, rpm);
+  // wings.set(true);
+  PIDMove(23, 0.5);
+  // wings.set(false);
+  PIDMove(-12);
+
+  PIDTurn(-66);
+  motor1.spin(reverse, 50, rpm);
+  motor2.spin(reverse, 50, rpm);
+  PIDMove(49);
   PIDTurn(-10);
-  pathing(pathMain[2], false, true);
+  motor1.stop();
+  motor2.stop();
+  // pathing(pathMain[2], false, false);
+  PIDMove(24);
+  PIDTurn(90);
+   wings.set(true);
+  PIDMove(36, 0.7);
+   wings.set(false);
+  // pathing(pathMain[3], false, true);
+  PIDMove(-14);
+  PIDTurn(-126);
+  PIDMove(40, 3, coast);
 
   // pathing(pathMain[2], false, true);
   // wingsBackLeft.set(false);

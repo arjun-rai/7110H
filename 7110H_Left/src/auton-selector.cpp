@@ -1,3 +1,4 @@
+#include "auton-selector.h"
 #include "vex.h"
 
 Button::Button(int x, int y, int width, int height, std::string text, std::string buttonColor, std::string textColor)

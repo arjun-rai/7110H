@@ -288,7 +288,7 @@ double constrain(double input, double lastInput, double min, double max)
 
 
 
-double pos[] = {27,-150};
+double pos[] = {-118,-142};
 double lastLeft = 0;
 double lastRight =0;
 double last_orientation_rad = 0;
