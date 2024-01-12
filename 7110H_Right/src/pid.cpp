@@ -27,7 +27,7 @@ double maxTurningPower = 12;
 timer t;
 //Variables modified for use
 bool enableDrivePID = true;
-double timeLimit = 3;
+double timeLimit = 3.5;
 bool pivot = false;
 bool rightStop = true;
 bool leftStop = true;
