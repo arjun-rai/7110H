@@ -50,7 +50,7 @@ void pre_auton(void) {
   }
   
   Inertial.resetRotation();
-  Inertial.setRotation(-45, degrees);
+  Inertial.setRotation(-135, degrees);
   
   parallelEncoder.resetPosition();
   perpendicularEncoder.resetPosition();
@@ -106,32 +106,45 @@ void autonomous(void) {
   // motor2.spin(reverse, 100, rpm);
   // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
   vex::task odometry(odom);
-  motor1.spin(reverse, 30, rpm);
-  motor2.spin(reverse, 30, rpm);
-  wait(700, msec);
-  PIDMove(10);
-  motor1.stop();
-  motor2.stop();
+  PIDMove(-24);
+  PIDTurn(-70);
+  PIDMove(-9);
   wingsBackLeft.set(true);
-  wait(1000,msec);
-  PIDMove(-14);
+  wait(1000, msec);
   wingsBackLeft.set(false);
-  // motor1.spin(fwd, 50, rpm);
-  // motor2.spin(fwd, 50, rpm);
-  // pathing(pathMain[0], false, true);
-  PIDMove(22);
-  // PIDTurn(-20);
-  // PIDMove(4);
-  PIDTurn(159);
-  PIDMove(-18, 1.5);
   PIDMove(10);
-  pathing(pathMain[0], false, true);
-  motor1.spin(fwd, 100, rpm);
-  motor2.spin(fwd, 100, rpm);
-  PIDMove(9);
-  motor1.stop();
-  motor2.stop();
-  PIDMove(-5);
+  PIDTurn(-135);
+  motor1.spinFor(fwd, 70,deg, 100, rpm, false);
+  motor2.spinFor(fwd, 70,deg, 100, rpm);
+  motor1.stop(hold);
+  motor2.stop(hold);
+  pathing(pathMain[0], false, false, 7);
+  // wings.set(true);
+  pathing(pathMain[1], false, true, 7);
+  // wings.set(false);
+  // PIDMove(-1);
+  PIDTurn(-90);
+  PIDMove(-55, 3);
+  PIDTurn(-180);
+  PIDMove(-25);
+  PIDTurn(-270);
+  wingsBackLeft.set(true);
+  wingsBackRight.set(true);
+  PIDMove(-25);
+  wingsBackLeft.set(false);
+  wingsBackRight.set(false);
+  PIDMove(32);
+  PIDTurn(-177);
+  PIDMove(-22);
+  PIDTurn(-264);
+  wingsBackLeft.set(true);
+  wingsBackRight.set(true);
+  PIDMove(-30);
+  wingsBackLeft.set(false);
+  wingsBackRight.set(false);
+  PIDMove(17);
+  PIDTurn(-180);
+  pathing(pathMain[2], true, true);
  
 
 
