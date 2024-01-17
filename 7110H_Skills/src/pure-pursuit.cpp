@@ -135,8 +135,8 @@ void curv_func(std::vector<pathPoint>& p)
 }
 
 double max_vel = (2.54*600*3*2.75*M_PI)/(4*60); //rpm to in/s
-double turning_const = 1; //changes how fast it goes around turns
-double max_accel = 50; //in/s^3  used to be 6 150
+double turning_const = 1.25; //changes how fast it goes around turns
+double max_accel = 100; //in/s^3  used to be 6 150
 // double starting_vel = (350*4*3.25*M_PI)/(5*60); //rpm to in/s 300
 void speed_func(std::vector<pathPoint>& p, double starting_rpm, double finSpeed)
 {
@@ -288,7 +288,7 @@ double constrain(double input, double lastInput, double min, double max)
 
 
 
-double pos[] = {113,-135};
+double pos[] = {103,-136.78};
 double lastLeft = 0;
 double lastRight =0;
 double last_orientation_rad = 0;
@@ -319,8 +319,8 @@ void getCurrLoc()
     local_Y=parallelEncoder_delta;
   }
   else{
-    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(5.5*2.54));
-    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(0.5*2.54));
+    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(15.24));
+    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(1));
   }
 
   double local_polar_angle;
@@ -333,7 +333,7 @@ void getCurrLoc()
   else 
   {
     local_polar_angle=atan2(local_Y, local_X);
-    local_polar_length=distanceP(local_X, 0, local_Y, 0);
+    local_polar_length=distanceP(local_X, local_Y, 0, 0);
   }
 
   double global_polar_angle = local_polar_angle-last_orientation_rad-(orientation_delta/2.0);

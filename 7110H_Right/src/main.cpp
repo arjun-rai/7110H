@@ -186,8 +186,8 @@ void usercontrol(void) {
         motor2.spin(fwd, 100, rpm);
       }
       else {
-      motor1.spin(fwd, 50, rpm);
-      motor2.spin(fwd, 50, rpm);
+      motor1.spin(fwd, 56, rpm);
+      motor2.spin(fwd, 56, rpm);
       }
     }
     else if (Controller.ButtonL2.pressing())
