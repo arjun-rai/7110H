@@ -319,8 +319,8 @@ void getCurrLoc()
     local_Y=parallelEncoder_delta;
   }
   else{
-    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(5.5*2.54));
-    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(0.5*2.54));
+    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(15.24));
+    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(1));
   }
 
   double local_polar_angle;
@@ -333,7 +333,7 @@ void getCurrLoc()
   else 
   {
     local_polar_angle=atan2(local_Y, local_X);
-    local_polar_length=distanceP(local_X, 0, local_Y, 0);
+    local_polar_length=distanceP(local_X, local_Y, 0, 0);
   }
 
   double global_polar_angle = local_polar_angle-last_orientation_rad-(orientation_delta/2.0);

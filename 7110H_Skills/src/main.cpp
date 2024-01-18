@@ -55,7 +55,7 @@ void pre_auton(void) {
   parallelEncoder.resetPosition();
   perpendicularEncoder.resetPosition();
   driveBrake(coast);
-  printf("yes!\n");
+  //printf("yes!\n");
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -111,16 +111,16 @@ void autonomous(void) {
   PIDMove(-21);
   motor1.stop();
   motor2.stop();
-  PIDTurn(-77);
-  PIDMove(-23);
+  PIDTurn(-79);
+  PIDMove(-22);
   wingsBackLeft.set(true);
   double angleBefore = Inertial.rotation(degrees);
   enableOdom=false;
-  // motor1.spin(fwd, 56, rpm);
-  // motor2.spin(fwd, 56, rpm);
-  // wait(25000, msec);
-  // motor1.stop();
-  // motor2.stop();
+  motor1.spin(fwd, 56, rpm);
+  motor2.spin(fwd, 56, rpm);
+  wait(25000, msec);
+  motor1.stop();
+  motor2.stop();
   Inertial.calibrate();
   waitUntil(!Inertial.isCalibrating());
   Inertial.setRotation(angleBefore,deg);
@@ -128,49 +128,57 @@ void autonomous(void) {
   enableOdom=true;
   vex::task odometry2(odom);
   PIDMove(8);
-  PIDTurn(-135);
+  PIDTurn(-135+180);
   // PIDMove(15);
   // PIDTurn(-90);
  
-  motor1.spinFor(fwd, 70,deg, 100, rpm, false);
-  motor2.spinFor(fwd, 70,deg, 100, rpm);
-  motor1.stop(hold);
-  motor2.stop(hold);
+  // motor1.spinFor(fwd, 70,deg, 100, rpm, false);
+  // motor2.spinFor(fwd, 70,deg, 100, rpm);
+  // motor1.stop(hold);
+  // motor2.stop(hold);
   // wait(1000, sec);
   
-  pathing(pathMain[0], false, false, 5);
+  pathing(pathMain[0], true, false, 5);
   // wings.set(true);
-  pathing(pathMain[1], false, true, 3);
+  pathing(pathMain[1], true, true, 3);
+  PIDMove(15);
+  PIDMove(-20, 1);
   // wings.set(false);
  // printf("%f\t%f\n", pos[0], pos[1]);
   // wings.set(true);
   // pathing(pathMain[1], false, true, 4);
   // wings.set(false);
-  PIDMove(-2);
-  PIDTurn(-95);
+  PIDMove(5);
+  PIDTurn(-100);
   PIDMove(-45, 3);
   PIDTurn(-180);
-  PIDMove(-17);
+  PIDMove(-26);
   PIDTurn(-270);
   wingsBackLeft.set(true);
   wingsBackRight.set(true);
-  PIDMove(-30, 2);
+  PIDMove(-50, 1);
+  PIDMove(25, 1);
+  PIDMove(-50, 1);
   wingsBackLeft.set(false);
   wingsBackRight.set(false);
-  PIDMove(36);
+  PIDMove(31);
   PIDTurn(-177);
-  PIDMove(-20);
-  PIDTurn(-264);
+  PIDMove(-25);
+  PIDTurn(-280);
   wingsBackLeft.set(true);
   wingsBackRight.set(true);
-  PIDMove(-30, 2);
+  PIDMove(-50, 1);
+  PIDMove(25, 1);
+  PIDMove(-50, 1);
   wingsBackLeft.set(false);
   wingsBackRight.set(false);
-  PIDMove(19);
-  PIDTurn(-180);
-  wingsBackLeft.set(true);
+  PIDMove(16);
+  PIDTurn(-210);
+  //wingsBackLeft.set(true);
   printf("%f\t%f\n", pos[0], pos[1]);
-  pathing(pathMain[1], true, true);
+  pathing(pathMain[2], true, true);
+  PIDMove(10);
+  PIDMove(-10);
   PIDMove(10);
  
 
@@ -202,21 +210,18 @@ bool backWingsOn = false;
 bool backWingsToggle = false;
 
 void usercontrol(void) {
-  vex::task odometry(odom);
   motor1.spin(reverse, 50, rpm);
   motor2.spin(reverse, 50, rpm);
-  PIDMove(-16);
+  PIDMove(-21);
   motor1.stop();
   motor2.stop();
-  PIDTurn(-87);
-  PIDMove(-20);
-  wingsBackLeft.set(true);
-  enableOdom=false;
-  // motor1.spin(fwd, 56, rpm);
-  // motor2.spin(fwd, 56, rpm);
-  // wait(25000, msec);
-  // motor1.stop();
-  // motor2.stop();
+  PIDTurn(-79);
+  PIDMove(-22);
+  motor1.spin(fwd, 56, rpm);
+  motor2.spin(fwd, 56, rpm);
+  wait(25000, msec);
+  motor1.stop();
+  motor2.stop();
   
   enableOdom=false;
   // User control code here, inside the loop

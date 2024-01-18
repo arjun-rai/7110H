@@ -106,12 +106,14 @@ void autonomous(void) {
   // motor2.spin(reverse, 100, rpm);
   // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
   vex::task odometry(odom);
-  motor1.spin(reverse, 30, rpm);
-  motor2.spin(reverse, 30, rpm);
-  wait(700, msec);
+  wings.set(true);
+  motor1.spin(reverse, 80, rpm);
+  motor2.spin(reverse, 80, rpm);
+  wait(300, msec);
   PIDMove(10);
   motor1.stop();
   motor2.stop();
+  wings.set(false);
   wingsBackLeft.set(true);
   wait(1000,msec);
   PIDMove(-14);
@@ -160,6 +162,8 @@ bool ptoOn = false;
 bool ptoToggle = false;
 bool backWingsOn = false;
 bool backWingsToggle = false;
+bool speedToggle=false;
+bool speedOn=false;
 
 void usercontrol(void) {
   // User control code here, inside the loop
@@ -254,6 +258,9 @@ void usercontrol(void) {
       wingsBackRight.set(false);
       wingsBackLeft.set(false);
     }
+
+    
+
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }

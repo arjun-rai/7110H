@@ -319,8 +319,8 @@ void getCurrLoc()
     local_Y=parallelEncoder_delta;
   }
   else{
-    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(5.5*2.54));
-    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(0.5*2.54));
+    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(15.24));
+    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(1));
   }
 
   double local_polar_angle;
@@ -333,7 +333,7 @@ void getCurrLoc()
   else 
   {
     local_polar_angle=atan2(local_Y, local_X);
-    local_polar_length=distanceP(local_X, 0, local_Y, 0);
+    local_polar_length=distanceP(local_X, local_Y, 0, 0);
   }
 
   double global_polar_angle = local_polar_angle-last_orientation_rad-(orientation_delta/2.0);
@@ -357,13 +357,13 @@ void getCurrLoc()
 double track_width = 16*2.54;
 //double dt = 0.005;
 double maxVelChange=1000; //3
-bool pathing(std::vector<pathPoint> path, bool backwards, bool stop)
+bool pathing(std::vector<pathPoint> path, bool backwards, bool stop, double time)
 {
   timer t = timer();
   double lastVel = 0;
   while (closest(pos, path)!=path.size()-1)
   {
-    if (t.time(msec)>3000)
+    if (t.time(msec)>time)
     {
       return 0;
     }

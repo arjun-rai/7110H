@@ -106,17 +106,16 @@ void autonomous(void) {
   // motor2.spin(reverse, 100, rpm);
   // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
   vex::task odometry(odom);
-  motor1.spin(reverse, 40, rpm);
-  motor2.spin(reverse, 40, rpm);
+  motor1.spin(reverse, 80, rpm);
+  motor2.spin(reverse, 80, rpm);
   wait(700, msec);
   PIDMove(6);
   // wait(500, msec);
   pathing(pathMain[0], true, false);
-  motor1.stop();
-  motor2.stop();
+  
   wingsBackLeft.set(true);
   wait(500, msec);
-  pathing(pathMain[1], true, true);
+  pathing(pathMain[1], true, true, 2000);
   wingsBackLeft.set(false);
   PIDMove(9);
  
@@ -125,10 +124,12 @@ void autonomous(void) {
   // motor2.spin(fwd, 100, rpm);
   // wings.set(true);
   PIDMove(23, 0.6);
+  motor1.stop();
+  motor2.stop();
   // wings.set(false);
   PIDMove(-12);
 
-  PIDTurn(-67);
+  PIDTurn(-70);
   motor1.spin(reverse, 50, rpm);
   motor2.spin(reverse, 50, rpm);
   PIDMove(49);
@@ -142,8 +143,8 @@ void autonomous(void) {
   PIDMove(36, 0.7);
    wings.set(false);
   // pathing(pathMain[3], false, true);
-  PIDMove(-14);
-  PIDTurn(-148);
+  PIDMove(-16);
+  PIDTurn(230);
   PIDMove(43, 3, coast);
 
   // pathing(pathMain[2], false, true);
