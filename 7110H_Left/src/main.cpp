@@ -121,19 +121,22 @@ void autonomous(void) {
   // motor1.spin(fwd, 50, rpm);
   // motor2.spin(fwd, 50, rpm);
   // pathing(pathMain[0], false, true);
-  PIDMove(22);
+  // PIDMove(22);
   // PIDTurn(-20);
-  // PIDMove(4);
-  PIDTurn(159);
-  PIDMove(-18, 1.5);
-  PIDMove(10);
+  // // PIDMove(4);
+  // PIDTurn(159);
+  // PIDMove(-14, 1.5);
+  // PIDMove(10);
+  PIDTurn(90);
+  PIDMove(30);
   pathing(pathMain[0], false, true);
   motor1.spin(fwd, 100, rpm);
   motor2.spin(fwd, 100, rpm);
   PIDMove(9);
+  PIDMove(-5);
+  wait(2000, msec);
   motor1.stop();
   motor2.stop();
-  PIDMove(-5);
  
 
 

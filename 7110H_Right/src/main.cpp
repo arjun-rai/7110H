@@ -123,15 +123,15 @@ void autonomous(void) {
   // motor1.spin(fwd, 100, rpm);
   // motor2.spin(fwd, 100, rpm);
   // wings.set(true);
-  PIDMove(23, 0.6);
   motor1.stop();
   motor2.stop();
+  PIDMove(23, 0.8);
   // wings.set(false);
   PIDMove(-12);
 
-  PIDTurn(-70);
-  motor1.spin(reverse, 50, rpm);
-  motor2.spin(reverse, 50, rpm);
+  PIDTurn(-67);
+  motor1.spin(reverse, 100, rpm);
+  motor2.spin(reverse, 100, rpm);
   PIDMove(49);
   PIDTurn(-10);
   motor1.stop();
@@ -140,12 +140,12 @@ void autonomous(void) {
   PIDMove(24);
   PIDTurn(90);
    wings.set(true);
-  PIDMove(36, 0.7);
+  PIDMove(36, 0.9);
    wings.set(false);
   // pathing(pathMain[3], false, true);
   PIDMove(-16);
-  PIDTurn(230);
-  PIDMove(43, 3, coast);
+  PIDTurn(215);
+  PIDMove(47, 4, coast);
 
   // pathing(pathMain[2], false, true);
   // wingsBackLeft.set(false);
