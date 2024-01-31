@@ -170,6 +170,8 @@ bool speedOn=false;
 
 void usercontrol(void) {
   // User control code here, inside the loop
+  motor1.setBrake(hold);
+  motor2.setBrake(hold);
   while (1) {
     driveBrake(coast);
     // rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
@@ -184,18 +186,24 @@ void usercontrol(void) {
         motor2.spin(fwd, 100, rpm);
       }
       else {
-      motor1.spin(fwd, 56, rpm);
-      motor2.spin(fwd, 56, rpm);
+        intake.spin(fwd, 100, rpm);
       }
     }
     else if (Controller.ButtonL2.pressing())
     {
+      if (ptoToggle)
+      {
       motor1.spin(reverse, 100, rpm);
       motor2.spin(reverse, 100, rpm);
+      }
+      else {
+        intake.spin(reverse, 100, rpm);
+      }
     }
     else {
       motor1.stop();
       motor2.stop();
+      intake.stop();
     }
 
     if (Controller.ButtonL1.pressing()&&Controller.ButtonL2.pressing())
@@ -231,13 +239,9 @@ void usercontrol(void) {
     if (ptoToggle)
     {
       pto.set(true);
-      motor1.setBrake(hold);
-      motor2.setBrake(hold);
     }
     else {
       pto.set(false);
-      motor1.setBrake(coast);
-      motor2.setBrake(coast);
     }
 
 

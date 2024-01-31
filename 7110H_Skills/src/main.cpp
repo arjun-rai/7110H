@@ -111,7 +111,7 @@ void autonomous(void) {
   PIDMove(-21);
   motor1.stop();
   motor2.stop();
-  PIDTurn(-72);
+  PIDTurn(-74);
   PIDMove(-20);
   wingsBackLeft.set(true);
   double angleBefore = Inertial.rotation(degrees);
@@ -227,15 +227,16 @@ void usercontrol(void) {
   PIDMove(-21);
   motor1.stop();
   motor2.stop();
-  PIDTurn(-79);
-  PIDMove(-22);
+  PIDTurn(-78);
+  PIDMove(-20);
+  wingsBackLeft.set(true);
+  enableOdom=false;
   motor1.spin(fwd, 50, rpm);
   motor2.spin(fwd, 50, rpm);
   wait(25000, msec);
   motor1.stop();
   motor2.stop();
-  
-  enableOdom=false;
+
   // User control code here, inside the loop
   while (1) {
     driveBrake(coast);
