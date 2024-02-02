@@ -10,7 +10,7 @@ double turnRemap(double turn){
 }
 
 double fastStopAccum = 0.0;
-double negInertiaAccum = 0.0;
+double negInertiaAccum = 0.05;
 void updateAccum(){
   if (negInertiaAccum>1){
     negInertiaAccum-=1;
@@ -29,7 +29,7 @@ double prevThrottle = 0.0;
 double drive_deadband=0.1;
 double drive_slew = 0.02;
 double kInertiaScalar =0.75;//0.5
-double kSensitivty = 1;
+double kSensitivty = 0.6;
 
 void curvatureDrive(double throttle, double turn){
   bool pointTurn = false;
@@ -65,8 +65,8 @@ void curvatureDrive(double throttle, double turn){
   }
   prevTurn=turn;
   prevThrottle=throttle;
-  leftDrive.spin (fwd, left*100, vex::velocityUnits::pct);
-  rightDrive.spin (fwd, right*100, vex::velocityUnits::pct);
+  leftDrive.spin (fwd, left*600, rpm);
+  rightDrive.spin (fwd, right*600,rpm);
 }
 
 double LeftPercent = 0;

@@ -357,8 +357,9 @@ void getCurrLoc()
 double track_width = 16*2.54;
 //double dt = 0.005;
 double maxVelChange=1000; //3
-bool pathing(std::vector<pathPoint> path, bool backwards, bool stop)
+bool pathing(std::vector<pathPoint> path, bool backwards, bool stop, double look)
 {
+  l = look;
   timer t = timer();
   double lastVel = 0;
   while (closest(pos, path)!=path.size()-1)

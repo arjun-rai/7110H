@@ -161,6 +161,8 @@ bool wingsToggle = false;
 bool blooperOn = false;
 bool blooperToggle = false;
 double maxSpeed = 127;
+bool modeOn = false;
+bool modeToggle = false;
 bool ptoOn = false;
 bool ptoToggle = false;
 bool backWingsOn = false;
@@ -181,23 +183,23 @@ void usercontrol(void) {
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
-      if (ptoToggle){
+      if (modeToggle&&ptoToggle){
         motor1.spin(fwd, 100, rpm);
         motor2.spin(fwd, 100, rpm);
       }
       else {
-        intake.spin(fwd, 100, rpm);
+        intake.spin(fwd, 200, rpm);
       }
     }
     else if (Controller.ButtonL2.pressing())
     {
-      if (ptoToggle)
+      if (modeToggle)
       {
       motor1.spin(reverse, 100, rpm);
       motor2.spin(reverse, 100, rpm);
       }
       else {
-        intake.spin(reverse, 100, rpm);
+        intake.spin(reverse, 200, rpm);
       }
     }
     else {
@@ -226,6 +228,19 @@ void usercontrol(void) {
     }
 
     if (Controller.ButtonR1.pressing())
+    {
+      if (!modeOn)
+      {
+        modeToggle=!modeToggle;
+        modeOn=true;
+      }
+    }
+    else {
+      modeOn=false;
+    }
+
+
+    if (Controller.ButtonX.pressing())
     {
       if (!ptoOn)
       {
