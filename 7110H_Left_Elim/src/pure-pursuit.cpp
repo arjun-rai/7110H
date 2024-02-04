@@ -135,8 +135,8 @@ void curv_func(std::vector<pathPoint>& p)
 }
 
 double max_vel = (2.54*600*3*2.75*M_PI)/(4*60); //rpm to in/s
-double turning_const = 2; //changes how fast it goes around turns
-double max_accel = 100; //in/s^3  used to be 6 150
+double turning_const = 10; //changes how fast it goes around turns
+double max_accel = 200; //in/s^3  used to be 6 150
 // double starting_vel = (350*4*3.25*M_PI)/(5*60); //rpm to in/s 300
 void speed_func(std::vector<pathPoint>& p, double starting_rpm, double finSpeed)
 {
@@ -288,7 +288,7 @@ double constrain(double input, double lastInput, double min, double max)
 
 
 
-double pos[] = {-102,-145};
+double pos[] = {-82,-139};
 double lastLeft = 0;
 double lastRight =0;
 double last_orientation_rad = 0;
@@ -320,7 +320,7 @@ void getCurrLoc()
   }
   else{
     local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(15.24));
-    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(1));
+    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(0.75*2.54));
   }
 
   double local_polar_angle;
@@ -349,7 +349,7 @@ void getCurrLoc()
   last_orientation_rad=orientation_rad;
   last_parallelEncoder=parallelEncoder_angle;
   last_perpendicularEncoder=perpendicularEncoder_angle;
-  //printf("%f\t%f\n", pos[0], pos[1]);
+  // printf("%f\t%f\n", pos[0], pos[1]);
 }
 
 
@@ -357,8 +357,9 @@ void getCurrLoc()
 double track_width = 16*2.54;
 //double dt = 0.005;
 double maxVelChange=1000; //3
-bool pathing(std::vector<pathPoint> path, bool backwards, bool stop)
+bool pathing(std::vector<pathPoint> path, bool backwards, bool stop, double look)
 {
+  l = look;
   timer t = timer();
   double lastVel = 0;
   while (closest(pos, path)!=path.size()-1)

@@ -50,7 +50,7 @@ void pre_auton(void) {
   }
   
   Inertial.resetRotation();
-  Inertial.setRotation(15, degrees);
+  Inertial.setRotation(0, degrees);
   
   parallelEncoder.resetPosition();
   perpendicularEncoder.resetPosition();
@@ -106,57 +106,27 @@ void autonomous(void) {
   // motor2.spin(reverse, 100, rpm);
   // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
   vex::task odometry(odom);
+  intake.spin(reverse, 200, rpm);
   wings.set(true);
-  motor1.spin(reverse, 100, rpm);
-  motor2.spin(reverse, 100, rpm);
-  wait(200, msec);
+  wait(150, msec);
   wings.set(false);
-  leftDrive.spinFor(fwd, 2500, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 2500, degrees, 100, vex::velocityUnits::pct);
-  // wait(300, msec);
-  motor1.stop();
-  motor2.stop();
-  PIDMove(-5);
-  wait(200, msec);
-  PIDTurn(-96);
-  wingsBackRight.set(true);
-  wingsBackLeft.set(true);
-  leftDrive.spinFor(reverse, 1400, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(reverse, 1400, degrees, 100, vex::velocityUnits::pct);
-  wingsBackRight.set(false);
-  wingsBackLeft.set(false);
-  PIDTurn(-110);
-  PIDMove(14);
-  PIDTurn(-260);
-  PIDMove(14);
-  motor1.spin(fwd, 100, rpm);
-  motor2.spin(fwd, 100, rpm);
+  pathing(pathMain[0], false);
   wait(100, msec);
-  motor1.stop();
-  motor2.stop();
- 
-  // motor1.spin(fwd, 50, rpm);
-  // motor2.spin(fwd, 50, rpm);
-  // pathing(pathMain[0], false, true);
-  // PIDMove(22);
-  // PIDTurn(-20);
-  // // PIDMove(4);
-  // PIDTurn(159);
-  // PIDMove(-14, 1.5);
-  // PIDMove(10);
- 
+  pathing(pathMain[1], true);
+  PIDTurn(-45);
+  PIDMove(15);
+  wingsBackLeft.set(true);
+  wait(500, msec);
+  PIDTurn(-30);
+  PIDMove(-17);
+  PIDTurn(-80);
+  wingsBackLeft.set(false);
+  PIDTurn(98);
+  intake.spin(fwd, 200, rpm);
+  PIDMove(40);
+  pathing(pathMain[2], true, true, 15*2.54);
+  wingsBackRight.set(true);
 
-
-  
-
-  // pathing(pathMain[2], false, true);
-  // wingsBackLeft.set(false);
-  // wait(5000, msec);
-  // pathing(pathMain[2], true, true);
-  // while (true)
-  // {
-  //   getCurrLoc();
-  // }
 }
 
 
@@ -165,19 +135,24 @@ void autonomous(void) {
 
 bool wingsOn = false;
 bool wingsToggle = false;
-bool blooperOn = false;
-bool blooperToggle = false;
-double maxSpeed = 127;
+bool modeOn = false;
+bool modeToggle = false;
 bool ptoOn = false;
 bool ptoToggle = false;
 bool backWingsOn = false;
 bool backWingsToggle = false;
-bool speedToggle=false;
-bool speedOn=false;
-
+bool ratchetToggle=false;
+bool ratchetOn=false;
+timer tMatch = timer();
 void usercontrol(void) {
   // User control code here, inside the loop
+  motor1.setBrake(hold);
+  motor2.setBrake(hold);
   while (1) {
+    if (tMatch.time(sec)>103.5)
+    {
+      ratchet.set(true);
+    }
     driveBrake(coast);
     // rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
     // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
@@ -186,23 +161,29 @@ void usercontrol(void) {
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
-      if (ptoToggle){
-        motor1.spin(fwd, 100, rpm);
-        motor2.spin(fwd, 100, rpm);
+      if (modeToggle){
+        motor1.spin(fwd, 200, rpm);
+        motor2.spin(fwd, 200, rpm);
       }
       else {
-      motor1.spin(fwd, 56, rpm);
-      motor2.spin(fwd, 56, rpm);
+        intake.spin(fwd, 200, rpm);
       }
     }
     else if (Controller.ButtonL2.pressing())
     {
-      motor1.spin(reverse, 100, rpm);
-      motor2.spin(reverse, 100, rpm);
+      if (modeToggle)
+      {
+      motor1.spin(reverse, 200, rpm);
+      motor2.spin(reverse, 200, rpm);
+      }
+      else {
+        intake.spin(reverse, 200, rpm);
+      }
     }
     else {
       motor1.stop();
       motor2.stop();
+      intake.stop();
     }
 
     if (Controller.ButtonL1.pressing()&&Controller.ButtonL2.pressing())
@@ -226,25 +207,14 @@ void usercontrol(void) {
 
     if (Controller.ButtonR1.pressing())
     {
-      if (!ptoOn)
+      if (!modeOn)
       {
-        ptoToggle=!ptoToggle;
-        ptoOn=true;
+        modeToggle=!modeToggle;
+        modeOn=true;
       }
     }
     else {
-      ptoOn=false;
-    }
-    if (ptoToggle)
-    {
-      pto.set(true);
-      motor1.setBrake(hold);
-      motor2.setBrake(hold);
-    }
-    else {
-      pto.set(false);
-      motor1.setBrake(coast);
-      motor2.setBrake(coast);
+      modeOn=false;
     }
 
 
@@ -269,8 +239,25 @@ void usercontrol(void) {
       wingsBackLeft.set(false);
     }
 
-    
 
+    if (Controller.ButtonX.pressing())
+    {
+      if (!ratchetOn)
+      {
+        ratchetToggle=!ratchetToggle;
+        ratchetOn=true;
+      }
+    }
+    else {
+      ratchetOn=false;
+    }
+    if(ratchetToggle)
+    {
+      ratchet.set(true);
+    }
+    else {
+     ratchet.set(false);
+    }
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }

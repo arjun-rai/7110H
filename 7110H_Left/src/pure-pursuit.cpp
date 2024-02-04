@@ -320,7 +320,7 @@ void getCurrLoc()
   }
   else{
     local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(15.24));
-    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(1));
+    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(0.75*2.54));
   }
 
   double local_polar_angle;
