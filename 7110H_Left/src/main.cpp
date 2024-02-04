@@ -167,14 +167,18 @@ bool ptoOn = false;
 bool ptoToggle = false;
 bool backWingsOn = false;
 bool backWingsToggle = false;
-bool speedToggle=false;
-bool speedOn=false;
-
+bool ratchetToggle=false;
+bool ratchetOn=false;
+timer tMatch = timer();
 void usercontrol(void) {
   // User control code here, inside the loop
   motor1.setBrake(hold);
   motor2.setBrake(hold);
   while (1) {
+    if (tMatch.time(sec)>102)
+    {
+      ratchet.set(true);
+    }
     driveBrake(coast);
     // rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
     // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
@@ -183,9 +187,9 @@ void usercontrol(void) {
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
-      if (modeToggle&&ptoToggle){
-        motor1.spin(fwd, 100, rpm);
-        motor2.spin(fwd, 100, rpm);
+      if (modeToggle){
+        motor1.spin(fwd, 200, rpm);
+        motor2.spin(fwd, 200, rpm);
       }
       else {
         intake.spin(fwd, 200, rpm);
@@ -195,8 +199,8 @@ void usercontrol(void) {
     {
       if (modeToggle)
       {
-      motor1.spin(reverse, 100, rpm);
-      motor2.spin(reverse, 100, rpm);
+      motor1.spin(reverse, 200, rpm);
+      motor2.spin(reverse, 200, rpm);
       }
       else {
         intake.spin(reverse, 200, rpm);
@@ -240,26 +244,6 @@ void usercontrol(void) {
     }
 
 
-    if (Controller.ButtonX.pressing())
-    {
-      if (!ptoOn)
-      {
-        ptoToggle=!ptoToggle;
-        ptoOn=true;
-      }
-    }
-    else {
-      ptoOn=false;
-    }
-    if (ptoToggle)
-    {
-      pto.set(true);
-    }
-    else {
-      pto.set(false);
-    }
-
-
      if (Controller.ButtonR2.pressing())
     {
       if (!backWingsOn)
@@ -281,8 +265,25 @@ void usercontrol(void) {
       wingsBackLeft.set(false);
     }
 
-    
 
+    if (Controller.ButtonX.pressing())
+    {
+      if (!ratchetOn)
+      {
+        ratchetToggle=!ratchetToggle;
+        ratchetOn=true;
+      }
+    }
+    else {
+      ratchetOn=false;
+    }
+    if(ratchetToggle)
+    {
+      ratchet.set(true);
+    }
+    else {
+     ratchet.set(false);
+    }
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }

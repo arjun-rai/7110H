@@ -25,7 +25,7 @@ motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
 digital_out wings = digital_out(Brain.ThreeWirePort.C);
 digital_out wingsBackLeft = digital_out(Brain.ThreeWirePort.D);
 digital_out wingsBackRight = digital_out(Brain.ThreeWirePort.B);
-digital_out pto = digital_out(Brain.ThreeWirePort.A);
+digital_out ratchet = digital_out(Brain.ThreeWirePort.A);
 motor intake = motor(PORT8, ratio18_1, true);
 
 // VEXcode generated functions
