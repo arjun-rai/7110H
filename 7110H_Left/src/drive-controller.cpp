@@ -29,7 +29,7 @@ double prevThrottle = 0.0;
 double drive_deadband=0.1;
 double drive_slew = 0.02;
 double kInertiaScalar =0.75;//0.5
-double kSensitivty = 0.6;
+double kSensitivty = 0.5;
 
 void curvatureDrive(double throttle, double turn){
   bool pointTurn = false;

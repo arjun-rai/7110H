@@ -18,7 +18,7 @@ extern digital_out wings;
 extern motor motor2;
 extern digital_out wingsBackLeft;
 extern digital_out wingsBackRight;
-extern digital_out pto;
+extern digital_out ratchet;
 extern rotation parallelEncoder;
 extern rotation perpendicularEncoder;
 /**

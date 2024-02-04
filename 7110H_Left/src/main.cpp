@@ -107,12 +107,10 @@ void autonomous(void) {
   // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
   vex::task odometry(odom);
   wings.set(true);
-  motor1.spin(reverse, 80, rpm);
-  motor2.spin(reverse, 80, rpm);
+  intake.spin(reverse, 200, rpm);
   wait(300, msec);
   PIDMove(10);
-  motor1.stop();
-  motor2.stop();
+  intake.stop();
   wings.set(false);
   wingsBackLeft.set(true);
   wait(1000,msec);
@@ -130,13 +128,11 @@ void autonomous(void) {
   PIDTurn(90);
   PIDMove(30);
   pathing(pathMain[0], false, true);
-  motor1.spin(fwd, 100, rpm);
-  motor2.spin(fwd, 100, rpm);
+  intake.spin(fwd, 200, rpm);
   PIDMove(9);
   PIDMove(-5);
   wait(2000, msec);
-  motor1.stop();
-  motor2.stop();
+  intake.stop();
  
 
 
@@ -158,9 +154,6 @@ void autonomous(void) {
 
 bool wingsOn = false;
 bool wingsToggle = false;
-bool blooperOn = false;
-bool blooperToggle = false;
-double maxSpeed = 127;
 bool modeOn = false;
 bool modeToggle = false;
 bool ptoOn = false;
@@ -175,7 +168,7 @@ void usercontrol(void) {
   motor1.setBrake(hold);
   motor2.setBrake(hold);
   while (1) {
-    if (tMatch.time(sec)>102)
+    if (tMatch.time(sec)>103.5)
     {
       ratchet.set(true);
     }
