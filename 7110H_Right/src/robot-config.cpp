@@ -15,17 +15,19 @@ motor FrontLeft = motor(PORT19, ratio6_1, true);
 motor FrontRight = motor(PORT12, ratio6_1, false);
 motor MiddleLeft = motor(PORT20, ratio6_1, true);
 motor MiddleRight = motor(PORT13, ratio6_1, false);
-motor motor1 = motor(PORT15, ratio36_1,true);
-motor motor2 = motor(PORT16, ratio36_1, false);
-rotation parallelEncoder = rotation(PORT14);
-rotation perpendicularEncoder = rotation(PORT17);
+motor motor1 = motor(PORT15, ratio18_1,true);
+motor motor2 = motor(PORT16, ratio18_1, false);
+rotation parallelEncoder = rotation(PORT4);
+rotation perpendicularEncoder = rotation(PORT5);
 inertial Inertial = inertial(PORT9);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight);
-digital_out wings = digital_out(Brain.ThreeWirePort.A);
+digital_out wings = digital_out(Brain.ThreeWirePort.C);
 digital_out wingsBackLeft = digital_out(Brain.ThreeWirePort.D);
-digital_out wingsBackRight = digital_out(Brain.ThreeWirePort.C);
-digital_out ratchet = digital_out(Brain.ThreeWirePort.B);
+digital_out wingsBackRight = digital_out(Brain.ThreeWirePort.B);
+digital_out ratchet = digital_out(Brain.ThreeWirePort.A);
+motor intake = motor(PORT8, ratio18_1, true);
+
 
 // VEXcode generated functions
 

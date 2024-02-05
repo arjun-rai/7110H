@@ -106,8 +106,7 @@ void autonomous(void) {
   // motor2.spin(reverse, 100, rpm);
   // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
   vex::task odometry(odom);
-  motor1.spin(reverse, 80, rpm);
-  motor2.spin(reverse, 80, rpm);
+  intake.spin(reverse, 200, rpm);
   wait(700, msec);
   PIDMove(6);
   // wait(500, msec);
@@ -115,46 +114,37 @@ void autonomous(void) {
   
   wingsBackLeft.set(true);
   wait(500, msec);
-  pathing(pathMain[1], true, true, 2000);
+  pathing(pathMain[1], true, true, 14*2.54);
   wingsBackLeft.set(false);
   PIDMove(12);
  
-  PIDTurn(20);
+  PIDTurn(20-360);
   // motor1.spin(fwd, 100, rpm);
   // motor2.spin(fwd, 100, rpm);
   // wings.set(true);
-  motor1.stop();
-  motor2.stop();
-  PIDMove(23, 0.8);
+  intake.spin(fwd, 200, rpm);
+  PIDMove(25, 0.8);
   // wings.set(false);
   PIDMove(-12);
 
-  PIDTurn(-67);
-  motor1.spin(reverse, 100, rpm);
-  motor2.spin(reverse, 100, rpm);
+  PIDTurn(-67-360);
+  intake.spin(reverse, 200, rpm);
   PIDMove(49);
-  PIDTurn(-10);
-  motor1.stop();
-  motor2.stop();
+  PIDTurn(-10-360);
+  intake.stop();
   // pathing(pathMain[2], false, false);
   PIDMove(20);
-  PIDTurn(90);
+  PIDTurn(90-360);
+  intake.spin(fwd, 200, rpm);
   wings.set(true);
-  PIDMove(36, 0.9);
+  PIDMove(38, 0.95);
   wings.set(false);
-  // pathing(pathMain[3], false, true);
+ 
   PIDMove(-16);
-  PIDTurn(217);
-  PIDMove(47, 4, coast);
-
-  // pathing(pathMain[2], false, true);
-  // wingsBackLeft.set(false);
-  // wait(5000, msec);
-  // pathing(pathMain[2], true, true);
-  // while (true)
-  // {
-  //   getCurrLoc();
-  // }
+  PIDTurn(225-360);
+  pathing(pathMain[2], false, true, 22*2.54);
+  
+  // PIDMove(38, 4, coast);
 }
 
 
@@ -284,7 +274,7 @@ void usercontrol(void) {
       ratchet.set(true);
     }
     else {
-      ratchet.set(false);
+     ratchet.set(false);
     }
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
