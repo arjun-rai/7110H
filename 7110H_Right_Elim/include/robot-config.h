@@ -13,17 +13,15 @@ extern motor MiddleRight;
 extern inertial Inertial;
 extern motor_group leftDrive;
 extern motor_group rightDrive;
-extern motor catapult;
-extern digital_out intakeLifter;
+extern motor motor1;
 extern digital_out wings;
+extern motor motor2;
+extern digital_out wingsBackLeft;
+extern digital_out wingsBackRight;
+extern digital_out ratchet;
+extern rotation parallelEncoder;
+extern rotation perpendicularEncoder;
 extern motor intake;
-extern digital_out blooper;
-//extern digital_out auton_grabber;
-extern rotation cataSense;
-extern digital_out elevation;
-extern digital_out elevationLifter;
-extern distance distSensor;
-extern digital_out blockerLifter;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

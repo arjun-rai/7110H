@@ -1,35 +1,14 @@
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       VEX                                                       */
-/*    Created:      Thu Sep 26 2019                                           */
-/*    Description:  Competition Template                                      */
-/*                                                                            */
-/*----------------------------------------------------------------------------*/
-
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Drivetrain           drivetrain    8, 10, 3, 20    
-// ---- END VEXCODE CONFIGURED DEVICES ----
-
 #include "vex.h"
+#include "drive-controller.h"
+#include "pure-pursuit.h"
+#include "pid.h"
+#include "paths.h"
 using namespace vex;
-
-// A global instance of competition
 competition Competition;
-// define your global instances of motors and other devices here
-
-/*---------------------------------------------------------------------------*/
-/*                          Pre-Autonomous Functions                         */
-/*                                                                           */
-/*  You may want to perform some actions before the competition starts.      */
-/*  Do them in the following function.  You must return from this function   */
-/*  or the autonomous and usercontrol tasks will not be started.  This       */
-/*  function is only called once after the V5 has been powered on and        */
-/*  not every time that the robot is disabled.                               */
-/*---------------------------------------------------------------------------*/
-
+extern std::vector<std::vector<pathPoint>> pathMain;
+extern std::vector<double> finSpeed;
+extern std::vector<double> startSpeed;
+extern double pos[];
 //Button Class for auton selector buttons, with hex codes for color
 
 //auton buttons with the text, and hex codes for colors
@@ -43,22 +22,22 @@ void driveBrake(vex::brakeType b)
   MiddleRight.setBrake(b);
 }
 int autonNum =-1;
+
+
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  // for (int i =0;i<pathMain.size(); i++)
-  // {
-  //   pathMain[i] = inject(pathMain[i]);
-  //   pathMain[i] = smooth(pathMain[i]);
-  //   curv_func(pathMain[i]);
-  //   speed_func(pathMain[i]);
-  // }
+  for (int i =0;i<pathMain.size(); i++)
+  {
+    // pathMain[i] = inject(pathMain[i]);
+    // pathMain[i] = smooth(pathMain[i]);
+    pathMain[i].pop_back();
+    curv_func(pathMain[i]);
+    // std::cout << pathMain[i][0].x;
+    speed_func(pathMain[i], startSpeed[i], finSpeed[i]);
+  }
 
-  // for (int i=0;i<pathMain[0].size(); i++)
-  // {
-  //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
-  //   wait(20, msec);
-  // }
+ 
   
 
   //shows button, allows user to select button and then stops once submit is pressed
@@ -71,320 +50,14 @@ void pre_auton(void) {
   }
   
   Inertial.resetRotation();
-  Inertial.setHeading(0, degrees);
+  Inertial.setRotation(0, degrees);
   
-  cataSense.resetPosition();
-  // leftEncoder.resetRotation();
-  // rightEncoder.resetRotation();
+  parallelEncoder.resetPosition();
+  perpendicularEncoder.resetPosition();
   driveBrake(coast);
-  catapult.setBrake(hold);
+  printf("yes!\n");
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
-}
-
-double kP = 0.2; //steady minor oscillations, should stop close to the correct point
-double kI = 0; //compensate for undershoot
-double kD = 1; //until steady
-
-double turnkP = 0.915; //0.057
-double turnkI = 0; //0.0035
-double turnkD = 4.3;
-double turnkF = 0;
-
-double pivotP = 0.21;
-double pivotI =0.08;
-//Autonomous Settings
-double desiredValue = 0;
-double desiredTurnValue = 0;
-double startingTurnValue =0;
-
-double error; //SensorValue - DesiredValue : Position 
-double prevError = 0; //Position 2- milleseconds ago
-double derivative; // error - prevError : Speed
-double totalError=0; //totalError = totalError + error;
-
-double turnError; //SensorValue - DesiredValue : Position 
-double turnPrevError = 0; //Position 2- milleseconds ago
-double turnDerivative; // error - prevError : Speed
-double turnTotalError=0; //totalError = totalError + error;
-
-double curveLeftVar= 1;
-double curveRightVar  =1;
-
-int integralBound =90;
-int averagePosition;
-bool resetDriveSensors = false;
-double maxLateralPower = 12;
-double maxTurningPower = 12;
-double maxLateralChange=1;
-double lastLateralVoltage = 0;
-timer t;
-//Variables modified for use
-bool enableDrivePID = true;
-bool turning = false;
-double timeLimit = 3.5;
-bool pivot = false;
-bool rightStop = true;
-bool leftStop = true;
-
-int drivePID(){
-  t = timer();
-  while(enableDrivePID)
-  {
-    if (t.time(seconds)>timeLimit)
-    {
-      break;
-    }
-    if (resetDriveSensors)
-    {
-      resetDriveSensors = false;
-     // Inertial.setRotation(0, degrees);
-      leftDrive.setPosition(0, degrees);
-      rightDrive.setPosition(0, degrees);
-      leftDrive.resetPosition();
-      rightDrive.resetPosition();
-      startingTurnValue=(Inertial.rotation());
-      
-    }
-    //Get the position of both motors
-    int leftMotorPosition = leftDrive.position(degrees);
-    int rightMotorPosition = rightDrive.position(degrees);
-
-
-    //////////////////////////////////////////////////////////
-    //Lateral Movement PID
-    /////////////////////////////////////////////////////////
-    //Get average of the two motors
-    averagePosition = (leftMotorPosition + rightMotorPosition)/2;
-    //printf("%d\n", averagePosition);
-    //Potential
-    error = desiredValue-averagePosition;
-
-    //Derivative
-    derivative = error - prevError;
-
-    //Integral (Highly suggested do not use it)
-    //Velocity -> Postion -> Absement (Position and Time)
-    totalError += error;
-    if (fabs(error)>fabs(totalError))
-    {
-      totalError=0;
-    }
-    if (error == 0)
-    {
-      totalError = 0;
-    }
-
-    //Maybe /12.0 ?
-    double lateralMotorPower = error*kP + derivative*kD+totalError*kI;
-    //
-
-    //////////////////////////////////////////////////////////
-    //Turning Movement PID
-    /////////////////////////////////////////////////////////
-    //int turnDifference = leftMotorPosition - rightMotorPosition;
-
-    //Potential
-    turnError =desiredTurnValue-((Inertial.rotation()));
-    //printf("%f\t%d\n", t.time(seconds), averagePosition);
-    if ((fabs(turnError)<2 && turning && fabs(turnDerivative)<1) || (fabs(error)<10 && !turning && fabs(derivative)<1))
-    {
-      break;
-    }
-    // printf("%f\n", Inertial.rotation());
-    // Controller.Screen.setCursor(0,0);
-    // Controller.Screen.clearLine();
-    // Controller.Screen.print(Inertial.rotation());
-
-    //Derivative
-    turnDerivative = turnError - turnPrevError;
-
-    //Integral (Highly suggested do not use it)
-    //Velocity -> Postion -> Absement (Position and Time)
-    if (turnError == 0)
-    {
-      turnTotalError = 0;
-    }
-    if ( fabs(turnError)<fabs(turnTotalError))
-    {
-      turnTotalError = 0;
-    }
-
-    // if (turnDerivative<0.1)
-    // {
-      turnTotalError += turnError;
-    // }
-    // else {
-    //   turnTotalError=0;
-    // }
-
-   
-    
-
-    //Maybe /12.0 ?
-    double turnMotorPower;
-    if (!pivot)
-    {
-      turnMotorPower = turnError*turnkP + turnDerivative*turnkD+turnTotalError*turnkI + turnkF*(desiredTurnValue-startingTurnValue);
-    }// x
-    else {
-      turnMotorPower = pivotP*turnError+pivotI*turnTotalError;
-    }
-    
-    if(lateralMotorPower>maxLateralPower)
-    {
-      lateralMotorPower=maxLateralPower;
-    }
-    if(lateralMotorPower<-maxLateralPower)
-    {
-      lateralMotorPower=-maxLateralPower;
-    }
-
-    if(turnMotorPower>maxTurningPower && !pivot)
-    {
-      turnMotorPower=maxTurningPower;
-    }
-    if(turnMotorPower<-maxTurningPower && !pivot)
-    {
-      turnMotorPower=-maxTurningPower;
-    }
-     
-    // if(turnMotorPower>maxTurningPower)
-    // {
-    //   turnMotorPower=maxTurningPower;
-    // }
-    // if(turnMotorPower<-maxTurningPower)
-    // {
-    //   turnMotorPower=-maxTurningPower;
-    // }
-    // Controller.Screen.setCursor(0,0);
-    // Controller.Screen.clearLine();
-    // Controller.Screen.print((Inertial.rotation()));
-    if (lateralMotorPower>0 && lateralMotorPower-lastLateralVoltage>maxLateralChange)
-    {
-      lateralMotorPower = lastLateralVoltage+maxLateralChange;
-    }
-    if (lateralMotorPower<0 && lateralMotorPower-lastLateralVoltage<-maxLateralChange)
-    {
-      lateralMotorPower = lastLateralVoltage-maxLateralChange;
-    }
-
-    lastLateralVoltage=lateralMotorPower;
-    if (rightStop && pivot)
-    {
-        leftDrive.spin(fwd, (turnMotorPower), volt);   
-        rightDrive.stop(hold);   
-    }
-    if (leftStop && pivot)
-    {
-        rightDrive.spin(fwd, (turnMotorPower), volt);   
-        leftDrive.stop(hold);   
-    }
-    else if (!pivot){
-      leftDrive.spin(fwd, curveLeftVar*(lateralMotorPower + turnMotorPower), volt);
-      rightDrive.spin(fwd, curveRightVar*(lateralMotorPower - turnMotorPower), volt);
-    }
-    prevError = error;
-    turnPrevError = turnError;
-    // printf("%f\n", Inertial.rotation());
-    wait(10, msec);
-  }
-  leftDrive.stop(vex::brakeType::hold);
-  rightDrive.stop(vex::brakeType::hold);
-  return 1;
-}
-
-
-// double moveError;
-// double movePrevError;
-// double moveDerivative;
-
-// double KpMove=1;
-// double KdMove=10;
-
-
-// double lastMovePct =0;
-
-// double maxMoveVoltage =10; //8
-
-// double desiredLength = 0;
-
-// float clamp(float input, float min, float max){
-//   if( input > max ){ return(max); }
-//   if(input < min){ return(min); }
-//   return(input);
-// }
-
-// bool enableDist = true;
-// int dist(double timeout, brakeType chooseBrakeType)
-// {
-//   double timeout_loop = (timeout*1000.0);
-//   double timeout_time =0;
-//   double startingDist = (fEncoder.position(deg)/360.0)*M_PI*2.75;
-//   while (enableDist&&timeout_time<timeout_loop)
-//   {
-//     moveError = desiredLength-(((fEncoder.position(deg)/360.0)*M_PI*2.75)-startingDist);
-//     moveDerivative = moveError-movePrevError;
-
-//     double moveVolt = (moveError*KpMove+moveDerivative*KdMove);
-
-//     moveVolt = clamp(moveVolt, -maxMoveVoltage, maxMoveVoltage);
-//     // if(straightPct-lastStraightPct>5)
-//     // {
-//     //   straightPct=lastStraightPct+5;
-//     // }
-//     //printf("%f\n", timeout_time);
-    
-//     leftDrive.spin(fwd, moveVolt, voltageUnits::volt);
-//     rightDrive.spin(fwd, moveVolt, voltageUnits::volt);
-
-
-//     if (fabs(moveError)<3)
-//     {
-//       break;
-//     }
-
-//     movePrevError=moveError;
-//     lastMovePct=moveVolt;
-//     timeout_time+=20;
-//     wait(20, msec);
-//   }
-//   leftDrive.stop(chooseBrakeType);
-//   rightDrive.stop(chooseBrakeType);
-//   return 1;
-// }
-
-
-void PIDTurn(double angle)
-{
-  resetDriveSensors=true;
-  desiredTurnValue=angle;
-  desiredValue=0;
-  turning=true;
-  drivePID();
-}
-// void PIDMove (double length, double timeout=5, brakeType chooseBrakeType=hold)
-// {
-//   desiredLength=length;
-//   dist(timeout, chooseBrakeType);
-// }
-void PIDTurnMove(double move, double ang)
-{
-  resetDriveSensors=true;
-  desiredTurnValue=ang;
-  desiredValue=0;
-  drivePID();
-  resetDriveSensors=true;
-  desiredValue=move;
-  drivePID();
-}
-
-void PIDMove(double move)
-{
-  resetDriveSensors=true;
-  desiredValue=move;
-  turning=false;
-  drivePID();
 }
 
 
@@ -398,259 +71,88 @@ void PIDMove(double move)
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 //Due to turning scrub, use a track width a couple inches larger than the real one
-// bool load = true;
-// bool fire = false;
-bool load = true;
-bool fire = true;
-bool autonCata=true;
-int loadCata()
+
+bool enableOdom=true;
+int odom()
 {
-  while (autonCata)
+  while (enableOdom)
   {
-    if (load)
-    {
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
-    }
-    if (cataSense.angle(deg)>225&&load)
-    {
-      catapult.spin(reverse, 10, vex::velocityUnits::pct);
-    }
-    if (cataSense.angle(deg)>257&&load)
-    {
-      catapult.stop(hold);
-      load=!load;
-    }
-    if (cataSense.angle(deg)<185&&fire)
-    {
-      catapult.stop(coast);
-      fire=!fire;
-      load=true;
-    }
-    if (fire)
-    {
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
-    }
-    vex::task::sleep(20);
+    getCurrLoc();
+    // Controller.Screen.setCursor(0, 0);
+    // Controller.Screen.clearLine();
+    // Controller.Screen.print("%d %d %d", (int)pos[0], (int)pos[1], (int)curveError);
+    //printf("%d\t%d\n", (int)pos[0], (int)pos[1]);
+    vex::task::sleep(10);
   }
-  return 0;
+  return 1;
 }
+
+
 
 
 void autonomous(void) {
-  autonCata = false;
-  elevationLifter.set(true);
-  intakeLifter.set(true);
-  // blooper.set(true);
+  //  for (int i=0;i<pathMain[0].size(); i++)
+  // {
+  //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
+  //   wait(20, msec);
+  // }
+  // for (int i=0;i<pathMain[0].size(); i++)
+  // {
+  //   printf("%f\n", pathMain[0][i].finVel);
+  //   wait(20, msec);
+  // }
+  // std::cout << pathMain[0].size();
+  // motor1.spin(reverse, 100, rpm);
+  // motor2.spin(reverse, 100, rpm);
+  // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
+  vex::task odometry(odom);
+  intake.spin(reverse, 200, rpm);
   wings.set(true);
-  wait(400, msec);
+  wait(200, msec);
   wings.set(false);
-  intake.spin(reverse, 600, rpm);
-  PIDMove(4500);
-  PIDTurn(125);  
-  wings.set(true);
-  intake.spin(fwd, 600, rpm);
-  PIDMove(1400);
-  // wait(500, msec);
-  leftDrive.spinFor(fwd, 600, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 600, degrees, 100, vex::velocityUnits::pct, false);
+  pathing(pathMain[0], false, true);
+  pathing(pathMain[1], true, false);
+  pathing(pathMain[2], true, true, 10*2.54);
+  intake.spin(fwd, 200, rpm);
   wait(600, msec);
-  leftDrive.stop();
-  rightDrive.stop();
-  PIDMove(-600);
-  wings.set(false);
-  PIDTurn(265);
-  intake.spin(reverse, 600, rpm);
-  PIDMove(1670);
-  PIDTurn(105);
-  intake.spin(fwd, 300, rpm);
-  PIDMove(1000);
-  // wait(500, msec);
-  leftDrive.spinFor(fwd, 950, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(fwd, 950, degrees, 100, vex::velocityUnits::pct, false);
-  wait(800, msec);
-  leftDrive.stop();
-  rightDrive.stop();
-  PIDMove(-1200);
-  PIDTurn(-2);
-  PIDMove(-3400);
-  blooper.set(true);
-  PIDTurn(-125);
-  blooper.set(false);
-  // PIDMove(-600);
-  // PIDTurn(-135);
-  leftDrive.spinFor(reverse, 1700, degrees, 100, vex::velocityUnits::pct, false);
-  rightDrive.spinFor(reverse, 1700, degrees, 100, vex::velocityUnits::pct, false);
-  wait(900, msec);
-  leftDrive.stop();
-  rightDrive.stop();
-  PIDMove(1800);
-  
-  // PIDTurn(75);
-  // leftDrive.spinFor(fwd, 2000, degrees, 100, vex::velocityUnits::pct, false);
-  // rightDrive.spinFor(fwd, 2000, degrees, 100, vex::velocityUnits::pct, false);
-  // wait(1200, msec);
-  // leftDrive.stop();
-  // rightDrive.stop();
+  PIDTurn(-90);
+  intake.spin(reverse, 200, rpm);
+  PIDMove(30);
+  pathing(pathMain[3], true, false);
+  wingsBackLeft.set(true);
+  pathing(pathMain[4], true, false, 18*2.54, 1500);
+  PIDMove(10);
+  wingsBackLeft.set(false);
+  PIDTurn(-370);
+  intake.spin(fwd, 200, rpm);
+  PIDMove(29, 1);
+  PIDMove(-15);
 }
 
 
-double kTurn = 0.65;
-double turnRemap(double turn){
-  double denom = sin(M_PI/2 * kTurn);
-  double firstRemap = sin(M_PI/2 * kTurn * turn)/denom;
-  return sin(M_PI/2 * kTurn * firstRemap) / denom;
-}
-
-double fastStopAccum = 0.0;
-double negInertiaAccum = 0.0;
-void updateAccum(){
-  if (negInertiaAccum>1){
-    negInertiaAccum-=1;
-  }
-  else if (negInertiaAccum<-1) {
-    negInertiaAccum+=1;
-  }
-  else{
-    negInertiaAccum=0;
-  }
-}
-
-double prevTurn = 0.0;
-double prevThrottle = 0.0;
-
-double drive_deadband=0.1;
-double drive_slew = 0.02;
-double kInertiaScalar =0.75;//0.5
-double kSensitivty = 1;
-
-void curvatureDrive(double throttle, double turn){
-  bool pointTurn = false;
-  double linear = throttle;
-  if (fabs(throttle)<drive_deadband && fabs(turn)>drive_deadband)
-  {
-    linear = 0.0;
-    pointTurn=true;
-  }
-  else if (throttle-prevThrottle>drive_slew) {
-    linear = prevThrottle+drive_slew;
-  }
-  else if (throttle-prevThrottle<-(drive_slew*2)) {
-    linear = prevThrottle-(drive_slew*2);
-  }
-  double remappedTurn = turnRemap(turn);
-  double left, right;
-  if (pointTurn){
-    left = remappedTurn*fabs(remappedTurn);
-    right = -remappedTurn*fabs(remappedTurn);
-    // printf("%f\n", remappedTurn*fabs(remappedTurn));
-  }
-  else {
-    double negInertiaPower = (turn-prevTurn)*kInertiaScalar;
-    negInertiaAccum+=negInertiaPower;
-    double angular = fabs(linear)*(remappedTurn+negInertiaAccum)*kSensitivty - fastStopAccum;
-
-    right =linear; left = linear;
-    //printf("%f\t%f\n", negInertiaAccum, angular);
-    left += angular;
-    right -=angular;
-    updateAccum();
-  }
-  prevTurn=turn;
-  prevThrottle=throttle;
-  leftDrive.spin (fwd, left*100, vex::velocityUnits::pct);
-  rightDrive.spin (fwd, right*100, vex::velocityUnits::pct);
-}
-
-double LeftPercent = 0;
-double RightPercent = 0;
-double lastLeftPercent = 0;
-double lastRightPercent = 0;
-void leftExpo (vex::directionType type, double percentage){
-  if(fabs(percentage) < 1)
-    percentage = 0;
-  else if(percentage >= 1)
-    percentage = 2*pow(1.05, percentage-42) + 1;
-  else{
-    percentage = -percentage;
-    percentage = 2*pow(1.05, percentage-42) + 1;
-    percentage = -percentage;
-  }
-  // if (percentage-lastLeftPercent>50)
-  // {
-  //   percentage=lastLeftPercent+50;
-  // }
-  // if (percentage-lastLeftPercent<-50)
-  // {
-  //   percentage=lastLeftPercent-50;
-  // }
-  LeftPercent=percentage;
-
-  leftDrive.spin (type, percentage, vex::velocityUnits::pct);
-  lastLeftPercent=percentage;
-}
-
-void rightExpo (vex::directionType type, double percentage){
-
-  if(fabs(percentage) < 1)
-    percentage = 0;
-  else if(percentage >= 1)
-    percentage = 2*pow(1.05, percentage-42) + 1;
-  else{
-    percentage = -percentage;
-    percentage = 2*pow(1.05, percentage-42) + 1;
-    percentage = -percentage;
-  }
-
-  //  if (percentage-lastRightPercent>50)
-  // {
-  //   percentage=lastRightPercent+50;
-  // }
-  // if (percentage-lastRightPercent<-50)
-  // {
-  //   percentage=lastRightPercent-50;
-  // }
 
 
-  RightPercent=percentage;
-  rightDrive.spin (type, percentage, vex::velocityUnits::pct);
-  lastRightPercent=percentage;
-}
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              User Control Task                            */
-/*                                                                           */
-/*  This task is used to control your robot during the user control phase of */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
-bool CataOn = false;
-bool CataToggle =false;
-bool reload = true;
-bool elevationUpOn = false;
-bool elevationUpToggle = false;
-bool elevationOn = false;
-bool elevationToggle = false;
-double loadAngle = 250;
 bool wingsOn = false;
 bool wingsToggle = false;
-bool blooperOn = false;
-bool blooperToggle = false;
-double maxSpeed = 127;
-bool lifterOn = false;
-bool lifterToggle = false;
-bool sensorFireOn = false;
-bool sensorFireToggle = false;
-bool fullSpeedOn = false;
-bool fullSpeedToggle = false;
-
+bool modeOn = false;
+bool modeToggle = false;
+bool ptoOn = false;
+bool ptoToggle = false;
+bool backWingsOn = false;
+bool backWingsToggle = false;
+bool ratchetToggle=false;
+bool ratchetOn=false;
+timer tMatch = timer();
 void usercontrol(void) {
-  intakeLifter.set(true);
-  enableDrivePID=false;
-  autonCata=false;
   // User control code here, inside the loop
+  motor1.setBrake(hold);
+  motor2.setBrake(hold);
   while (1) {
+    if (tMatch.time(sec)>103.5)
+    {
+      ratchet.set(true);
+    }
     driveBrake(coast);
     // rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
     // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
@@ -659,13 +161,28 @@ void usercontrol(void) {
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
-      intake.spin(fwd, 600, rpm);
+      if (modeToggle){
+        motor1.spin(fwd, 200, rpm);
+        motor2.spin(fwd, 200, rpm);
+      }
+      else {
+        intake.spin(fwd, 200, rpm);
+      }
     }
     else if (Controller.ButtonL2.pressing())
     {
-      intake.spin(reverse, 600, rpm);
+      if (modeToggle)
+      {
+      motor1.spin(reverse, 200, rpm);
+      motor2.spin(reverse, 200, rpm);
+      }
+      else {
+        intake.spin(reverse, 200, rpm);
+      }
     }
     else {
+      motor1.stop();
+      motor2.stop();
       intake.stop();
     }
 
@@ -688,108 +205,58 @@ void usercontrol(void) {
       wings.set(false);
     }
 
-    if (Controller.ButtonUp.pressing())
+    if (Controller.ButtonR1.pressing())
     {
-      if (!blooperOn)
+      if (!modeOn)
       {
-        blooperToggle=!blooperToggle;
-        blooperOn=true;
+        modeToggle=!modeToggle;
+        modeOn=true;
       }
     }
     else {
-      blooperOn=false;
-    }
-    if (blooperToggle)
-    {
-      blooper.set(true);
-    }
-    else {
-      blooper.set(false);
+      modeOn=false;
     }
 
-    if (Controller.ButtonDown.pressing())
+
+     if (Controller.ButtonR2.pressing())
     {
-      if (!lifterOn)
+      if (!backWingsOn)
       {
-        lifterToggle=!lifterToggle;
-        lifterOn=true;
+        backWingsToggle=!backWingsToggle;
+        backWingsOn=true;
       }
     }
     else {
-      lifterOn=false;
+      backWingsOn=false;
     }
-    if (lifterToggle)
+    if (backWingsToggle)
     {
-      blockerLifter.set(true);
+      wingsBackRight.set(true);
+      wingsBackLeft.set(true);
     }
     else {
-      blockerLifter.set(false);
+      wingsBackRight.set(false);
+      wingsBackLeft.set(false);
     }
+
 
     if (Controller.ButtonX.pressing())
     {
-      if (!elevationUpOn)
+      if (!ratchetOn)
       {
-        elevationUpToggle = !elevationUpToggle;
-        elevationUpOn=true;
+        ratchetToggle=!ratchetToggle;
+        ratchetOn=true;
       }
     }
-    else
-    {
-      elevationUpOn=false;
+    else {
+      ratchetOn=false;
     }
-    if (elevationUpToggle)
+    if(ratchetToggle)
     {
-      elevationLifter.set(true);
+      ratchet.set(true);
     }
-    else
-    {
-      elevationLifter.set(false);
-    }
-
-    if (Controller.ButtonB.pressing())
-    {
-      if (!elevationOn)
-      {
-        elevationToggle = !elevationToggle;
-        elevationOn=true;
-      }
-    }
-    else
-    {
-      elevationOn=false;
-    }
-    if (elevationToggle)
-    {
-      elevationLifter.set(false);
-      elevationUpToggle=false;
-      elevation.set(true);
-    }
-    else
-    {
-      elevation.set(false);
-    }
-
-    if (Controller.ButtonR1.pressing())
-    {
-      reload=true;
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
-    }
-    if (Controller.ButtonR2.pressing())
-    {
-      reload=false;
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
-    }
-    if (reload && cataSense.angle(deg)>265)//93
-    {
-      catapult.stop(hold);
-    }
-    else if (!reload && cataSense.angle(deg)<242)
-    {
-      catapult.stop(coast);
-
-      reload=true;
-      catapult.spin(reverse, 100, vex::velocityUnits::pct);
+    else {
+     ratchet.set(false);
     }
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
