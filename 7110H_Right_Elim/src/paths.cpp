@@ -271,9 +271,8 @@ const char * path_str = R"(#PATH-POINTS-START Path
 144.039,-69.482,120,0
 144.039,-69.482,0,0)";
 
-
 std::vector<std::vector<pathPoint>> pathMain = convert_to_path(path_str);
-std::vector<double> finSpeed = {125, 150, 0, 140, 150};
-std::vector<double> startSpeed = {200,200, 150, 130, 140};
+std::vector<double> finSpeed = {100, 150, 0, 140, 150};
+std::vector<double> startSpeed = {300,200, 150, 130, 140};
 //
 
