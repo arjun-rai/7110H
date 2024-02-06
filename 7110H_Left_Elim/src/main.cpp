@@ -162,8 +162,9 @@ void usercontrol(void) {
     if (Controller.ButtonL1.pressing())
     {
       if (modeToggle){
-        motor1.spin(fwd, 200, rpm);
-        motor2.spin(fwd, 200, rpm);
+        ratchetToggle=true;
+        motor1.spinFor(fwd, 2.84, rev, 200, rpm, false);
+        motor2.spinFor(fwd, 2.84, rev, 200, rpm, false);
       }
       else {
         intake.spin(fwd, 200, rpm);
@@ -173,16 +174,16 @@ void usercontrol(void) {
     {
       if (modeToggle)
       {
-      motor1.spin(reverse, 200, rpm);
-      motor2.spin(reverse, 200, rpm);
+      motor1.spinFor(reverse, 2.8, rev, 200, rpm, false);
+      motor2.spinFor(reverse, 2.8, rev, 200, rpm, false);
       }
       else {
         intake.spin(reverse, 200, rpm);
       }
     }
     else {
-      motor1.stop();
-      motor2.stop();
+      // motor1.stop();
+      // motor2.stop();
       intake.stop();
     }
 

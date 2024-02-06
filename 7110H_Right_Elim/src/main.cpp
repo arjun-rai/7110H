@@ -108,28 +108,36 @@ void autonomous(void) {
   vex::task odometry(odom);
   intake.spin(reverse, 200, rpm);
   wings.set(true);
-  wait(200, msec);
+  wait(100, msec);
   wings.set(false);
   pathing(pathMain[0], false, true);
-  PIDMove(-20);
+  intake.stop();
+  PIDMove(-5);
   PIDTurn(90);
+  wings.set(true);
   intake.spin(fwd, 200, rpm);
-  wait(500, msec);
-  PIDTurn(-60);
-  intake.spin(reverse, 200, rpm);
-  PIDMove(12);
+  PIDMove(24, 1.2);
 
-  wait(10000, msec);
+  wings.set(false);
+  PIDMove(-12);
+  PIDTurn(-121);
+  intake.spin(reverse, 200, rpm);
+  PIDMove(26);
+  //wait(200, msec);
+
+
   pathing(pathMain[1], true, false);
-  pathing(pathMain[2], true, true, 10*2.54);
+  pathing(pathMain[2], true, true, 13*2.54);
+
+  //wait(10000, msec);
+  // wait(10000, msec);
   intake.spin(fwd, 200, rpm);
-  wait(600, msec);
   PIDTurn(-90);
   intake.spin(reverse, 200, rpm);
-  PIDMove(30);
+  PIDMove(33);
   pathing(pathMain[3], true, false);
   wingsBackLeft.set(true);
-  pathing(pathMain[4], true, false, 18*2.54, 1500);
+  pathing(pathMain[4], true, false, 20*2.54, 1800);
   PIDMove(10);
   wingsBackLeft.set(false);
   PIDTurn(-370);
@@ -171,8 +179,9 @@ void usercontrol(void) {
     if (Controller.ButtonL1.pressing())
     {
       if (modeToggle){
-        motor1.spin(fwd, 200, rpm);
-        motor2.spin(fwd, 200, rpm);
+        ratchetToggle=true;
+        motor1.spinFor(fwd, 2.84, rev, 200, rpm, false);
+        motor2.spinFor(fwd, 2.84, rev, 200, rpm, false);
       }
       else {
         intake.spin(fwd, 200, rpm);
@@ -182,16 +191,16 @@ void usercontrol(void) {
     {
       if (modeToggle)
       {
-      motor1.spin(reverse, 200, rpm);
-      motor2.spin(reverse, 200, rpm);
+      motor1.spinFor(reverse, 2.8, rev, 200, rpm, false);
+      motor2.spinFor(reverse, 2.8, rev, 200, rpm, false);
       }
       else {
         intake.spin(reverse, 200, rpm);
       }
     }
     else {
-      motor1.stop();
-      motor2.stop();
+      // motor1.stop();
+      // motor2.stop();
       intake.stop();
     }
 
