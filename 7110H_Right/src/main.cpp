@@ -108,7 +108,8 @@ void autonomous(void) {
   vex::task odometry(odom);
   intake.spin(reverse, 200, rpm);
   wait(700, msec);
-  PIDMove(6);
+  //PIDMove(6);
+  intake.stop();
   // wait(500, msec);
   pathing(pathMain[0], true, false);
   
@@ -123,7 +124,7 @@ void autonomous(void) {
   // motor2.spin(fwd, 100, rpm);
   // wings.set(true);
   intake.spin(fwd, 200, rpm);
-  PIDMove(25, 0.8);
+  PIDMove(25, 1);
   // wings.set(false);
   PIDMove(-12);
 
