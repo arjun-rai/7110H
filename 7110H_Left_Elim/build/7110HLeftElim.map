@@ -8087,7 +8087,10 @@ Linker script and memory map
  .data.enableOdom
                 0x03807c48        0x1 build/src/main.o
                 0x03807c48                enableOdom
- *fill*         0x03807c49        0x7 
+ .data.backWingsToggle
+                0x03807c49        0x1 build/src/main.o
+                0x03807c49                backWingsToggle
+ *fill*         0x03807c4a        0x6 
  .data.turnkP   0x03807c50        0x8 build/src/pid.o
                 0x03807c50                turnkP
  .data.turnkD   0x03807c58        0x8 build/src/pid.o
@@ -8608,15 +8611,13 @@ Linker script and memory map
  .bss.backWingsOn
                 0x03808268        0x1 build/src/main.o
                 0x03808268                backWingsOn
- .bss.backWingsToggle
-                0x03808269        0x1 build/src/main.o
-                0x03808269                backWingsToggle
  .bss.ratchetToggle
-                0x0380826a        0x1 build/src/main.o
-                0x0380826a                ratchetToggle
+                0x03808269        0x1 build/src/main.o
+                0x03808269                ratchetToggle
  .bss.ratchetOn
-                0x0380826b        0x1 build/src/main.o
-                0x0380826b                ratchetOn
+                0x0380826a        0x1 build/src/main.o
+                0x0380826a                ratchetOn
+ *fill*         0x0380826b        0x1 
  .bss.tMatch    0x0380826c        0x8 build/src/main.o
                 0x0380826c                tMatch
  .bss._ZStL8__ioinit
