@@ -112,6 +112,7 @@ void autonomous(void) {
   wings.set(false);
   pathing(pathMain[0], false);
   wait(100, msec);
+  intake.stop();
   pathing(pathMain[1], true);
   PIDTurn(-45);
   PIDMove(15);
@@ -149,10 +150,10 @@ void usercontrol(void) {
   motor1.setBrake(hold);
   motor2.setBrake(hold);
   while (1) {
-    if (tMatch.time(sec)>103.5)
-    {
-      ratchet.set(true);
-    }
+    // if (tMatch.time(sec)>103.5)
+    // {
+    //   ratchet.set(true);
+    // }
     driveBrake(coast);
     // rightExpo(forward, (Controller.Axis3.value() - Controller.Axis1.value()), maxSpeed);
     // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
