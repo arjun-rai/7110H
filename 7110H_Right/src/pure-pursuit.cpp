@@ -342,7 +342,7 @@ void getCurrLoc()
   double Y_position_delta = local_polar_length*sin(global_polar_angle);
 
   X_position_delta = (X_position_delta/360.0)*M_PI*2.75*2.54;
-  Y_position_delta = (Y_position_delta/360.0)*M_PI*2.75*2.54;
+  Y_position_delta = (Y_position_delta/360.0)*M_PI*2*2.54;
 
   pos[0]+=X_position_delta;
   pos[1]+=Y_position_delta;

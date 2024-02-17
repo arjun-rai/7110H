@@ -50,7 +50,7 @@ void pre_auton(void) {
   }
   
   Inertial.resetRotation();
-  Inertial.setRotation(-180, degrees);
+  Inertial.setRotation(-90, degrees);
   
   parallelEncoder.resetPosition();
   perpendicularEncoder.resetPosition();
@@ -91,120 +91,16 @@ int odom()
 
 
 void autonomous(void) {
-  //  for (int i=0;i<pathMain[0].size(); i++)
-  // {
-  //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
-  //   wait(20, msec);
-  // }
-  // for (int i=0;i<pathMain[0].size(); i++)
-  // {
-  //   printf("%f\n", pathMain[0][i].finVel);
-  //   wait(20, msec);
-  // }
-  // std::cout << pathMain[0].size();
-  // motor1.spin(reverse, 100, rpm);
-  // motor2.spin(reverse, 100, rpm);
-  // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
   vex::task odometry(odom);
-  motor1.spin(reverse, 50, rpm);
-  motor2.spin(reverse, 50, rpm);
-  PIDMove(-21);
-  motor1.stop();
-  motor2.stop();
-  PIDTurn(-74);
-  PIDMove(-20);
-  wingsBackLeft.set(true);
-  double angleBefore = Inertial.rotation(degrees);
-  enableOdom=false;
-  motor1.spin(fwd, 50, rpm);
-  motor2.spin(fwd, 50, rpm);
-  wait(25000, msec);
-  motor1.stop();
-  motor2.stop();
-  Inertial.calibrate();
-  waitUntil(!Inertial.isCalibrating());
-  Inertial.setRotation(angleBefore,deg);
-  wingsBackLeft.set(false);
-  enableOdom=true;
-  vex::task odometry2(odom);
-  PIDMove(8);
-  PIDTurn(-135+180);
-  // PIDMove(15);
-  // PIDTurn(-90);
- 
-  // motor1.spinFor(fwd, 70,deg, 100, rpm, false);
-  // motor2.spinFor(fwd, 70,deg, 100, rpm);
-  // motor1.stop(hold);
-  // motor2.stop(hold);
-  // wait(1000, sec);
+  pathing(pathMain[0], true, true, 18*2.54, 2500);
+  PIDMove(12);
+  PIDTurn(-77);
+  PIDMove(-5);
+  pathing(pathMain[1], false, false, 18*2.54, 3000);
+  wings.set(true);
+  pathing(pathMain[2], false, true, 30*2.54, 3000);
+  printf("%f %f\n", pos[0], pos[1]);
   
-  pathing(pathMain[0], true, false, 5);
-  // wings.set(true);
-  // wingsBackLeft.set(true);
-  pathing(pathMain[1], true, true, 3);
-  // wingsBackLeft.set(false);
-  PIDMove(15);
-  PIDMove(-20, 1);
-  // wings.set(false);
- // printf("%f\t%f\n", pos[0], pos[1]);
-  // wings.set(true);
-  // pathing(pathMain[1], false, true, 4);
-  // wings.set(false);
-  PIDMove(5);
-  PIDTurn(-100);
-  PIDMove(-46, 3);
-  PIDTurn(-178);
-  PIDMove(-23);
-  PIDTurn(-273);
-  wingsBackLeft.set(true);
-  wingsBackRight.set(true);
-  PIDMove(-22, 1);
-  PIDMove(-22, 1);
-  wingsBackLeft.set(false);
-  wingsBackRight.set(false);
-  PIDMove(25, 1);
-  wingsBackLeft.set(true);
-  wingsBackRight.set(true);
-  PIDMove(-45, 1);
-  wingsBackLeft.set(false);
-  wingsBackRight.set(false);
-  PIDMove(31);
-  PIDTurn(-177);
-  PIDMove(-22);
-  PIDTurn(-280);
-  wingsBackLeft.set(true);
-  wingsBackRight.set(true);
-  PIDMove(-22, 1);
-  PIDMove(-22, 1);
-  wingsBackLeft.set(false);
-  wingsBackRight.set(false);
-  PIDMove(25, 1);
-  wingsBackLeft.set(true);
-  wingsBackRight.set(true);
-  PIDMove(-45, 1);
-  wingsBackLeft.set(false);
-  wingsBackRight.set(false);
-  PIDMove(13);
-  PIDTurn(-215);
-  //wingsBackLeft.set(true);
-  printf("%f\t%f\n", pos[0], pos[1]);
-  pathing(pathMain[2], true, true);
-  PIDMove(10);
-  PIDMove(-10);
-  PIDMove(10);
- 
-
-
-  
-
-  // pathing(pathMain[2], false, true);
-  // wingsBackLeft.set(false);
-  // wait(5000, msec);
-  // pathing(pathMain[2], true, true);
-  // while (true)
-  // {
-  //   getCurrLoc();
-  // }
 }
 
 
@@ -241,8 +137,8 @@ void usercontrol(void) {
     {
       if (modeToggle){
         // ratchetToggle=true;
-        // motor1.spin(fwd, 200, rpm);
-        // motor2.spin(fwd, 200, rpm);
+        motor1.spin(fwd, 200, rpm);
+        motor2.spin(fwd, 200, rpm);
       }
       else {
         intake.spin(fwd, 200, rpm);
