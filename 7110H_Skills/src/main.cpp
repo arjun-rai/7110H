@@ -55,7 +55,7 @@ void pre_auton(void) {
   parallelEncoder.resetPosition();
   perpendicularEncoder.resetPosition();
   driveBrake(coast);
-  //printf("yes!\n");
+  printf("yes!\n");
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -98,8 +98,32 @@ void autonomous(void) {
   PIDMove(-5);
   pathing(pathMain[1], false, false, 18*2.54, 3000);
   wings.set(true);
-  pathing(pathMain[2], false, true, 30*2.54, 3000);
-  printf("%f %f\n", pos[0], pos[1]);
+  intake.spin(fwd, 200, rpm);
+  pathing(pathMain[2], false, true, 40*2.54, 3000);
+  // PIDMove(54);
+  PIDMove(-7);
+  wings.set(false);
+  PIDTurn(70, true);
+  pathing(pathMain[3], false, true, 16*2.54, 3000);
+  wings.set(true);
+  pathing(pathMain[4], false, true, 20*2.54, 5000);
+  wings.set(false);
+  PIDMove(-10);
+  PIDMove(10);
+  PIDMove(-3);
+  PIDTurn(-90);
+  // PIDMove(-45);
+  pathing(pathMain[5], true, true, 20*2.54, 3000);
+  PIDTurn(-135); 
+  wings.set(true);
+  pathing(pathMain[6], false, true, 20*2.54, 3000);
+  wings.set(false);
+  pathing(pathMain[7], true, true, 20*2.54, 3000);
+  PIDTurn(-170);
+  wings.set(true);
+  pathing(pathMain[8], false, true, 20*2.54, 3000);
+
+  // printf("%f %f\n", pos[0], pos[1]);
   
 }
 

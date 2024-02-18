@@ -135,7 +135,7 @@ void curv_func(std::vector<pathPoint>& p)
 }
 
 double max_vel = (2.54*600*3*2.75*M_PI)/(4*60); //rpm to in/s
-double turning_const = 1; //changes how fast it goes around turns
+double turning_const = 2.5; //changes how fast it goes around turns
 double max_accel = 100; //in/s^3  used to be 6 150
 // double starting_vel = (350*4*3.25*M_PI)/(5*60); //rpm to in/s 300
 void speed_func(std::vector<pathPoint>& p, double starting_rpm, double finSpeed)
@@ -196,8 +196,8 @@ void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
 {
   for (int i =0; i<path.size()-1; i++)
   {
-    int i_ = path.size()-1-i;
-    pathPoint p = path[path.size()-1-i];
+    int i_ = path.size()-2-i;
+    pathPoint p = path[path.size()-2-i];
     double d[] = {path[i_+1].x-p.x, path[i_+1].y-p.y};
     double f[] = {p.x-pos[0], p.y-pos[1]};
     double a = 0;
@@ -369,7 +369,7 @@ bool pathing(std::vector<pathPoint> path, bool backwards, bool stop, double look
   {
     if (t.time(msec)>stopTime && stopTime!=0)
     {
-      return 0;
+      break;
     }
     // getCurrLoc();
     double look[] = {};
