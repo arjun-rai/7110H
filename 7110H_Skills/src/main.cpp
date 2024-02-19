@@ -92,14 +92,14 @@ int odom()
 
 void autonomous(void) {
   vex::task odometry(odom);
-  pathing(pathMain[0], true, true, 18*2.54, 2500);
+  pathing(pathMain[0], true, true, 18*2.54, 2300);
   PIDMove(12);
   PIDTurn(-77);
   PIDMove(-5);
   pathing(pathMain[1], false, false, 18*2.54, 3000);
   wings.set(true);
   intake.spin(fwd, 200, rpm);
-  pathing(pathMain[2], false, true, 40*2.54, 3000);
+  pathing(pathMain[2], false, true, 40*2.54, -2200);
   // PIDMove(54);
   PIDMove(-7);
   wings.set(false);
@@ -109,19 +109,23 @@ void autonomous(void) {
   pathing(pathMain[4], false, true, 20*2.54, 5000);
   wings.set(false);
   PIDMove(-10);
-  PIDMove(10);
-  PIDMove(-3);
-  PIDTurn(-90);
+  PIDTurn(-340);
+  PIDMove(-30, 1.5);
+  pos[0]=-148.0;
+  pos[1]=70.0;
+  printf("%f %f \n", pos[0], pos[1]);
+  PIDMove(5);
+  PIDTurn(-267);
   // PIDMove(-45);
-  pathing(pathMain[5], true, true, 20*2.54, 3000);
-  PIDTurn(-135); 
-  wings.set(true);
-  pathing(pathMain[6], false, true, 20*2.54, 3000);
-  wings.set(false);
-  pathing(pathMain[7], true, true, 20*2.54, 3000);
-  PIDTurn(-170);
-  wings.set(true);
-  pathing(pathMain[8], false, true, 20*2.54, 3000);
+  pathing(pathMain[5], false, true, 25*2.54, 3000);
+  PIDTurn(-335); 
+  // wings.set(true);
+  pathing(pathMain[6], true, true, 25*2.54, 3000);
+  // wings.set(false);
+  pathing(pathMain[7], false, true, 25*2.54, 2000);
+  PIDTurn(-335);
+  // wings.set(true);
+  pathing(pathMain[8], true, true, 25*2.54, 2000);
 
   // printf("%f %f\n", pos[0], pos[1]);
   
