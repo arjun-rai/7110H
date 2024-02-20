@@ -92,10 +92,20 @@ int odom()
 
 void autonomous(void) {
   vex::task odometry(odom);
+  intake.spin(reverse, 200, rpm);
   pathing(pathMain[0], true, true, 18*2.54, 1800);
   PIDMove(12);
-  PIDTurn(-77);
-  PIDMove(-5);
+  PIDTurn(-69); //-77
+  PIDMove(-6);
+  wingsBackLeft.set(true);
+
+  motor1.spin(reverse, 110, rpm);
+  motor2.spin(reverse, 110, rpm);
+  wait(26, sec);
+  motor1.stop();
+  motor2.stop();
+
+  wingsBackLeft.set(false);
   pathing(pathMain[1], false, false, 18*2.54, 3000);
   wings.set(true);
   intake.spin(fwd, 200, rpm);
@@ -111,15 +121,17 @@ void autonomous(void) {
   PIDMove(-10);
   PIDTurn(-340);
   PIDMove(-30, 1);
-  pos[0]=-143.0;
-  pos[1]=70.0;
+  pos[0]=-145.0;
+  pos[1]=72.0;
   // printf("%f %f \n", pos[0], pos[1]);
   intake.stop();
   PIDMove(5);
-  PIDTurn(-267);
+  PIDTurn(-270);
   // PIDMove(-45);
+  intake.spin(reverse, 200, rpm);
   pathing(pathMain[5], false, true, 25*2.54, 3000);
-  PIDTurn(-360); 
+  intake.spin(fwd, 200, rpm);
+  PIDTurn(0); 
   // wings.set(true);
   wingsBackLeft.set(true);
   wingsBackRight.set(true);
@@ -128,29 +140,30 @@ void autonomous(void) {
   wingsBackRight.set(false);
   // wings.set(false);
   pathing(pathMain[7], false, true, 25*2.54, 2000);
-  PIDTurn(-360);
-  PIDMove(-90/2.54);
+  PIDTurn(-360+360);
+  PIDMove(-81/2.54);
   // pathing(pathMain[8], true, true, 50*2.54, 2000);
   // wings.set(true);
-  PIDTurn(-270);
+  PIDTurn(-270+360);
   wingsBackLeft.set(true);
   wingsBackRight.set(true);
   pathing(pathMain[9], true, true, 30*2.54, 2000);
   wingsBackLeft.set(false);
   wingsBackRight.set(false);
   pathing(pathMain[10], false, true, 25*2.54, 3500);
-  PIDTurn(-180);
+  PIDTurn(-180+360);
   // wingsBackLeft.set(true);
   // wingsBackRight.set(true);
   wings.set(true);
   intake.spin(fwd, 200, rpm);
   pathing(pathMain[11], false, true, 22*2.54, 3000);
   wings.set(false);
-  PIDMove(-15);
-   wings.set(true);
-  leftDrive.spinFor(fwd, 5, rev, 600, rpm, false);
-  rightDrive.spinFor(fwd, 5, rev, 600, rpm, false);
-  wait(500, msec);
+  PIDMove(-20);
+  wings.set(true);
+  PIDTurn(0+360);
+  leftDrive.spinFor(fwd, 7, rev, 600, rpm, false);
+  rightDrive.spinFor(fwd, 7, rev, 600, rpm, false);
+  wait(1000, msec);
   leftDrive.stop();
   rightDrive.stop();
   wings.set(false);
@@ -177,6 +190,7 @@ bool ratchetToggle=false;
 bool ratchetOn=false;
 timer tMatch = timer();
 void usercontrol(void) {
+
   // User control code here, inside the loop
   motor1.setBrake(hold);
   motor2.setBrake(hold);
@@ -195,8 +209,8 @@ void usercontrol(void) {
     {
       if (modeToggle){
         // ratchetToggle=true;
-        motor1.spin(fwd, 200, rpm);
-        motor2.spin(fwd, 200, rpm);
+        // motor1.spin(fwd, 200, rpm);
+        // motor2.spin(fwd, 200, rpm);
       }
       else {
         intake.spin(fwd, 200, rpm);
@@ -206,16 +220,16 @@ void usercontrol(void) {
     {
       if (modeToggle)
       {
-      motor1.spin(reverse, 200, rpm);
-      motor2.spin(reverse, 200, rpm);
+      motor1.spin(reverse, 110, rpm);
+      motor2.spin(reverse, 110, rpm);
       }
       else {
         intake.spin(reverse, 200, rpm);
       }
     }
     else {
-      motor1.stop();
-      motor2.stop();
+      // motor1.stop();
+      // motor2.stop();
       intake.stop();
     }
 
