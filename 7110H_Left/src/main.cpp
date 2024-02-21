@@ -167,6 +167,8 @@ bool ratchetOn=false;
 bool vertToggle = false;
 bool vertOn = false;
 
+bool ready=false;
+
 timer tMatch = timer();
 void usercontrol(void) {
   // User control code here, inside the loop
@@ -312,6 +314,16 @@ void usercontrol(void) {
     }
     else {
       vertOn=false;
+    }
+    if (Controller.ButtonA.pressing())
+    {
+      motor1.spinFor(reverse, 6.6, rev, 200, rpm, false);
+      motor2.spinFor(reverse, 6.6, rev, 200, rpm, false);
+      ready = true;
+    }
+    if (ready==true && !motor1.isSpinning())
+    {
+      vertToggle=true;
     }
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.

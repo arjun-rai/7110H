@@ -143,9 +143,15 @@ bool modeToggle = false;
 bool ptoOn = false;
 bool ptoToggle = false;
 bool backWingsOn = false;
-bool backWingsToggle = true;
+bool backWingsToggle = false;
 bool ratchetToggle=false;
 bool ratchetOn=false;
+
+bool vertToggle = false;
+bool vertOn = false;
+
+bool ready=false;
+
 timer tMatch = timer();
 void usercontrol(void) {
   // User control code here, inside the loop
@@ -166,8 +172,16 @@ void usercontrol(void) {
     {
       if (modeToggle){
         ratchetToggle=true;
-        motor1.spinFor(fwd, 2.84, rev, 200, rpm, false);
-        motor2.spinFor(fwd, 2.84, rev, 200, rpm, false);
+        if(vertToggle)
+        {
+          motor1.spin(fwd, 200, rpm);
+          motor2.spin(fwd, 200, rpm);
+        }
+        else {
+          motor1.spinFor(fwd, 2.84, rev, 200, rpm, false);
+          motor2.spinFor(fwd, 2.84, rev, 200, rpm, false);
+        }
+
       }
       else {
         intake.spin(fwd, 200, rpm);
@@ -177,16 +191,26 @@ void usercontrol(void) {
     {
       if (modeToggle)
       {
-      motor1.spinFor(reverse, 2.8, rev, 200, rpm, false);
-      motor2.spinFor(reverse, 2.8, rev, 200, rpm, false);
+        if (vertToggle)
+        {
+          motor1.spin(reverse, 200, rpm);
+          motor2.spin(reverse, 200, rpm);
+        }
+        else {
+          motor1.spinFor(reverse, 2.8, rev, 200, rpm, false);
+          motor2.spinFor(reverse, 2.8, rev, 200, rpm, false);
+        }
       }
       else {
         intake.spin(reverse, 200, rpm);
       }
     }
     else {
-      // motor1.stop();
-      // motor2.stop();
+      if (vertToggle)
+      {
+        motor1.stop();
+        motor2.stop();
+      }
       intake.stop();
     }
 
@@ -261,6 +285,28 @@ void usercontrol(void) {
     }
     else {
      ratchet.set(false);
+    }
+
+    if (Controller.ButtonUp.pressing())
+    {
+      if (!vertOn)
+      {
+        vertToggle=!vertToggle;
+        vertOn=true;
+      }
+    }
+    else {
+      vertOn=false;
+    }
+    if (Controller.ButtonA.pressing())
+    {
+      motor1.spinFor(reverse, 6.6, rev, 200, rpm, false);
+      motor2.spinFor(reverse, 6.6, rev, 200, rpm, false);
+      ready = true;
+    }
+    if (ready==true && !motor1.isSpinning())
+    {
+      vertToggle=true;
     }
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
