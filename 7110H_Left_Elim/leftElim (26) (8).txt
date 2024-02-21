@@ -1,34 +1,4 @@
-#include "vex.h"
-#include "paths.h"
-#include "pure-pursuit.h"
-std::vector<std::vector<pathPoint>> convert_to_path(std::string str)
-{
-    std::istringstream stream(str);
-    std::string line;
-    std::vector<std::vector<pathPoint>> paths;
-
-    while (std::getline(stream, line)) {
-        if (line.find("#PATH-POINTS-START Path") != std::string::npos) {
-            // Start a new path for each "#PATH-POINTS-START Path"
-            paths.push_back(std::vector<pathPoint>());
-            continue;
-        }
-
-        std::istringstream lineStream(line);
-        std::string token;
-
-        // Skip the first two values and only consider the first two for x, y
-        std::getline(lineStream, token, ','); // x
-        double x = atof(token.c_str());
-
-        std::getline(lineStream, token, ','); // y
-        double y = atof(token.c_str());
-
-        paths.back().push_back(point(x,y));
-    }
-    return paths;
-}
-const char * path_str = R"(#PATH-POINTS-START Path
+#PATH-POINTS-START Path
 -82.604,-139.743,120,0
 -82.389,-137.754,120
 -82.167,-135.767,120
@@ -224,8 +194,5 @@ const char * path_str = R"(#PATH-POINTS-START Path
 -138.752,-126.875,120
 -139.929,-125.259,120
 -141.606,-122.663,120,0
--141.606,-122.663,0,0)";
-std::vector<std::vector<pathPoint>> pathMain = convert_to_path(path_str);
-std::vector<double> finSpeed = {0, 0, 0};
-std::vector<double> startSpeed = {600, 500, 100};
-//
+-141.606,-122.663,0,0
+#PATH.JERRYIO-DATA {"appVersion":"0.5.1","format":"path.jerryio v0.1.x (cm, rpm)","gc":{"robotWidth":30,"robotHeight":30,"robotIsHolonomic":false,"showRobot":false,"uol":1,"pointDensity":2,"controlMagnetDistance":5,"fieldImage":{"displayName":"VRC 2024 - Over Under","signature":"VRC 2024 - Over Under","origin":{"__type":"built-in"}}},"paths":[{"segments":[{"controls":[{"uid":"EHsnIoRjxA","x":-82.60354131534571,"y":-139.74283305227658,"lock":false,"visible":true,"heading":0,"__type":"end-point"},{"uid":"Zv3EP8D6fB","x":-77.94544688026983,"y":-95.64620573355819,"lock":false,"visible":true,"__type":"control"},{"uid":"WlVbeICf2L","x":-72.0451939291737,"y":-94.09350758853273,"lock":false,"visible":true,"__type":"control"},{"uid":"NRCapjEVWA","x":-71.42411467116358,"y":-20.18507588532884,"lock":false,"visible":true,"heading":0,"__type":"end-point"}],"speedProfiles":[],"lookaheadKeyframes":[],"uid":"bPsuKRPFo4"}],"pc":{"speedLimit":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":600,"label":"600"},"step":1,"from":40,"to":120},"bentRateApplicableRange":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":4,"label":"4"},"step":0.01,"from":1.4,"to":1.8}},"name":"Path","uid":"sghWKYz62R","lock":false,"visible":true},{"segments":[{"controls":[{"uid":"5Ntl6G9fzC","x":-71.42411467116358,"y":-20.18507588532884,"lock":false,"visible":true,"heading":0,"__type":"end-point"},{"uid":"rDb3eBgMx0","x":-83.22462057335582,"y":-73.597892074199,"lock":false,"visible":true,"__type":"control"},{"uid":"b52XJzSxZb","x":-80.42976391231029,"y":-85.70893760539629,"lock":false,"visible":true,"__type":"control"},{"uid":"hEzsNgmd5D","x":-133.22150084317033,"y":-114.27858347386173,"lock":false,"visible":true,"heading":0,"__type":"end-point"}],"speedProfiles":[],"lookaheadKeyframes":[],"uid":"3p6iRl2Rpm"}],"pc":{"speedLimit":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":600,"label":"600"},"step":1,"from":40,"to":120},"bentRateApplicableRange":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":4,"label":"4"},"step":0.01,"from":1.4,"to":1.8}},"name":"Path","uid":"KTEiCAPDjy","lock":false,"visible":true},{"segments":[{"controls":[{"uid":"wepK6TkLSY","x":-10.868887015177066,"y":-147.81686340640812,"lock":false,"visible":true,"heading":0,"__type":"end-point"},{"uid":"gXyUwlhbZq","x":-61.17630691399663,"y":-147.81686340640812,"lock":false,"visible":true,"__type":"control"},{"uid":"Js5psxsn4L","x":-120.48937605396291,"y":-158.06467116357504,"lock":false,"visible":true,"__type":"control"},{"uid":"3bwFazTtTZ","x":-141.60607082630693,"y":-122.66315345699833,"lock":false,"visible":true,"heading":0,"__type":"end-point"}],"speedProfiles":[],"lookaheadKeyframes":[],"uid":"1PFkKHI07S"}],"pc":{"speedLimit":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":600,"label":"600"},"step":1,"from":40,"to":120},"bentRateApplicableRange":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":4,"label":"4"},"step":0.01,"from":1.4,"to":1.8}},"name":"Path","uid":"LbxVjJZFrK","lock":false,"visible":true}]}

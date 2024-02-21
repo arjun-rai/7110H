@@ -122,10 +122,12 @@ void autonomous(void) {
   PIDMove(-17);
   PIDTurn(-80);
   wingsBackLeft.set(false);
-  PIDTurn(98);
+  PIDTurn(105);
   intake.spin(fwd, 200, rpm);
-  PIDMove(40);
-  pathing(pathMain[2], true, true, 15*2.54);
+  wings.set(true);
+  PIDMove(42);
+  wings.set(false);
+  pathing(pathMain[2], true, true, 18*2.54);
   wingsBackRight.set(true);
 
 }

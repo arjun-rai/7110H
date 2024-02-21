@@ -114,8 +114,8 @@ void autonomous(void) {
   pathing(pathMain[0], true, false);
   
   wingsBackLeft.set(true);
-  wait(500, msec);
-  pathing(pathMain[1], true, true, 14*2.54);
+  //wait(500, msec);
+  pathing(pathMain[1], true, true, 14*2.54, 1700);
   wingsBackLeft.set(false);
   PIDMove(12);
  
@@ -143,7 +143,7 @@ void autonomous(void) {
  
   PIDMove(-16);
   PIDTurn(225-360);
-  pathing(pathMain[2], false, true, 22*2.54);
+  pathing(pathMain[2], false, true, 20*2.54);
   
   // PIDMove(38, 4, coast);
 }

@@ -135,8 +135,8 @@ void curv_func(std::vector<pathPoint>& p)
 }
 
 double max_vel = (2.54*600*3*2.75*M_PI)/(4*60); //rpm to in/s
-double turning_const = 10; //changes how fast it goes around turns
-double max_accel = 200; //in/s^3  used to be 6 150
+double turning_const = 2.5; //changes how fast it goes around turns
+double max_accel = 100; //in/s^3  used to be 6 150
 // double starting_vel = (350*4*3.25*M_PI)/(5*60); //rpm to in/s 300
 void speed_func(std::vector<pathPoint>& p, double starting_rpm, double finSpeed)
 {
@@ -150,8 +150,8 @@ void speed_func(std::vector<pathPoint>& p, double starting_rpm, double finSpeed)
   //   printf("%d\t%f\n", i, p[i].vel);
   //   wait(50, msec);
   // }
-
-  p[p.size()-1].finVel = finSpeed; //end velocity
+  double fin_Vel = (2.54*finSpeed*3*2.75*M_PI)/(4*60);
+  p[p.size()-1].finVel = fin_Vel; //end velocity
   for (int i=p.size()-2; i>=0;i--)
   {
     double d = distanceP(p[i+1], p[i]);
@@ -237,6 +237,7 @@ void lookahead(double pos[], std::vector<pathPoint> path, double ret[])
   t_i=0;
   ret[0] = path[closest(pos, path)].x;
   ret[1] = path[closest(pos, path)].y;
+  ret[2] = -1;
 }
 
 double sign(double x) 
@@ -289,8 +290,6 @@ double constrain(double input, double lastInput, double min, double max)
 
 
 double pos[] = {-82,-139};
-double lastLeft = 0;
-double lastRight =0;
 double last_orientation_rad = 0;
 double last_perpendicularEncoder =0;
 double last_parallelEncoder =0;
@@ -299,8 +298,8 @@ void getCurrLoc()
 
   double perpendicularEncoder_angle = perpendicularEncoder.position(deg);
   double parallelEncoder_angle = parallelEncoder.position(deg);
-  double perpendicularEncoder_delta = perpendicularEncoder_angle-last_perpendicularEncoder;
-  double parallelEncoder_delta = parallelEncoder_angle-last_parallelEncoder;
+  double perpendicularEncoder_delta = ((perpendicularEncoder_angle-last_perpendicularEncoder)/360.0)*M_PI*2.75*2.54;
+  double parallelEncoder_delta = ((parallelEncoder_angle-last_parallelEncoder)/360.0)*M_PI*2.0*2.54;
 
 
 
@@ -319,8 +318,8 @@ void getCurrLoc()
     local_Y=parallelEncoder_delta;
   }
   else{
-    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(15.24));
-    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(0.75*2.54));
+    local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(14.72));
+    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(0.3*2.54));
   }
 
   double local_polar_angle;
@@ -341,39 +340,47 @@ void getCurrLoc()
   double X_position_delta = local_polar_length*cos(global_polar_angle);
   double Y_position_delta = local_polar_length*sin(global_polar_angle);
 
-  X_position_delta = (X_position_delta/360.0)*M_PI*2.75*2.54;
-  Y_position_delta = (Y_position_delta/360.0)*M_PI*2.0*2.54;
+  // X_position_delta = X_position_delta;
+  // Y_position_delta = Y_position_delta;
 
   pos[0]+=X_position_delta;
   pos[1]+=Y_position_delta;
   last_orientation_rad=orientation_rad;
   last_parallelEncoder=parallelEncoder_angle;
   last_perpendicularEncoder=perpendicularEncoder_angle;
-  // printf("%f\t%f\n", pos[0], pos[1]);
+  //printf("%f\t%f\n", pos[0], pos[1]);
 }
 
 
 
-double track_width = 16*2.54;
+double track_width = 12.5*2.54;
 //double dt = 0.005;
 double maxVelChange=1000; //3
-bool pathing(std::vector<pathPoint> path, bool backwards, bool stop, double look)
+bool pathing(std::vector<pathPoint> path, bool backwards, bool stop, double look, double stopTime)
 {
   l = look;
   timer t = timer();
   double lastVel = 0;
+  // if (stopTime==0 && Inertial.pitch()>5)
+  // {
+  //   return 0;
+  // }
   while (closest(pos, path)!=path.size()-1)
   {
-    if (t.time(msec)>3000)
+    if (Inertial.roll()>6 && stopTime<0)
     {
-      return 0;
+      break;
+    }
+    if (t.time(msec)>fabs(stopTime))
+    {
+      break;
     }
     // getCurrLoc();
     double look[] = {};
     lookahead(pos, path, look);
     int close = closest(pos, path);
     double curv;
-    double vel = path[close].finVel;;
+    double vel = path[close].finVel;
     if (look[2]>close)
     {
       curv = curvature(path, pos, look, radians((Inertial.rotation())));
@@ -384,11 +391,18 @@ bool pathing(std::vector<pathPoint> path, bool backwards, bool stop, double look
       curv = 0.00001;
     }
    
-    vel = lastVel+constrain(vel, lastVel, -maxVelChange, maxVelChange);
+    //vel = lastVel+constrain(vel, lastVel, -maxVelChange, maxVelChange);
     lastVel = vel;
     double wheels[] = {};
     turn(curv, vel, track_width, wheels);
     //can add coefficients and tune for better velocity accuracy if 
+
+    double ratio = std::max(std::fabs(wheels[1]), std::fabs(wheels[0])) / max_vel;
+    if (ratio > 1) {
+        wheels[1] /= ratio;
+        wheels[0] /= ratio;
+    }
+
     if (backwards)
     {
       // printf("%f\t%f\n", wheels[0], wheels[1]);

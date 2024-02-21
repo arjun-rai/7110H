@@ -31,7 +31,7 @@ double timeLimit = 3;
 bool pivot = false;
 bool rightStop = true;
 bool leftStop = true;
-
+bool stopVal = true;
 int turnPID(){
   t = timer();
   while(enableDrivePID)
@@ -52,7 +52,11 @@ int turnPID(){
     /////////////////////////////////////////////////////////
     //Potential
     turnError =desiredTurnValue-((Inertial.rotation()));
-    if ((fabs(turnError)<2 && fabs(turnDerivative)<1))
+    if ((fabs(turnError)<2 && fabs(turnDerivative)<1) && stopVal)
+    {
+      break;
+    }
+    if (fabs(turnError)<2 && !stopVal)
     {
       break;
     }
@@ -156,10 +160,10 @@ int dist(double timeout = 3, brakeType chooseBrakeType = hold)
 {
   double timeout_loop = (timeout*1000.0);
   timer t = timer();
-  double startingDist = (parallelEncoder.position(deg)/360.0)*M_PI*2.75;
+  double startingDist = (parallelEncoder.position(deg)/360.0)*M_PI*2.0;
   while (enableDist&&t.time(msec)<timeout_loop)
   {
-    moveError = desiredLength-(((parallelEncoder.position(deg)/360.0)*M_PI*2.75)-startingDist);
+    moveError = desiredLength-(((parallelEncoder.position(deg)/360.0)*M_PI*2.0)-startingDist);
     moveDerivative = moveError-movePrevError;
 
     double moveVolt = (moveError*KpMove+moveDerivative*KdMove);
@@ -190,10 +194,11 @@ int dist(double timeout = 3, brakeType chooseBrakeType = hold)
   return 1;
 }
 
-void PIDTurn(double angle)
+void PIDTurn(double ang, bool stopSet)
 {
   resetDriveSensors=true;
-  desiredTurnValue=angle;
+  desiredTurnValue=ang;
+  stopVal=stopSet;
   turnPID();
 }
 void PIDMove (double length, double timeout, vex::brakeType chooseBrakeType)
@@ -202,18 +207,19 @@ void PIDMove (double length, double timeout, vex::brakeType chooseBrakeType)
   dist(timeout, chooseBrakeType);
 }
 
-void PIDTurn(double pos[], double x, double y, bool reverse, bool left)
+void PIDTurn(double pos[], double x, double y, bool reverse, bool left, bool stopSet)
 {
   resetDriveSensors=true;
   double ang = degree(atan2(x-pos[0], y-pos[1]));
   desiredTurnValue=ang;
-  // if (reverse&&left)
-  // {
-  //   desiredTurnValue-=180;
-  // }
-  // else if (reverse)
-  // {
-  //   desiredTurnValue+=180;
-  // }
+  if (reverse&&left)
+  {
+    desiredTurnValue-=180;
+  }
+  else if (reverse)
+  {
+    desiredTurnValue+=180;
+  }
+  stopVal = stopSet;
   turnPID();
 }
