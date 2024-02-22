@@ -111,11 +111,14 @@ void autonomous(void) {
   //PIDMove(6);
   intake.stop();
   // wait(500, msec);
-  pathing(pathMain[0], true, false);
+  pathing(pathMain[0], true, false, 18*2.54);
   
   wingsBackLeft.set(true);
   //wait(500, msec);
-  pathing(pathMain[1], true, true, 14*2.54, 1700);
+  // pathing(pathMain[1], true, true, 18*2.54, 1700);
+  
+  // wingsBackLeft.set(false);
+  pathing(pathMain[1], true, true, 18*2.54, 1400);
   wingsBackLeft.set(false);
   PIDMove(12);
  
@@ -134,16 +137,16 @@ void autonomous(void) {
   PIDTurn(-10-360);
   intake.stop();
   // pathing(pathMain[2], false, false);
-  PIDMove(20);
+  PIDMove(20, 2);
   PIDTurn(90-360);
   intake.spin(fwd, 200, rpm);
   wings.set(true);
   PIDMove(38, 0.95);
   wings.set(false);
  
-  PIDMove(-16);
+  PIDMove(-16, 1);
   PIDTurn(225-360);
-  pathing(pathMain[2], false, true, 20*2.54);
+  pathing(pathMain[2], false, true, 18*2.54);
   
   // PIDMove(38, 4, coast);
 }
