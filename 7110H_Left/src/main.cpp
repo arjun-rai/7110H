@@ -195,8 +195,8 @@ void usercontrol(void) {
           motor2.spin(fwd, 200, rpm);
         }
         else {
-          motor1.spinFor(fwd, 2.84, rev, 200, rpm, false);
-          motor2.spinFor(fwd, 2.84, rev, 200, rpm, false);
+          motor1.spinFor(fwd, 2.9, rev, 200, rpm, false);
+          motor2.spinFor(fwd, 2.9, rev, 200, rpm, false);
         }
 
       }
@@ -214,8 +214,8 @@ void usercontrol(void) {
           motor2.spin(reverse, 200, rpm);
         }
         else {
-          motor1.spinFor(reverse, 2.8, rev, 200, rpm, false);
-          motor2.spinFor(reverse, 2.8, rev, 200, rpm, false);
+          motor1.spinFor(reverse, 2.9, rev, 200, rpm, false);
+          motor2.spinFor(reverse, 2.9, rev, 200, rpm, false);
         }
       }
       else {

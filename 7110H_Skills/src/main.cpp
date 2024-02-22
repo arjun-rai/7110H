@@ -220,8 +220,8 @@ void usercontrol(void) {
     {
       if (modeToggle)
       {
-      motor1.spin(reverse, 110, rpm);
-      motor2.spin(reverse, 110, rpm);
+      motor1.spin(reverse, 90, rpm);
+      motor2.spin(reverse, 90, rpm);
       }
       else {
         intake.spin(reverse, 200, rpm);
