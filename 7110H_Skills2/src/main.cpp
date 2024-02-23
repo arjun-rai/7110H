@@ -110,14 +110,14 @@ void autonomous(void) {
   pathing(pathMain[1], false, false, 18*2.54, 3000);
   wings.set(true);
   intake.spin(fwd, 200, rpm);
-  pathing(pathMain[2], false, true, 40*2.54, -2200);
+  pathing(pathMain[2], false, true, 40*2.54, -1600);
   // PIDMove(54);
   PIDMove(-7);
   wings.set(false);
   PIDTurn(70, true);
   pathing(pathMain[3], false, true, 16*2.54, 2600);
   wings.set(true);
-  pathing(pathMain[4], false, true, 20*2.54, 3500);
+  pathing(pathMain[4], false, true, 20*2.54, 3200);
   wings.set(false);
   PIDMove(-10);
   PIDTurn(-340);
@@ -126,50 +126,48 @@ void autonomous(void) {
   pos[1]=72.0;
   // printf("%f %f \n", pos[0], pos[1]);
   intake.stop();
-  PIDMove(5);
-  PIDTurn(-270);
+  // PIDMove(5);
+  // PIDTurn(-270);
   // PIDMove(-45);
   intake.spin(reverse, 200, rpm);
-  pathing(pathMain[5], false, true, 25*2.54, 3000);
-  intake.spin(fwd, 200, rpm);
-  PIDTurn(30); 
-  // wings.set(true);
-  wingsBackLeft.set(true);
-  wingsBackRight.set(true);
-  pathing(pathMain[6], true, true, 20*2.54, 2000);
-  wingsBackLeft.set(false);
-  wingsBackRight.set(false);
-  // wings.set(false);
-  pathing(pathMain[7], false, true, 22*2.54, 2000);
-  PIDTurn(-360+360);
-  PIDMove(-95/2.54);
-  // pathing(pathMain[8], true, true, 50*2.54, 2000);
-  // wings.set(true);
-  PIDTurn(-270+360);
-  wingsBackLeft.set(true);
-  wingsBackRight.set(true);
-  pathing(pathMain[9], true, true, 30*2.54, 2000);
-  wingsBackLeft.set(false);
-  wingsBackRight.set(false);
-  pathing(pathMain[10], false, true, 25*2.54, 3500);
-  PIDTurn(-180+360);
-  // wingsBackLeft.set(true);
-  // wingsBackRight.set(true);
   wings.set(true);
-  intake.spin(fwd, 200, rpm);
-  pathing(pathMain[11], false, true, 22*2.54, 3000);
+  pathing(pathMain[5], false, true, 17*2.54, 3500);
   wings.set(false);
-  PIDMove(-25);
-  // wings.set(true);
-  PIDTurn(-30+360);
-  leftDrive.spinFor(fwd, 7, rev, 600, rpm, false);
-  rightDrive.spinFor(fwd, 7, rev, 600, rpm, false);
-  wait(1000, msec);
-  leftDrive.stop();
-  rightDrive.stop();
+  // intake.spin(fwd, 200, rpm);
+  // PIDTurn(-180); 
+
+  // pathing(pathMain[6], false, true, 20*2.54, 1500);
+  // PIDTurn(-270);
+  // // wingsBackLeft.set(true);
+  // wingsBackRight.set(true);
+  // PIDMove(-77/2.54, 1.7);
+  // wingsBackLeft.set(false);
+  // wingsBackRight.set(false);
+  
+  pathing(pathMain[6], true, true, 30*2.54, 2000);
+  pathing(pathMain[7], true, true, 10*2.54, 2000);
+  PIDTurn(90);
+  wingsBackLeft.set(true);
+  wingsBackRight.set(true);
+  
+  PIDMove(-77/2.54, 1.6);
+  wingsBackLeft.set(false);
+  wingsBackRight.set(false);
+  pathing(pathMain[8], false, true, 20*2.54, 2000);
+  PIDTurn(180);
+  pathing(pathMain[9], false, true, 20*2.54, 2000);
+  wingsBackLeft.set(true);
+  wingsBackRight.set(true);
+  pathing(pathMain[10], true, true, 20*2.54, 2000);
+  wingsBackLeft.set(false);
+  wingsBackRight.set(false);
+  wings.set(true);
+  pathing(pathMain[11], false, true, 20*2.54, 3500);
   wings.set(false);
-  // PIDMove(20, 1.5);
-  PIDMove(-15);
+  PIDMove(-10);
+  // PIDMove(70/2.54, 1.5);
+
+  
 
   // printf("%f %f\n", pos[0], pos[1]);
   
@@ -198,13 +196,13 @@ void usercontrol(void) {
   PIDTurn(-67.5); //-77
   PIDMove(-6, 0.6);
   wingsBackLeft.set(true);
-  // timer t = timer();
-  // motor1.spin(reverse, 120, rpm);
-  // motor2.spin(reverse, 120, rpm);
-  // waitUntil(t.time(sec)>25);
-  // // wait(27, sec);
-  // motor1.stop();
-  // motor2.stop();
+  timer t = timer();
+  motor1.spin(reverse, 120, rpm);
+  motor2.spin(reverse, 120, rpm);
+  waitUntil(t.time(sec)>25);
+  // wait(27, sec);
+  motor1.stop();
+  motor2.stop();
 
   wingsBackLeft.set(false);
   pathing(pathMain[1], false, false, 18*2.54, 3000);
