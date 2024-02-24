@@ -98,16 +98,22 @@ void autonomous(void) {
   PIDTurn(-67.5); //-77
   PIDMove(-6, 0.6);
   wingsBackLeft.set(true);
-  // timer t = timer();
-  // motor1.spin(reverse, 120, rpm);
-  // motor2.spin(reverse, 120, rpm);
-  // waitUntil(t.time(sec)>25);
-  // // wait(27, sec);
-  // motor1.stop();
-  // motor2.stop();
+  double angle = Inertial.rotation();
+  timer t = timer();
+  motor1.spin(reverse, 120, rpm);
+  motor2.spin(reverse, 120, rpm);
+  waitUntil(t.time(sec)>5);
+  // wait(27, sec);
+  motor1.stop();
+  motor2.stop();
+  wait(250, msec);
+  Inertial.calibrate();
+  waitUntil(!Inertial.isCalibrating());
+  Inertial.setRotation(angle, degrees);
+
 
   wingsBackLeft.set(false);
-  pathing(pathMain[1], false, false, 18*2.54, 3000);
+  pathing(pathMain[1], false, false, 18*2.54, 3000); //18
   wings.set(true);
   intake.spin(fwd, 200, rpm);
   pathing(pathMain[2], false, true, 40*2.54, -2200);
@@ -198,13 +204,13 @@ void usercontrol(void) {
   PIDTurn(-67.5); //-77
   PIDMove(-6, 0.6);
   wingsBackLeft.set(true);
-  // timer t = timer();
-  // motor1.spin(reverse, 120, rpm);
-  // motor2.spin(reverse, 120, rpm);
-  // waitUntil(t.time(sec)>25);
-  // // wait(27, sec);
-  // motor1.stop();
-  // motor2.stop();
+  timer t = timer();
+  motor1.spin(reverse, 120, rpm);
+  motor2.spin(reverse, 120, rpm);
+  waitUntil(t.time(sec)>25);
+  // wait(27, sec);
+  motor1.stop();
+  motor2.stop();
 
   wingsBackLeft.set(false);
   pathing(pathMain[1], false, false, 18*2.54, 3000);

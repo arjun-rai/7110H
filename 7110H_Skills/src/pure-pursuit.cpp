@@ -367,7 +367,7 @@ bool pathing(std::vector<pathPoint> path, bool backwards, bool stop, double look
   // }
   while (closest(pos, path)!=path.size()-1)
   {
-    if (Inertial.roll()>6 && stopTime<0)
+    if (fabs(Inertial.roll())>7 && stopTime<0)
     {
       break;
     }
