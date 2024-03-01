@@ -93,16 +93,16 @@ int odom()
 void autonomous(void) {
   vex::task odometry(odom);
   intake.spin(reverse, 200, rpm);
-  pathing(pathMain[0], true, true, 18*2.54, 1800);
+  pathing(pathMain[0], true, true, 15*2.54, 1800);
   PIDMove(12);
-  PIDTurn(-67.5); //-77
-  PIDMove(-6, 0.6);
+  PIDTurn(-66); //-77
+  PIDMove(-7, 0.6);
   wingsBackLeft.set(true);
   double angle = Inertial.rotation();
   timer t = timer();
-  motor1.spin(reverse, 120, rpm);
-  motor2.spin(reverse, 120, rpm);
-  waitUntil(t.time(sec)>5);
+  motor1.spin(reverse, 150, rpm);
+  motor2.spin(reverse, 150, rpm);
+  waitUntil(t.time(sec)>20);
   // wait(27, sec);
   motor1.stop();
   motor2.stop();
@@ -116,7 +116,7 @@ void autonomous(void) {
   pathing(pathMain[1], false, false, 18*2.54, 3000); //18
   wings.set(true);
   intake.spin(fwd, 200, rpm);
-  pathing(pathMain[2], false, true, 40*2.54, -2200);
+  pathing(pathMain[2], false, true, 40*2.54, -3500);
   // PIDMove(54);
   PIDMove(-7);
   wings.set(false);
@@ -199,24 +199,30 @@ timer tMatch = timer();
 void usercontrol(void) {
   vex::task odometry(odom);
   intake.spin(reverse, 200, rpm);
-  pathing(pathMain[0], true, true, 18*2.54, 1800);
+  pathing(pathMain[0], true, true, 15*2.54, 1800);
   PIDMove(12);
-  PIDTurn(-67.5); //-77
-  PIDMove(-6, 0.6);
+  PIDTurn(-66); //-77
+  PIDMove(-7, 0.6);
   wingsBackLeft.set(true);
+  double angle = Inertial.rotation();
   timer t = timer();
-  motor1.spin(reverse, 120, rpm);
-  motor2.spin(reverse, 120, rpm);
-  waitUntil(t.time(sec)>25);
+  motor1.spin(reverse, 150, rpm);
+  motor2.spin(reverse, 150, rpm);
+  waitUntil(t.time(sec)>20);
   // wait(27, sec);
   motor1.stop();
   motor2.stop();
+  wait(250, msec);
+  Inertial.calibrate();
+  waitUntil(!Inertial.isCalibrating());
+  Inertial.setRotation(angle, degrees);
+
 
   wingsBackLeft.set(false);
-  pathing(pathMain[1], false, false, 18*2.54, 3000);
+  pathing(pathMain[1], false, false, 18*2.54, 3000); //18
   wings.set(true);
   intake.spin(fwd, 200, rpm);
-  pathing(pathMain[2], false, true, 40*2.54, -2200);
+  pathing(pathMain[2], false, true, 40*2.54, -3500);
   // PIDMove(54);
   PIDMove(-7);
   wings.set(false);
@@ -228,6 +234,55 @@ void usercontrol(void) {
   PIDMove(-10);
   PIDTurn(-340);
   PIDMove(-30, 1);
+  // pos[0]=-143.0;
+  // pos[1]=72.0;
+  // // printf("%f %f \n", pos[0], pos[1]);
+  // intake.stop();
+  // PIDMove(5);
+  // PIDTurn(-270);
+  // // PIDMove(-45);
+  // intake.spin(reverse, 200, rpm);
+  // pathing(pathMain[5], false, true, 25*2.54, 3000);
+  // intake.spin(fwd, 200, rpm);
+  // PIDTurn(30); 
+  // // wings.set(true);
+  // wingsBackLeft.set(true);
+  // wingsBackRight.set(true);
+  // pathing(pathMain[6], true, true, 20*2.54, 2000);
+  // wingsBackLeft.set(false);
+  // wingsBackRight.set(false);
+  // // wings.set(false);
+  // pathing(pathMain[7], false, true, 22*2.54, 2000);
+  // PIDTurn(-360+360);
+  // PIDMove(-95/2.54);
+  // // pathing(pathMain[8], true, true, 50*2.54, 2000);
+  // // wings.set(true);
+  // PIDTurn(-270+360);
+  // wingsBackLeft.set(true);
+  // wingsBackRight.set(true);
+  // pathing(pathMain[9], true, true, 30*2.54, 2000);
+  // wingsBackLeft.set(false);
+  // wingsBackRight.set(false);
+  // pathing(pathMain[10], false, true, 25*2.54, 3500);
+  // PIDTurn(-180+360);
+  // // wingsBackLeft.set(true);
+  // // wingsBackRight.set(true);
+  // wings.set(true);
+  // intake.spin(fwd, 200, rpm);
+  // pathing(pathMain[11], false, true, 22*2.54, 3000);
+  // wings.set(false);
+  // PIDMove(-25);
+  // // wings.set(true);
+  // PIDTurn(-30+360);
+  // leftDrive.spinFor(fwd, 7, rev, 600, rpm, false);
+  // rightDrive.spinFor(fwd, 7, rev, 600, rpm, false);
+  // wait(1000, msec);
+  // leftDrive.stop();
+  // rightDrive.stop();
+  // wings.set(false);
+  // // PIDMove(20, 1.5);
+  // PIDMove(-15);
+
   // pos[0]=-143.0;
   // pos[1]=72.0;
   // // printf("%f %f \n", pos[0], pos[1]);
@@ -268,8 +323,8 @@ void usercontrol(void) {
     {
       if (modeToggle)
       {
-      motor1.spin(reverse, 110, rpm);
-      motor2.spin(reverse, 110, rpm);
+      motor1.spin(reverse, 150, rpm);
+      motor2.spin(reverse, 150, rpm);
       }
       else {
         intake.spin(reverse, 200, rpm);
