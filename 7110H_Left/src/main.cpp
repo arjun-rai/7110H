@@ -20,6 +20,8 @@ void driveBrake(vex::brakeType b)
   FrontRight.setBrake(b);
   MiddleLeft.setBrake(b);
   MiddleRight.setBrake(b);
+  GearboxRight.setBrake(b);
+  GearboxLeft.setBrake(b);
 }
 int autonNum =-1;
 
@@ -105,38 +107,7 @@ void autonomous(void) {
   // motor1.spin(reverse, 100, rpm);
   // motor2.spin(reverse, 100, rpm);
   // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
-  vex::task odometry(odom);
-  wings.set(true);
-  intake.spin(reverse, 200, rpm);
-  wait(300, msec);
-  wings.set(false);
-  PIDMove(10);
-  intake.stop();
-  wingsBackLeft.set(true);
-  wait(1000,msec);
-  PIDMove(-15);
-  wingsBackLeft.set(false);
-  wait(200, msec);
-  // motor1.spin(fwd, 50, rpm);
-  // motor2.spin(fwd, 50, rpm);
-  // pathing(pathMain[0], false, true);
-  // PIDMove(22);
-  // PIDTurn(-20);
-  // // PIDMove(4);
-  // PIDTurn(159);
-  // PIDMove(-14, 1.5);
-  // PIDMove(10);
-  PIDTurn(104-360);
-  PIDMove(30);
-  pathing(pathMain[0], false, true);
-  intake.spin(fwd, 200, rpm);
-  PIDMove(5.5);
-  // PIDMove(-6);
-  wait(2000, msec);
-  intake.stop();
- 
-
-
+  
   
 
   // pathing(pathMain[2], false, true);
@@ -172,8 +143,6 @@ bool ready=false;
 timer tMatch = timer();
 void usercontrol(void) {
   // User control code here, inside the loop
-  motor1.setBrake(hold);
-  motor2.setBrake(hold);
   while (1) {
     // if (tMatch.time(sec)>103.5)
     // {
@@ -187,47 +156,13 @@ void usercontrol(void) {
     curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
-      if (modeToggle){
-        ratchetToggle=true;
-        if(vertToggle)
-        {
-          motor1.spin(fwd, 200, rpm);
-          motor2.spin(fwd, 200, rpm);
-        }
-        else {
-          motor1.spinFor(fwd, 2.9, rev, 200, rpm, false);
-          motor2.spinFor(fwd, 2.9, rev, 200, rpm, false);
-        }
-
-      }
-      else {
         intake.spin(fwd, 200, rpm);
-      }
     }
     else if (Controller.ButtonL2.pressing())
     {
-      if (modeToggle)
-      {
-        if (vertToggle)
-        {
-          motor1.spin(reverse, 200, rpm);
-          motor2.spin(reverse, 200, rpm);
-        }
-        else {
-          motor1.spinFor(reverse, 2.9, rev, 200, rpm, false);
-          motor2.spinFor(reverse, 2.9, rev, 200, rpm, false);
-        }
-      }
-      else {
         intake.spin(reverse, 200, rpm);
-      }
     }
     else {
-      if (vertToggle)
-      {
-        motor1.stop();
-        motor2.stop();
-      }
       intake.stop();
     }
 
@@ -248,82 +183,6 @@ void usercontrol(void) {
     }
     else {
       wings.set(false);
-    }
-
-    if (Controller.ButtonR1.pressing())
-    {
-      if (!modeOn)
-      {
-        modeToggle=!modeToggle;
-        modeOn=true;
-      }
-    }
-    else {
-      modeOn=false;
-    }
-
-
-     if (Controller.ButtonR2.pressing())
-    {
-      if (!backWingsOn)
-      {
-        backWingsToggle=!backWingsToggle;
-        backWingsOn=true;
-      }
-    }
-    else {
-      backWingsOn=false;
-    }
-    if (backWingsToggle)
-    {
-      wingsBackRight.set(true);
-      wingsBackLeft.set(true);
-    }
-    else {
-      wingsBackRight.set(false);
-      wingsBackLeft.set(false);
-    }
-
-
-    if (Controller.ButtonX.pressing())
-    {
-      if (!ratchetOn)
-      {
-        ratchetToggle=!ratchetToggle;
-        ratchetOn=true;
-      }
-    }
-    else {
-      ratchetOn=false;
-    }
-    if(ratchetToggle)
-    {
-      ratchet.set(true);
-    }
-    else {
-     ratchet.set(false);
-    }
-
-    if (Controller.ButtonUp.pressing())
-    {
-      if (!vertOn)
-      {
-        vertToggle=!vertToggle;
-        vertOn=true;
-      }
-    }
-    else {
-      vertOn=false;
-    }
-    if (Controller.ButtonA.pressing())
-    {
-      motor1.spinFor(reverse, 6.6, rev, 200, rpm, false);
-      motor2.spinFor(reverse, 6.6, rev, 200, rpm, false);
-      ready = true;
-    }
-    if (ready==true && !motor1.isSpinning())
-    {
-      vertToggle=true;
     }
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
