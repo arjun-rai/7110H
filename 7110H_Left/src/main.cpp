@@ -93,6 +93,11 @@ int odom()
 
 
 void autonomous(void) {
+  leftDrive.spin(fwd, 600, rpm);
+  rightDrive.spin(fwd, 600, rpm);
+  wait(1000, msec);
+  leftDrive.stop(hold);
+  rightDrive.stop(hold);
   //  for (int i=0;i<pathMain[0].size(); i++)
   // {
   //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
@@ -126,24 +131,16 @@ void autonomous(void) {
 
 bool wingsOn = false;
 bool wingsToggle = false;
-bool modeOn = false;
-bool modeToggle = false;
 bool ptoOn = false;
 bool ptoToggle = false;
-bool backWingsOn = false;
-bool backWingsToggle = false;
-bool ratchetToggle=false;
-bool ratchetOn=false;
-
-bool vertToggle = false;
-bool vertOn = false;
-
-bool ready=false;
+bool elevationToggle = false;
+bool elevationOn = false;
 
 timer tMatch = timer();
 void usercontrol(void) {
   // User control code here, inside the loop
   while (1) {
+
     // if (tMatch.time(sec)>103.5)
     // {
     //   ratchet.set(true);
@@ -153,20 +150,20 @@ void usercontrol(void) {
     // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
     // rightExpo(forward, (Controller.Axis2.value()));
     // leftExpo(forward, (Controller.Axis3.value()));
-    curvatureDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
+    curvatureSingleDrive(Controller.Axis3.value()/127.0, Controller.Axis4.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
-        intake.spin(fwd, 200, rpm);
+        intake.spin(fwd, 600, rpm);
     }
     else if (Controller.ButtonL2.pressing())
     {
-        intake.spin(reverse, 200, rpm);
+        intake.spin(reverse, 600, rpm);
     }
     else {
       intake.stop();
     }
 
-    if (Controller.ButtonL1.pressing()&&Controller.ButtonL2.pressing())
+    if (Controller.ButtonR2.pressing())
     {
       if (!wingsOn)
       {
@@ -184,6 +181,48 @@ void usercontrol(void) {
     else {
       wings.set(false);
     }
+
+    if (Controller.ButtonR1.pressing())
+    {
+      if (!elevationOn)
+      {
+        elevationToggle=!elevationToggle;
+        elevationOn=true;
+      }
+    }
+    else {
+      elevationOn=false;
+    }
+    if (elevationToggle)
+    {
+      elevation.set(true);
+    }
+    else {
+      elevation.set(false);
+    }
+
+
+    if (Controller.ButtonX.pressing())
+    {
+      if (!ptoOn)
+      {
+        ptoToggle=!ptoToggle;
+        ptoOn=true;
+      }
+    }
+    else {
+      ptoOn=false;
+    }
+    if (ptoToggle)
+    {
+      pto.set(true);
+    }
+    else {
+      pto.set(false);
+    }
+    // Controller.Screen.clearLine();
+    Controller.Screen.setCursor(1, 1);
+    Controller.Screen.print("Dri: %.0f\n Int: %.0f\n" , FrontLeft.temperature(temperatureUnits::fahrenheit), intake.temperature(temperatureUnits::fahrenheit));
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }

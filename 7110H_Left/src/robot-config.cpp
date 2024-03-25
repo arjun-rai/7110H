@@ -15,17 +15,17 @@ motor FrontLeft = motor(PORT8, ratio6_1, true);
 motor FrontRight = motor(PORT2, ratio6_1, false);
 motor MiddleLeft = motor(PORT9, ratio6_1, true);
 motor MiddleRight = motor(PORT3, ratio6_1, false);
-motor GearboxRight = motor(PORT4, ratio18_1,false);
-motor GearboxLeft = motor(PORT7, ratio18_1, true);
+motor GearboxRight = motor(PORT4, ratio18_1,true);
+motor GearboxLeft = motor(PORT7, ratio18_1, false);
 rotation parallelEncoder = rotation(PORT4);
 rotation perpendicularEncoder = rotation(PORT21);
 inertial Inertial = inertial(PORT5);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft, GearboxLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight, GearboxRight);
-digital_out wings = digital_out(Brain.ThreeWirePort.A);
-digital_out pto = digital_out(Brain.ThreeWirePort.C);
+digital_out wings = digital_out(Brain.ThreeWirePort.C);
+digital_out pto = digital_out(Brain.ThreeWirePort.A);
 digital_out elevation = digital_out(Brain.ThreeWirePort.B);
-motor intake = motor(PORT6, ratio18_1, true);
+motor intake = motor(PORT6, ratio6_1, false);
 
 // VEXcode generated functions
 

@@ -65,9 +65,63 @@ void curvatureDrive(double throttle, double turn){
   }
   prevTurn=turn;
   prevThrottle=throttle;
-  leftDrive.spin (fwd, left*600, rpm);
-  rightDrive.spin (fwd, right*600,rpm);
+
+  leftDrive.spin(fwd, left*12, volt);
+  rightDrive.spin(fwd, right*12,volt);
+  GearboxLeft.spin(reverse, left*12, volt);
+  GearboxRight.spin(reverse, right*12, volt);
 }
+
+
+double single_prevTurn = 0.0;
+double single_prevThrottle = 0.0;
+
+double single_drive_deadband=0.1;
+double single_drive_slew = 0.02;
+double single_kInertiaScalar =0;//0.5
+double single_kSensitivty = 0.8;
+
+void curvatureSingleDrive(double throttle, double turn){
+  bool pointTurn = false;
+  double linear = throttle;
+  if (fabs(throttle)<single_drive_deadband && fabs(turn)>single_drive_deadband)
+  {
+    linear = 0.0;
+    pointTurn=true;
+  }
+  else if (throttle-single_prevThrottle>single_drive_slew) {
+    linear = single_prevThrottle+single_drive_slew;
+  }
+  else if (throttle-single_prevThrottle<-(single_drive_slew*2)) {
+    linear = single_prevThrottle-(single_drive_slew*2);
+  }
+  double remappedTurn = turnRemap(turn);
+  double left, right;
+  if (pointTurn){
+    left = remappedTurn*fabs(remappedTurn);
+    right = -remappedTurn*fabs(remappedTurn);
+    // printf("%f\n", remappedTurn*fabs(remappedTurn));
+  }
+  else {
+    double negInertiaPower = (turn-single_prevTurn)*single_kInertiaScalar;
+    negInertiaAccum+=negInertiaPower;
+    double angular = fabs(linear)*(remappedTurn+negInertiaAccum)*single_kSensitivty - fastStopAccum;
+
+    right =linear; left = linear;
+    //printf("%f\t%f\n", negInertiaAccum, angular);
+    left += angular;
+    right -=angular;
+    updateAccum();
+  }
+  single_prevTurn=turn;
+  single_prevThrottle=throttle;
+
+  leftDrive.spin(fwd, left*12, volt);
+  rightDrive.spin(fwd, right*12,volt);
+  // GearboxLeft.spin(reverse, left*12, volt);
+  // GearboxRight.spin(reverse, right*12, volt);
+}
+
 
 double LeftPercent = 0;
 double RightPercent = 0;
