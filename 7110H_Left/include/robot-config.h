@@ -21,6 +21,7 @@ extern digital_out pto;
 extern rotation parallelEncoder;
 extern rotation perpendicularEncoder;
 extern motor intake;
+extern distance dist_sens;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

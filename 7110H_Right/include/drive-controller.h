@@ -2,4 +2,5 @@
 #ifndef DRIVECONTROLLER_H
 #define DRIVECONTROLLER_H
 void curvatureDrive(double throttle, double turn);
+void curvatureSingleDrive(double throttle, double turn);
 #endif

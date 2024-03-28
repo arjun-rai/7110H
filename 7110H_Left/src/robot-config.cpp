@@ -26,6 +26,7 @@ digital_out wings = digital_out(Brain.ThreeWirePort.C);
 digital_out pto = digital_out(Brain.ThreeWirePort.A);
 digital_out elevation = digital_out(Brain.ThreeWirePort.B);
 motor intake = motor(PORT6, ratio6_1, false);
+distance dist_sens = distance(PORT12);
 
 // VEXcode generated functions
 

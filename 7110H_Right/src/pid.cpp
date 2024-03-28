@@ -32,6 +32,9 @@ bool pivot = false;
 bool rightStop = true;
 bool leftStop = true;
 bool stopVal = true;
+
+double lastTarget = 0;
+
 int turnPID(){
   t = timer();
   while(enableDrivePID)
@@ -146,12 +149,12 @@ double movePrevError;
 double moveDerivative;
 
 double KpMove=1;
-double KdMove=10;
+double KdMove=3;
 
 
 double lastMovePct =0;
 
-double maxMoveVoltage =10; //8
+double maxMoveVoltage =12; //8
 
 double desiredLength = 0;
 
@@ -160,12 +163,12 @@ int dist(double timeout = 3, brakeType chooseBrakeType = hold)
 {
   double timeout_loop = (timeout*1000.0);
   timer t = timer();
-  double startingDist = (parallelEncoder.position(deg)/360.0)*M_PI*2.0;
+  double startingDist = (((leftDrive.position(deg)+rightDrive.position(deg))/2.0)/360.0)*M_PI*2.75*2.54 * (3/4.0);
   while (enableDist&&t.time(msec)<timeout_loop)
   {
-    moveError = desiredLength-(((parallelEncoder.position(deg)/360.0)*M_PI*2.0)-startingDist);
+    moveError = desiredLength-(((((leftDrive.position(deg)+rightDrive.position(deg))/2.0)/360.0)*M_PI*2.75*2.54 * (3/4.0))-startingDist);
     moveDerivative = moveError-movePrevError;
-
+    // printf("%f\n", moveError);
     double moveVolt = (moveError*KpMove+moveDerivative*KdMove);
 
     moveVolt = clamp(moveVolt, -maxMoveVoltage, maxMoveVoltage);

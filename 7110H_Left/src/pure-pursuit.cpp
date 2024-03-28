@@ -297,9 +297,9 @@ void getCurrLoc()
 {
 
   double perpendicularEncoder_angle = perpendicularEncoder.position(deg);
-  double parallelEncoder_angle = parallelEncoder.position(deg);
+  double parallelEncoder_angle = (leftDrive.rotation(deg)+rightDrive.rotation(deg))/2.0;
   double perpendicularEncoder_delta = ((perpendicularEncoder_angle-last_perpendicularEncoder)/360.0)*M_PI*2.75*2.54;
-  double parallelEncoder_delta = ((parallelEncoder_angle-last_parallelEncoder)/360.0)*M_PI*2.0*2.54;
+  double parallelEncoder_delta = ((parallelEncoder_angle-last_parallelEncoder)/360.0)*M_PI*2.75*2.54 * (3/4.0);
 
 
 
@@ -319,7 +319,7 @@ void getCurrLoc()
   }
   else{
     local_X=(2*sin(orientation_delta/2.0))*((perpendicularEncoder_delta/orientation_delta)+(14.72));
-    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta)-(0.3*2.54));
+    local_Y=(2*sin(orientation_delta/2.0))*((parallelEncoder_delta/orientation_delta));
   }
 
   double local_polar_angle;

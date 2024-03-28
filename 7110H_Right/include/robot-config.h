@@ -13,15 +13,15 @@ extern motor MiddleRight;
 extern inertial Inertial;
 extern motor_group leftDrive;
 extern motor_group rightDrive;
-extern motor motor1;
+extern motor GearboxLeft;
 extern digital_out wings;
-extern motor motor2;
-extern digital_out wingsBackLeft;
-extern digital_out wingsBackRight;
-extern digital_out ratchet;
+extern motor GearboxRight;
+extern digital_out elevation;
+extern digital_out pto;
 extern rotation parallelEncoder;
 extern rotation perpendicularEncoder;
 extern motor intake;
+extern distance dist_sens;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 
