@@ -348,7 +348,7 @@ void getCurrLoc()
   last_orientation_rad=orientation_rad;
   last_parallelEncoder=parallelEncoder_angle;
   last_perpendicularEncoder=perpendicularEncoder_angle;
-  //printf("%f\t%f\n", pos[0], pos[1]);
+  // printf("%f\t%f\n", pos[0], pos[1]);
 }
 
 

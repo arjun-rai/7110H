@@ -95,12 +95,37 @@ int odom()
 
 
 void autonomous(void) {
-  // vex::task(odometry);
+  vex::task odometry(odom);
   intake.spin(fwd, 600, rpm);
-  wait(300, msec);
+  wait(200, msec);
   intake.spin(reverse, 400, rpm);
-  pathing(pathMain[0], true, false);
-  PIDTurn(double *pos, double x, double y, bool reverse, bool left, bool stopSet)
+  wait(500, msec);
+  pathing(pathMain[0], true, true, 17*2.54);
+  wings.set(true);
+  pathing(pathMain[1], true, true, 17*2.54);
+  PIDTurn(-360);
+  intake.spin(fwd, 600, rpm);
+  // wings.set(false);
+  pathing(pathMain[2], false, true, 17*2.54, 2500);
+  wings.set(false);
+  PIDMove(-30);
+  PIDMove(30);
+  pathing(pathMain[3], true, true, 17*2.54, 2500);
+  PIDTurn(-420);
+  intake.spin(reverse, 400, rpm);
+  PIDMove(120);
+  PIDTurn(-360);
+  PIDMove(30);
+  PIDTurn(-270);
+  wings.set(true);
+  PIDMove(120);
+
+  
+  
+ 
+  // PIDMove(-40);
+  // PIDMove(40);
+  printf("%f %f \n",pos[0], pos[1]);
 
   //  for (int i=0;i<pathMain[0].size(); i++)
   // {
