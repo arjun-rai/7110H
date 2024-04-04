@@ -106,19 +106,30 @@ void autonomous(void) {
   PIDTurn(-360);
   intake.spin(fwd, 600, rpm);
   // wings.set(false);
-  pathing(pathMain[2], false, true, 17*2.54, 2500);
+  pathing(pathMain[2], false, true, 17*2.54, 1500);
   wings.set(false);
-  PIDMove(-30);
-  PIDMove(30);
+  PIDMove(-40);
+  wings.set(true);
+  pathing(pathMain[2], false, true, 17*2.54, 1500);
+  wings.set(false);
   pathing(pathMain[3], true, true, 17*2.54, 2500);
   PIDTurn(-420);
   intake.spin(reverse, 400, rpm);
   PIDMove(120);
-  PIDTurn(-360);
-  PIDMove(30);
+  PIDTurn(-290);
+  intake.spin(fwd, 600, rpm);
+  wait(500, msec);
+  PIDTurn(-390);
+  intake.spin(reverse, 600, rpm);
+  PIDMove(38);
+  wait(500, msec);
   PIDTurn(-270);
   wings.set(true);
-  PIDMove(120);
+  intake.spin(fwd, 600, rpm);
+  PIDMove(100, 1.1);
+  PIDMove(-30);
+  PIDTurn(-135);
+  PIDMove(130);
 
   
   
