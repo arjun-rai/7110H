@@ -52,7 +52,7 @@ void pre_auton(void) {
   }
   
   Inertial.resetRotation();
-  Inertial.setRotation(135, degrees);
+  Inertial.setRotation(0, degrees);
   
   // parallelEncoder.resetPosition();
   leftDrive.resetPosition();
@@ -95,33 +95,25 @@ int odom()
 
 
 void autonomous(void) {
-  // vex::task odometry(odom);
+  vex::task odometry(odom);
   intake.spin(fwd, 600, rpm);
-  wait(300, msec);
+  wait(200, msec);
   intake.spin(reverse, 400, rpm);
-  // PIDTurn(90);
+  pathing(pathMain[0], false);
+  pathing(pathMain[1], true, true, 15*2.54);
+  intake.stop();
+  PIDTurn(158);
+  wings.set(true);
+  wait(200, msec);
+  pathing(pathMain[2], false, false, 15*2.54);
+  intake.spin(fwd, 600, rpm);
+  pathing(pathMain[3], false, true, 15*2.54);
+  wings.set(false);
+  pathing(pathMain[4], true, true, 17*2.54);
   // wait(500, msec);
   // printf("%f\n", Inertial.rotation());
   // printf("%f\n", (((leftDrive.position(deg)+rightDrive.position(deg))/2.0)/360.0)*M_PI*2.75*2.54 * (3/4.0));
-  PIDMove(-25);
-  intake.stop();
-  wings.set(true);
-  PIDMove(25);
-  wings.set(false);
-  PIDTurn(90);
-  PIDMove(10);
-  PIDTurn(20);
-  PIDMove(75, 4);
-  intake.spin(fwd, 600, rpm);
-  wait(300, msec);
-  PIDMove(-75, 4);
-  PIDTurn(90);
-  // wings.set(true);
-  leftDrive.spin(fwd, 300, rpm);
-  rightDrive.spin(fwd, 300, rpm);
-  waitUntil(dist_sens.objectDistance(inches)<8);
-  leftDrive.stop();
-  rightDrive.stop();
+  
   //  for (int i=0;i<pathMain[0].size(); i++)
   // {
   //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
