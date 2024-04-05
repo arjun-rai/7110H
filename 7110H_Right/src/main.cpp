@@ -99,7 +99,7 @@ void autonomous(void) {
   intake.spin(fwd, 600, rpm);
   wait(200, msec);
   intake.spin(reverse, 400, rpm);
-  wait(500, msec);
+  wait(400, msec);
   pathing(pathMain[0], true, true, 17*2.54);
   wings.set(true);
   pathing(pathMain[1], true, true, 17*2.54);
@@ -107,17 +107,18 @@ void autonomous(void) {
   PIDTurn(-360);
   intake.spin(fwd, 600, rpm);
   // wings.set(false);
-  pathing(pathMain[2], false, true, 25*2.54, 1500);
+  pathing(pathMain[2], false, true, 25*2.54, 1000);
   wings.set(false);
   PIDMove(-40);
   // wings.set(true);
-  PIDTurn(-340);
-  pathing(pathMain[2], false, true, 24*2.54, 1500);
+  PIDTurn(-333);
+  pathing(pathMain[2], false, true, 24*2.54, 1000);
   // wings.set(false);
   pathing(pathMain[3], true, true, 17*2.54, 2500);
-  PIDTurn(-417);
-  intake.spin(reverse, 400, rpm);
+  PIDTurn(-414);
+  intake.spin(reverse, 600, rpm);
   PIDMove(125);
+  intake.stop();
   PIDTurn(-290);
   intake.spin(fwd, 600, rpm);
   wait(300, msec);
@@ -131,15 +132,15 @@ void autonomous(void) {
   PIDMove(100, 0.9);
   wings.set(false);
   PIDMove(-30);
-  PIDTurn(-135);
-  PIDMove(120);
+  PIDTurn(-150);
+  PIDMove(110);
 
   
   
  
   // PIDMove(-40);
   // PIDMove(40);
-  printf("%f %f \n",pos[0], pos[1]);
+  // printf("%f %f \n",pos[0], pos[1]);
 
   //  for (int i=0;i<pathMain[0].size(); i++)
   // {

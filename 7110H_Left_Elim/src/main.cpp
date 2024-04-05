@@ -146,7 +146,7 @@ void autonomous(void) {
 
 
 bool wingsOn = false;
-bool wingsToggle = false;
+bool wingsToggle = true;
 bool ptoOn = false;
 bool ptoToggle = false;
 bool elevationToggle = false;

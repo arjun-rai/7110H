@@ -8168,7 +8168,10 @@ Linker script and memory map
  .data.enableOdom
                 0x03808130        0x1 build/src/main.o
                 0x03808130                enableOdom
- *fill*         0x03808131        0x7 
+ .data.wingsToggle
+                0x03808131        0x1 build/src/main.o
+                0x03808131                wingsToggle
+ *fill*         0x03808132        0x6 
  .data.turnkP   0x03808138        0x8 build/src/pid.o
                 0x03808138                turnkP
  .data.turnkD   0x03808140        0x8 build/src/pid.o
@@ -8656,21 +8659,18 @@ Linker script and memory map
                 0x038086f4                Competition
  .bss.wingsOn   0x0380871c        0x1 build/src/main.o
                 0x0380871c                wingsOn
- .bss.wingsToggle
-                0x0380871d        0x1 build/src/main.o
-                0x0380871d                wingsToggle
- .bss.ptoOn     0x0380871e        0x1 build/src/main.o
-                0x0380871e                ptoOn
+ .bss.ptoOn     0x0380871d        0x1 build/src/main.o
+                0x0380871d                ptoOn
  .bss.ptoToggle
-                0x0380871f        0x1 build/src/main.o
-                0x0380871f                ptoToggle
+                0x0380871e        0x1 build/src/main.o
+                0x0380871e                ptoToggle
  .bss.elevationToggle
-                0x03808720        0x1 build/src/main.o
-                0x03808720                elevationToggle
+                0x0380871f        0x1 build/src/main.o
+                0x0380871f                elevationToggle
  .bss.elevationOn
-                0x03808721        0x1 build/src/main.o
-                0x03808721                elevationOn
- *fill*         0x03808722        0x2 
+                0x03808720        0x1 build/src/main.o
+                0x03808720                elevationOn
+ *fill*         0x03808721        0x3 
  .bss.tMatch    0x03808724        0x8 build/src/main.o
                 0x03808724                tMatch
  .bss._ZStL8__ioinit
