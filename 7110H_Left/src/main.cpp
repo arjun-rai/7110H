@@ -103,11 +103,13 @@ void autonomous(void) {
   // wait(500, msec);
   // printf("%f\n", Inertial.rotation());
   // printf("%f\n", (((leftDrive.position(deg)+rightDrive.position(deg))/2.0)/360.0)*M_PI*2.75*2.54 * (3/4.0));
-  PIDMove(-25);
+  //PIDMove(-25);
+  wait(500, msec);
   intake.stop();
-  wings.set(true);
-  PIDMove(25);
-  wings.set(false);
+  backWing.set(true);
+  PIDMove(35);
+  backWing.set(false);
+  PIDMove(-35);
   PIDTurn(90);
   PIDMove(10);
   PIDTurn(20);
@@ -115,11 +117,11 @@ void autonomous(void) {
   intake.spin(fwd, 600, rpm);
   wait(300, msec);
   PIDMove(-75, 4);
-  PIDTurn(90);
+  PIDTurn(80);
   // wings.set(true);
-  leftDrive.spin(fwd, 300, rpm);
-  rightDrive.spin(fwd, 300, rpm);
-  waitUntil(dist_sens.objectDistance(inches)<8);
+  leftDrive.spin(fwd, 200, rpm);
+  rightDrive.spin(fwd, 200, rpm);
+  waitUntil(dist_sens.objectDistance(inches)<10);
   leftDrive.stop();
   rightDrive.stop();
   //  for (int i=0;i<pathMain[0].size(); i++)
@@ -155,10 +157,10 @@ void autonomous(void) {
 
 bool wingsOn = false;
 bool wingsToggle = false;
-bool ptoOn = false;
-bool ptoToggle = false;
-bool elevationToggle = false;
-bool elevationOn = false;
+bool releaseOn = false;
+bool releaseToggle = false;
+bool backWingOn = false;
+bool backWingToggle = false;
 
 timer tMatch = timer();
 void usercontrol(void) {
@@ -208,41 +210,41 @@ void usercontrol(void) {
 
     if (Controller.ButtonA.pressing())
     {
-      if (!elevationOn)
+      if (!backWingOn)
       {
-        elevationToggle=!elevationToggle;
-        elevationOn=true;
+        backWingToggle=!backWingToggle;
+        backWingOn=true;
       }
     }
     else {
-      elevationOn=false;
+      backWingOn=false;
     }
-    if (elevationToggle)
+    if (backWingToggle)
     {
-      elevation.set(true);
+      backWing.set(true);
     }
     else {
-      elevation.set(false);
+      backWing.set(false);
     }
 
 
     if (Controller.ButtonX.pressing())
     {
-      if (!ptoOn)
+      if (!releaseOn)
       {
-        ptoToggle=!ptoToggle;
-        ptoOn=true;
+        releaseToggle=!releaseToggle;
+        releaseOn=true;
       }
     }
     else {
-      ptoOn=false;
+      releaseOn=false;
     }
-    if (ptoToggle)
+    if (releaseToggle)
     {
-      pto.set(true);
+      release.set(true);
     }
     else {
-      pto.set(false);
+      release.set(false);
     }
     // Controller.Screen.clearLine();
     Controller.Screen.setCursor(1, 1);
