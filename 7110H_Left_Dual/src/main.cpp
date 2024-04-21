@@ -52,7 +52,7 @@ void pre_auton(void) {
   }
   
   Inertial.resetRotation();
-  Inertial.setRotation(-90, degrees);
+  Inertial.setRotation(135, degrees);
   
   // parallelEncoder.resetPosition();
   leftDrive.resetPosition();
@@ -95,57 +95,33 @@ int odom()
 
 
 void autonomous(void) {
-  vex::task odometry(odom);
+  // vex::task odometry(odom);
   intake.spin(fwd, 600, rpm);
-  wait(200, msec);
-  intake.spin(reverse, 400, rpm);
-  wait(400, msec);
-  pathing(pathMain[0], true, true, 17*2.54);
-  pathing(pathMain[1], true, true, 17*2.54);
-  intake.stop();
-  PIDTurn(-330);
-  backWing.set(true);
-  wait(50, msec);
-  PIDTurn(-360);
-  backWing.set(false);
-  intake.spin(fwd, 600, rpm);
-  // wings.set(false);
-  wings.set(true);
-  pathing(pathMain[2], false, true, 21*2.54, 1200);
-  wings.set(false);
-  PIDMove(-40);
-  // wings.set(true);
-  PIDTurn(-333);
-  pathing(pathMain[2], false, true, 21*2.54, 1200);
-  // wings.set(false);
-  pathing(pathMain[3], true, true, 17*2.54, 2500);
-  PIDTurn(-419);
-  intake.spin(reverse, 50, rpm);
-  PIDMove(125);
-  intake.stop();
-  PIDTurn(-290);
-  intake.spin(fwd, 600, rpm);
-  wait(350, msec);
-  PIDTurn(-390);
-  intake.spin(reverse, 400, rpm);
-  PIDMove(50);
   wait(300, msec);
-  PIDTurn(-270);
+  intake.spin(reverse, 400, rpm);
+  // PIDTurn(90);
+  // wait(500, msec);
+  // printf("%f\n", Inertial.rotation());
+  // printf("%f\n", (((leftDrive.position(deg)+rightDrive.position(deg))/2.0)/360.0)*M_PI*2.75*2.54 * (3/4.0));
+  PIDMove(-25);
+  intake.stop();
   wings.set(true);
-  intake.spin(fwd, 600, rpm);
-  PIDMove(100, 0.9);
+  PIDMove(25);
   wings.set(false);
-  PIDMove(-30);
-  PIDTurn(-139);
-  PIDMove(110);
-
-  
-  
- 
-  // PIDMove(-40);
-  // PIDMove(40);
-  // printf("%f %f \n",pos[0], pos[1]);
-
+  PIDTurn(90);
+  PIDMove(10);
+  PIDTurn(20);
+  PIDMove(75, 4);
+  intake.spin(fwd, 600, rpm);
+  wait(300, msec);
+  PIDMove(-75, 4);
+  PIDTurn(90);
+  // wings.set(true);
+  leftDrive.spin(fwd, 300, rpm);
+  rightDrive.spin(fwd, 300, rpm);
+  waitUntil(dist_sens.objectDistance(inches)<8);
+  leftDrive.stop();
+  rightDrive.stop();
   //  for (int i=0;i<pathMain[0].size(); i++)
   // {
   //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
@@ -179,10 +155,10 @@ void autonomous(void) {
 
 bool wingsOn = false;
 bool wingsToggle = false;
-bool releaseOn = false;
-bool releaseToggle = false;
-bool backWingOn = false;
-bool backWingToggle = false;
+bool ptoOn = false;
+bool ptoToggle = false;
+bool elevationToggle = false;
+bool elevationOn = false;
 
 timer tMatch = timer();
 void usercontrol(void) {
@@ -198,7 +174,7 @@ void usercontrol(void) {
     // leftExpo(forward, (Controller.Axis3.value() + Controller.Axis1.value()), maxSpeed);
     // rightExpo(forward, (Controller.Axis2.value()));
     // leftExpo(forward, (Controller.Axis3.value()));
-    curvatureSingleDrive(Controller.Axis3.value()/127.0, Controller.Axis4.value()/127.0);
+    curvatureSingleDrive(Controller.Axis3.value()/127.0, Controller.Axis1.value()/127.0);
     if (Controller.ButtonL1.pressing())
     {
         intake.spin(fwd, 600, rpm);
@@ -232,41 +208,41 @@ void usercontrol(void) {
 
     if (Controller.ButtonA.pressing())
     {
-      if (!backWingOn)
+      if (!elevationOn)
       {
-        backWingToggle=!backWingToggle;
-        backWingOn=true;
+        elevationToggle=!elevationToggle;
+        elevationOn=true;
       }
     }
     else {
-      backWingOn=false;
+      elevationOn=false;
     }
-    if (backWingToggle)
+    if (elevationToggle)
     {
-      backWing.set(true);
+      elevation.set(true);
     }
     else {
-      backWing.set(false);
+      elevation.set(false);
     }
 
 
     if (Controller.ButtonX.pressing())
     {
-      if (!releaseOn)
+      if (!ptoOn)
       {
-        releaseToggle=!releaseToggle;
-        releaseOn=true;
+        ptoToggle=!ptoToggle;
+        ptoOn=true;
       }
     }
     else {
-      releaseOn=false;
+      ptoOn=false;
     }
-    if (releaseToggle)
+    if (ptoToggle)
     {
-      release.set(true);
+      pto.set(true);
     }
     else {
-      release.set(false);
+      pto.set(false);
     }
     // Controller.Screen.clearLine();
     Controller.Screen.setCursor(1, 1);

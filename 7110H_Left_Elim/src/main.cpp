@@ -198,7 +198,7 @@ void usercontrol(void) {
       wings.set(false);
     }
 
-    if (Controller.ButtonR1.pressing())
+    if (Controller.ButtonA.pressing())
     {
       if (!elevationOn)
       {
