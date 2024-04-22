@@ -29,8 +29,8 @@ timer t;
 bool enableDrivePID = true;
 double timeLimit = 3;
 bool pivot = false;
-bool rightStop = true;
-bool leftStop = true;
+bool rightStop = false;
+bool leftStop = false;
 bool stopVal = true;
 
 double lastTarget = 0;
@@ -197,11 +197,16 @@ int dist(double timeout = 3, brakeType chooseBrakeType = hold)
   return 1;
 }
 
-void PIDTurn(double ang, bool stopSet)
+void PIDTurn(double ang, bool stopSet, bool rightStp)
 {
   resetDriveSensors=true;
   desiredTurnValue=ang;
   stopVal=stopSet;
+  if (rightStop==true)
+  {
+    pivot=true;
+    rightStop=rightStp;
+  }
   turnPID();
 }
 void PIDMove (double length, double timeout, vex::brakeType chooseBrakeType)

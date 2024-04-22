@@ -23,8 +23,8 @@ inertial Inertial = inertial(PORT5);
 motor_group leftDrive = motor_group(BackLeft, FrontLeft, MiddleLeft, GearboxLeft);
 motor_group rightDrive = motor_group(BackRight, FrontRight, MiddleRight, GearboxRight);
 digital_out wings = digital_out(Brain.ThreeWirePort.C);
-digital_out pto = digital_out(Brain.ThreeWirePort.A);
-digital_out elevation = digital_out(Brain.ThreeWirePort.B);
+digital_out release = digital_out(Brain.ThreeWirePort.B);
+digital_out backWing = digital_out(Brain.ThreeWirePort.A);
 motor intake = motor(PORT6, ratio6_1, false);
 distance dist_sens = distance(PORT12);
 
