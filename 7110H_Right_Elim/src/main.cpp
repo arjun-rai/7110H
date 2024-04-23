@@ -99,78 +99,7 @@ void autonomous(void) {
   intake.spin(fwd, 600, rpm);
   wait(200, msec);
   intake.spin(reverse, 400, rpm);
-  wait(400, msec);
-  pathing(pathMain[0], true, true, 17*2.54);
-  pathing(pathMain[1], true, true, 17*2.54);
-  intake.stop();
-  PIDTurn(-330);
-  backWing.set(true);
-  wait(50, msec);
-  PIDTurn(-360);
-  backWing.set(false);
-  intake.spin(fwd, 600, rpm);
-  // wings.set(false);
-  wings.set(true);
-  pathing(pathMain[2], false, true, 21*2.54, 1200);
-  wings.set(false);
-  PIDMove(-40);
-  // wings.set(true);
-  PIDTurn(-333);
-  pathing(pathMain[2], false, true, 21*2.54, 1200);
-  // wings.set(false);
-  pathing(pathMain[3], true, true, 17*2.54, 2500);
-  PIDTurn(-419);
-  intake.spin(reverse, 200, rpm);
-  PIDMove(120);
-  intake.stop();
-  PIDTurn(-290);
-  intake.spin(fwd, 600, rpm);
-  wait(350, msec);
-  PIDTurn(-390);
-  intake.spin(reverse, 300, rpm);
-  PIDMove(50);
-  wait(300, msec);
-  PIDTurn(-270);
-  wings.set(true);
-  intake.spin(fwd, 600, rpm);
-  PIDMove(100, 0.9);
-  wings.set(false);
-  PIDMove(-30);
-  PIDTurn(-139);
-  PIDMove(102, 3, coast);
-
   
-  
- 
-  // PIDMove(-40);
-  // PIDMove(40);
-  // printf("%f %f \n",pos[0], pos[1]);
-
-  //  for (int i=0;i<pathMain[0].size(); i++)
-  // {
-  //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
-  //   wait(20, msec);
-  // }
-  // for (int i=0;i<pathMain[0].size(); i++)
-  // {
-  //   printf("%f\n", pathMain[0][i].finVel);
-  //   wait(20, msec);
-  // }
-  // std::cout << pathMain[0].size();
-  // motor1.spin(reverse, 100, rpm);
-  // motor2.spin(reverse, 100, rpm);
-  // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
-  
-  
-
-  // pathing(pathMain[2], false, true);
-  // wingsBackLeft.set(false);
-  // wait(5000, msec);
-  // pathing(pathMain[2], true, true);
-  // while (true)
-  // {
-  //   getCurrLoc();
-  // }
 }
 
 
