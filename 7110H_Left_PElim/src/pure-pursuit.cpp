@@ -289,7 +289,7 @@ double constrain(double input, double lastInput, double min, double max)
 
 
 
-double pos[] = {76,-140};
+double pos[] = {-76,-140};
 double last_orientation_rad = 0;
 double last_perpendicularEncoder =0;
 double last_parallelEncoder =0;
@@ -348,7 +348,7 @@ void getCurrLoc()
   last_orientation_rad=orientation_rad;
   last_parallelEncoder=parallelEncoder_angle;
   last_perpendicularEncoder=perpendicularEncoder_angle;
-  // printf("%f\t%f\n", pos[0], pos[1]);
+  //printf("%f\t%f\n", pos[0], pos[1]);
 }
 
 

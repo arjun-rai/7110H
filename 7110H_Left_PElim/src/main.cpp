@@ -97,46 +97,65 @@ int odom()
 void autonomous(void) {
   vex::task odometry(odom);
   intake.spin(fwd, 600, rpm);
-  backWing.set(true);
-  wait(100, msec);
-  backWing.set(false);
-  pathing(pathMain[0], false, false, 10*2.54);
-  intake.spin(reverse, 400, rpm);
-  pathing(pathMain[1], false, true);
-  PIDMove(-40);
-  PIDTurn(-25);
-  // printf("%f\t%f\n", pos[0], pos[1]);
-  pathing(pathMain[2], true, true);
-  PIDTurn(60);
-  pathing(pathMain[3], false, true);
-  backWing.set(true);
-  PIDTurn(-10);
-  backWing.set(false);
-  PIDTurn(50);
-  pathing(pathMain[4], false, true);
-  PIDTurn(5);
-  intake.spin(fwd, 600, rpm);
-  // wings.set(true);
-  pathing(pathMain[5], false, true, 18*1.54, 800);
-  // wings.set(false);
-  pathing(pathMain[6], true, true);
-  PIDTurn(-70);
+  pathing(pathMain[0], false, false);
   intake.spin(reverse, 600, rpm);
-  pathing(pathMain[7], false, true);
-  PIDTurn(0);
-  pathing(pathMain[8], false, true);
+  pathing(pathMain[1], false);
+  pathing(pathMain[2], true, true, 15*2.54);
   PIDTurn(90);
+  // wings.set(true);
+  // pathing(pathMain[3], false, true, 15*2.54);
+  leftDrive.spin(fwd, 300, rpm);
+  rightDrive.spin(fwd, 300, rpm);
+  waitUntil(Inertial.pitch()>5);
+  rightDrive.stop();
+  leftDrive.stop();
+  intake.spin(fwd, 600, rpm);
+  wait(300, msec);
+  // wait(10000, msec);
+  PIDTurn(60);
+  pathing(pathMain[4], true, true, 18*2.54);
+  PIDTurn(145, true, true);
+  backWing.set(true);
+  wait(200, msec);
+  pathing(pathMain[5], false, true, 17*2.54);
+  PIDTurn(60, true, false);
+  backWing.set(false);
+  PIDTurn(105, true, false);
   wings.set(true);
   intake.spin(fwd, 600, rpm);
-  pathing(pathMain[9], false, true);
- 
-
-
-  // wings.set(true);
-  // PIDTurn(-333+360);
-  // pathing(pathMain[6], false, true, 21*2.54, 1500);
-
+  pathing(pathMain[6], false, true, 24*2.54);
+  wings.set(false);
+  PIDTurn(90);
+  pathing(pathMain[7], true, true, 17*2.54);
+  // wait(500, msec);
+  // printf("%f\n", Inertial.rotation());
+  // printf("%f\n", (((leftDrive.position(deg)+rightDrive.position(deg))/2.0)/360.0)*M_PI*2.75*2.54 * (3/4.0));
   
+  //  for (int i=0;i<pathMain[0].size(); i++)
+  // {
+  //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
+  //   wait(20, msec);
+  // }
+  // for (int i=0;i<pathMain[0].size(); i++)
+  // {
+  //   printf("%f\n", pathMain[0][i].finVel);
+  //   wait(20, msec);
+  // }
+  // std::cout << pathMain[0].size();
+  // motor1.spin(reverse, 100, rpm);
+  // motor2.spin(reverse, 100, rpm);
+  // printf("%f %f\n", pathMain[0][pathMain[0].size()].x, pathMain[0][pathMain[0].size()].y);
+  
+  
+
+  // pathing(pathMain[2], false, true);
+  // wingsBackLeft.set(false);
+  // wait(5000, msec);
+  // pathing(pathMain[2], true, true);
+  // while (true)
+  // {
+  //   getCurrLoc();
+  // }
 }
 
 
