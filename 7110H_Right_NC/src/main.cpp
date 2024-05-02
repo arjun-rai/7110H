@@ -52,7 +52,7 @@ void pre_auton(void) {
   }
   
   Inertial.resetRotation();
-  Inertial.setRotation(0, degrees);
+  Inertial.setRotation(-90, degrees);
   
   // parallelEncoder.resetPosition();
   leftDrive.resetPosition();
@@ -97,30 +97,55 @@ int odom()
 void autonomous(void) {
   vex::task odometry(odom);
   intake.spin(fwd, 600, rpm);
-  pathing(pathMain[0], false, false);
-  intake.spin(reverse, 600, rpm);
-  pathing(pathMain[1], false);
-  pathing(pathMain[2], true, true, 15*2.54);
-  intake.stop();
-  PIDTurn(145, true, true);
-  backWing.set(true);
   wait(200, msec);
-  pathing(pathMain[3], false, true, 17*2.54);
-  PIDTurn(60, true, false);
+  intake.spin(reverse, 400, rpm);
+  wait(400, msec);
+  pathing(pathMain[0], true, true, 17*2.54);
+  pathing(pathMain[1], true, true, 17*2.54);
+  intake.stop();
+  PIDTurn(-330);
+  backWing.set(true);
+  wait(50, msec);
+  PIDTurn(-360);
   backWing.set(false);
-  PIDTurn(105, true, false);
+  intake.spin(fwd, 600, rpm);
+  // wings.set(false);
+  wings.set(true);
+  pathing(pathMain[2], false, true, 21*2.54, 1200);
+  wings.set(false);
+  PIDMove(-40);
+  // wings.set(true);
+  PIDTurn(-333);
+  pathing(pathMain[2], false, true, 21*2.54, 1200);
+  // wings.set(false);
+  pathing(pathMain[3], true, true, 17*2.54, 2500);
+  PIDTurn(-419);
+  intake.spin(reverse, 200, rpm);
+  PIDMove(113);
+  intake.stop();
+  PIDTurn(-290);
+  intake.spin(fwd, 600, rpm);
+  wait(350, msec);
+  PIDTurn(-390);
+  intake.spin(reverse, 300, rpm);
+  PIDMove(50);
+  wait(300, msec);
+  PIDTurn(-270);
   wings.set(true);
   intake.spin(fwd, 600, rpm);
-  wait(200, msec);
-  pathing(pathMain[4], false, true, 24*2.54);
+  PIDMove(100, 0.9);
   wings.set(false);
-  PIDTurn(90);
-  pathing(pathMain[5], true, true, 17*2.54);
-  backWing.set(true);
-  // wait(500, msec);
-  // printf("%f\n", Inertial.rotation());
-  // printf("%f\n", (((leftDrive.position(deg)+rightDrive.position(deg))/2.0)/360.0)*M_PI*2.75*2.54 * (3/4.0));
+  PIDMove(-30);
+  PIDTurn(-139);
+  // PIDMove(102, 3, coast);
+
   
+  
+ 
+  // PIDMove(-40);
+  // PIDMove(40);
+  // printf("%f %f \n",pos[0], pos[1]);
+
   //  for (int i=0;i<pathMain[0].size(); i++)
   // {
   //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
@@ -157,7 +182,7 @@ bool wingsToggle = false;
 bool releaseOn = false;
 bool releaseToggle = false;
 bool backWingOn = false;
-bool backWingToggle = true;
+bool backWingToggle = false;
 
 timer tMatch = timer();
 void usercontrol(void) {

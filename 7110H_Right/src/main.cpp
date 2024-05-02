@@ -121,7 +121,7 @@ void autonomous(void) {
   pathing(pathMain[3], true, true, 17*2.54, 2500);
   PIDTurn(-419);
   intake.spin(reverse, 200, rpm);
-  PIDMove(120);
+  PIDMove(113);
   intake.stop();
   PIDTurn(-290);
   intake.spin(fwd, 600, rpm);
@@ -250,7 +250,7 @@ void usercontrol(void) {
     }
 
 
-    if (Controller.ButtonX.pressing())
+    if (Controller.ButtonX.pressing()&&Controller.ButtonY.pressing())
     {
       if (!releaseOn)
       {

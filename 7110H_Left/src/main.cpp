@@ -110,23 +110,24 @@ void autonomous(void) {
   PIDMove(25);
   PIDTurn(50);
   wait(100, msec);
-  PIDTurn(135);
   backWing.set(false);
+  PIDTurn(135);
   PIDMove(-25);
   PIDTurn(90);
   PIDMove(10);
   PIDTurn(20);
-  PIDMove(75, 4);
+  PIDMove(50, 4);
   intake.spin(fwd, 600, rpm);
   wait(300, msec);
-  PIDMove(-95, 5);
-  PIDTurn(82);
+  PIDMove(-85, 5);
+  PIDTurn(103);
   // wings.set(true);
-  leftDrive.spin(fwd, 200, rpm);
-  rightDrive.spin(fwd, 200, rpm);
-  waitUntil(dist_sens.objectDistance(inches)<10);
-  leftDrive.stop();
-  rightDrive.stop();
+  PIDMove(89.5);
+  // leftDrive.spin(fwd, 200, rpm);
+  // rightDrive.spin(fwd, 200, rpm);
+  // waitUntil(dist_sens.objectDistance(inches)<6);
+  // leftDrive.stop();
+  // rightDrive.stop();
   //  for (int i=0;i<pathMain[0].size(); i++)
   // {
   //   printf("%f\t%f\n", pathMain[0][i].x, pathMain[0][i].y);
@@ -231,7 +232,7 @@ void usercontrol(void) {
     }
 
 
-    if (Controller.ButtonX.pressing())
+    if (Controller.ButtonX.pressing() && Controller.ButtonY.pressing())
     {
       if (!releaseOn)
       {
